@@ -13,6 +13,7 @@ export const blogsController = {
     },
     getBlog(req: Request, res: Response) {
         const foundBlog = blogsModel.getBlog(req.params.id);
+
         if (!foundBlog) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;

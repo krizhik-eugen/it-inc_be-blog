@@ -13,6 +13,7 @@ export const postsController = {
     },
     getPost(req: Request, res: Response) {
         const foundPost = postsModel.getPost(req.params.id);
+
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
