@@ -1,6 +1,6 @@
 export type TDBBaseInstance = {
-    id: string
-}
+    id: string;
+};
 export class Database<T extends TDBBaseInstance> {
     private db: T[];
 
@@ -26,10 +26,14 @@ export class Database<T extends TDBBaseInstance> {
     }
 
     public updateInstance(updatedInstance: T) {
-        const foundInstance = this.db.find((instance) => instance.id === updatedInstance.id);
+        const foundInstance = this.db.find(
+            (instance) => instance.id === updatedInstance.id
+        );
         if (!foundInstance) return false;
         this.db = this.db.map((instance) => {
-            return instance.id === foundInstance.id ? { ...instance, ...updatedInstance } : instance
+            return instance.id === foundInstance.id
+                ? { ...instance, ...updatedInstance }
+                : instance;
         });
         return true;
     }
@@ -37,7 +41,9 @@ export class Database<T extends TDBBaseInstance> {
     public deleteInstance(id: TDBBaseInstance['id']) {
         const foundInstance = this.db.find((instance) => instance.id === id);
         if (!foundInstance) return false;
-        this.db = this.db.filter((instance) => instance.id !== foundInstance.id);
+        this.db = this.db.filter(
+            (instance) => instance.id !== foundInstance.id
+        );
         return true;
     }
-};
+}

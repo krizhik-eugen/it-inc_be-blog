@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { postsModel } from "../models";
-import { HTTP_STATUS_CODES } from "../constants";
+import { Request, Response } from 'express';
+import { postsModel } from '../models';
+import { HTTP_STATUS_CODES } from '../constants';
 
 export const postsController = {
     getAllPosts(req: Request, res: Response) {
@@ -21,11 +21,22 @@ export const postsController = {
         res.status(HTTP_STATUS_CODES.OK).json(foundPost);
     },
     updatePost(req: Request, res: Response) {
-        const isPostUpdated = postsModel.updatePost({ ...req.body, id: req.params.id });
-        res.sendStatus(isPostUpdated ? HTTP_STATUS_CODES.NO_CONTENT : HTTP_STATUS_CODES.NOT_FOUND);
+        const isPostUpdated = postsModel.updatePost({
+            ...req.body,
+            id: req.params.id,
+        });
+        res.sendStatus(
+            isPostUpdated
+                ? HTTP_STATUS_CODES.NO_CONTENT
+                : HTTP_STATUS_CODES.NOT_FOUND
+        );
     },
     deletePost(req: Request, res: Response) {
         const isPostDeleted = postsModel.deletePost(req.params.id);
-        res.sendStatus(isPostDeleted ? HTTP_STATUS_CODES.NO_CONTENT : HTTP_STATUS_CODES.NOT_FOUND);
+        res.sendStatus(
+            isPostDeleted
+                ? HTTP_STATUS_CODES.NO_CONTENT
+                : HTTP_STATUS_CODES.NOT_FOUND
+        );
     },
 };

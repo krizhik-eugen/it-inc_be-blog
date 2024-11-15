@@ -1,27 +1,23 @@
-import { Router } from "express";
-import { blogsController } from "../controllers";
-import { blogsValidators } from "../middlewares";
+import { Router } from 'express';
+import { blogsController } from '../controllers';
+import { blogsValidators } from '../middlewares';
 
 export const blogsRouter = Router();
 
-blogsRouter.get('/',
-    blogsController.getAllBlogs
-);
+blogsRouter.get('/', blogsController.getAllBlogs);
 
-blogsRouter.post('/',
+blogsRouter.post(
+    '/',
     ...blogsValidators.postRequest,
     blogsController.createNewBlog
 );
 
-blogsRouter.get('/:id',
-    blogsController.getBlog
-);
+blogsRouter.get('/:id', blogsController.getBlog);
 
-blogsRouter.put('/:id',
+blogsRouter.put(
+    '/:id',
     ...blogsValidators.putRequest,
     blogsController.updateBlog
 );
 
-blogsRouter.delete('/:id',
-    blogsController.deleteBlog
-);
+blogsRouter.delete('/:id', blogsController.deleteBlog);

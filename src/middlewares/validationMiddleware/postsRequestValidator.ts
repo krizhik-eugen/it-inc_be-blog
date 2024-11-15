@@ -1,6 +1,6 @@
-import { Schema } from "express-validator";
-import { blogsModel } from "../../models";
-import { requestValidator } from "../requestValidatorHelpers";
+import { Schema } from 'express-validator';
+import { blogsModel } from '../../models';
+import { requestValidator } from '../requestValidatorHelpers';
 
 const titleLength = 30;
 const shortDescriptionLength = 100;
@@ -31,7 +31,6 @@ const bodySchema: Schema = {
             options: { max: titleLength },
             errorMessage: `Title length should be max ${titleLength} characters`,
         },
-
     },
     shortDescription: {
         in: ['body'],
@@ -79,7 +78,7 @@ const bodySchema: Schema = {
                 if (!foundBlog) {
                     throw 'Invalid BlogId';
                 }
-                return true
+                return true;
             },
         },
     },

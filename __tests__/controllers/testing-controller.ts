@@ -1,6 +1,12 @@
 import request from 'supertest';
 import { app } from '../../src/app'; // assuming your app is exported in app.ts
-import { blogsModel, postsModel, testingModel, TBlog, TPost } from '../../src/models';
+import {
+    blogsModel,
+    postsModel,
+    testingModel,
+    TBlog,
+    TPost,
+} from '../../src/models';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { baseRoutes } from '../../src/configs';
 
@@ -10,7 +16,7 @@ describe('Testing Controller', () => {
         content: 'Test content',
         blogId: '',
         blogName: '',
-        shortDescription: 'test shortDescription'
+        shortDescription: 'test shortDescription',
     };
 
     let testBlog: TBlog;
@@ -19,15 +25,15 @@ describe('Testing Controller', () => {
         const newBlog: Omit<TBlog, 'id'> = {
             name: 'Test Blog',
             description: 'Test description',
-            websiteUrl: 'https://test.com'
+            websiteUrl: 'https://test.com',
         };
 
         const createdBlog = await blogsModel.addNewBlog(newBlog);
         testBlog = createdBlog;
         testPost.blogName = testBlog.name;
-        testPost.blogId = testBlog.id
-        await postsModel.addNewPost(testPost)
-    })
+        testPost.blogId = testBlog.id;
+        await postsModel.addNewPost(testPost);
+    });
 
     describe('DELETE /testing', () => {
         it('deletes all data', async () => {
@@ -40,14 +46,20 @@ describe('Testing Controller', () => {
             expect(postsResponse.body[0].title).toBe(testPost.title);
             expect(postsResponse.body[0].blogName).toBe(testBlog.name);
 
-            const deleteResponse = await request(app).delete(baseRoutes.testing);
+            const deleteResponse = await request(app).delete(
+                baseRoutes.testing
+            );
             expect(deleteResponse.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
 
-            const deletedBlogsResponse = await request(app).get(baseRoutes.blogs);
+            const deletedBlogsResponse = await request(app).get(
+                baseRoutes.blogs
+            );
             expect(deletedBlogsResponse.status).toBe(HTTP_STATUS_CODES.OK);
             expect(deletedBlogsResponse.body).toEqual([]);
 
-            const deletedPostsResponse = await request(app).get(baseRoutes.blogs);
+            const deletedPostsResponse = await request(app).get(
+                baseRoutes.blogs
+            );
             expect(deletedPostsResponse.status).toBe(HTTP_STATUS_CODES.OK);
             expect(deletedPostsResponse.body).toEqual([]);
         });

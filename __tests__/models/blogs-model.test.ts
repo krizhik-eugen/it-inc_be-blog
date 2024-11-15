@@ -9,13 +9,13 @@ describe('blogsModel', () => {
         id: '1',
         name: 'Blog name 1',
         description: 'Short blog 1 description',
-        websiteUrl: 'Blog 1 address'
+        websiteUrl: 'Blog 1 address',
     };
     const newBlog2: TBlog = {
         id: '2',
         name: 'Blog name 2',
         description: 'Short blog 2 description',
-        websiteUrl: 'Blog 2 address'
+        websiteUrl: 'Blog 2 address',
     };
 
     it('getAllBlogs returns an empty array initially', () => {

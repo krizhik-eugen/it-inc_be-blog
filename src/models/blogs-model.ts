@@ -14,7 +14,7 @@ export const blogsModel = {
     getBlog(id: TBlog['id']) {
         return blogsDb.getInstance(id);
     },
-    updateBlog(updatedBlog: TBlog,) {
+    updateBlog(updatedBlog: TBlog) {
         return blogsDb.updateInstance(updatedBlog);
     },
     deleteBlog(id: TBlog['id']) {

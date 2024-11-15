@@ -14,7 +14,7 @@ export const postsModel = {
     getPost(id: TPost['id']) {
         return postsDb.getInstance(id);
     },
-    updatePost(updatedPost: TPost,) {
+    updatePost(updatedPost: TPost) {
         return postsDb.updateInstance(updatedPost);
     },
     deletePost(id: TPost['id']) {

@@ -12,7 +12,7 @@ describe('Blogs Controller', () => {
     const testBlog: Omit<TBlog, 'id'> = {
         name: 'Test Blog',
         description: 'Test description',
-        websiteUrl: 'https://test.com'
+        websiteUrl: 'https://test.com',
     };
 
     describe('GET /blogs', () => {
@@ -32,14 +32,18 @@ describe('Blogs Controller', () => {
 
     describe('POST /blogs', () => {
         it('creates a new blog', async () => {
-            const response = await request(app).post(baseRoutes.blogs).send(testBlog);
+            const response = await request(app)
+                .post(baseRoutes.blogs)
+                .send(testBlog);
             expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
             expect(response.body).toEqual(expect.objectContaining(testBlog));
         });
 
         it('returns an error if required fields are missing', async () => {
             const newBlog = { description: 'Test description' };
-            const response = await request(app).post(baseRoutes.blogs).send(newBlog);
+            const response = await request(app)
+                .post(baseRoutes.blogs)
+                .send(newBlog);
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });
     });
@@ -47,7 +51,9 @@ describe('Blogs Controller', () => {
     describe('GET /blogs/:id', () => {
         it('returns a blog by id', async () => {
             const createdBlog = await blogsModel.addNewBlog(testBlog);
-            const response = await request(app).get(`${baseRoutes.blogs}/${createdBlog.id}`);
+            const response = await request(app).get(
+                `${baseRoutes.blogs}/${createdBlog.id}`
+            );
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body).toEqual(expect.objectContaining(createdBlog));
         });
@@ -61,14 +67,18 @@ describe('Blogs Controller', () => {
     describe('DELETE /blogs/:id', () => {
         it('deletes a blog', async () => {
             const createdBlog = await blogsModel.addNewBlog(testBlog);
-            const response = await request(app).delete(`${baseRoutes.blogs}/${createdBlog.id}`);
+            const response = await request(app).delete(
+                `${baseRoutes.blogs}/${createdBlog.id}`
+            );
             expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
             const deletedBlog = await blogsModel.getBlog(createdBlog.id);
             expect(deletedBlog).toBeUndefined();
         });
 
         it('returns an error if blog is not found', async () => {
-            const response = await request(app).delete(`${baseRoutes.blogs}/123`);
+            const response = await request(app).delete(
+                `${baseRoutes.blogs}/123`
+            );
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });
     });

@@ -1,10 +1,11 @@
 import { Schema } from 'express-validator';
-import { requestValidator } from "../requestValidatorHelpers";
+import { requestValidator } from '../requestValidatorHelpers';
 
 const nameLength = 15;
 const descriptionLength = 500;
 const websiteUrlLength = 100;
-const websiteUrlPattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;
+const websiteUrlPattern =
+    /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;
 
 const paramSchema: Schema = {
     id: {
@@ -66,7 +67,6 @@ const bodySchema: Schema = {
             errorMessage: 'Website URL should be a valid URL',
         },
     },
-
 };
 
 export const blogsValidators = {

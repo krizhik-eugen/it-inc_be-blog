@@ -14,7 +14,8 @@ describe('generateId function', () => {
 
     it('should generate an id containing only allowed characters', () => {
         const id = generateId();
-        const allowedCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-={}:<>?,./';
+        const allowedCharacters =
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-={}:<>?,./';
         for (const char of id) {
             expect(allowedCharacters.includes(char)).toBe(true);
         }
