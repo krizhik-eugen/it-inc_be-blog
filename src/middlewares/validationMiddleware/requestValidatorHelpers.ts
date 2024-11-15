@@ -7,7 +7,7 @@ const errorValidator = (req: Request, res: Response, next: NextFunction) => {
 
     if (errors.length) {
         res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            errorMessages: errors.map((error) => ({
+            errorsMessages: errors.map((error) => ({
                 message: error.msg,
                 field: error.type === 'field' ? error.path : '',
             })),
