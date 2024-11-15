@@ -1,12 +1,8 @@
 import { NextFunction, Response, Request } from 'express';
 import { checkSchema, Schema, validationResult } from 'express-validator';
-import { HTTP_STATUS_CODES } from '../constants';
+import { HTTP_STATUS_CODES } from '../../constants';
 
-export const errorValidator = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array({ onlyFirstError: true });
 
     if (errors.length) {

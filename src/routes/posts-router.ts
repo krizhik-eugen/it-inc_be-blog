@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { postsController } from '../controllers';
-import { postsValidators } from '../middlewares';
+import { authValidator, postsValidators } from '../middlewares';
 
 export const postsRouter = Router();
 
@@ -8,6 +8,7 @@ postsRouter.get('/', postsController.getAllPosts);
 
 postsRouter.post(
     '/',
+    ...authValidator,
     ...postsValidators.postRequest,
     postsController.createNewPost
 );
@@ -16,8 +17,9 @@ postsRouter.get('/:id', postsController.getPost);
 
 postsRouter.put(
     '/:id',
+    ...authValidator,
     ...postsValidators.putRequest,
     postsController.updatePost
 );
 
-postsRouter.delete('/:id', postsController.deletePost);
+postsRouter.delete('/:id', ...authValidator, postsController.deletePost);

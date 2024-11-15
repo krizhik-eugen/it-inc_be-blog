@@ -1,5 +1,5 @@
 import { Schema } from 'express-validator';
-import { requestValidator } from '../requestValidatorHelpers';
+import { requestValidator } from './requestValidatorHelpers';
 
 const nameLength = 15;
 const descriptionLength = 500;
