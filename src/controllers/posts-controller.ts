@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { postsModel } from '../models';
+import { blogsModel, postsModel } from '../models';
 import { HTTP_STATUS_CODES } from '../constants';
 
 export const postsController = {
@@ -8,7 +8,8 @@ export const postsController = {
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
     createNewPost(req: Request, res: Response) {
-        const createdPost = postsModel.addNewPost(req.body);
+        const blogName = blogsModel.getBlog(req.body.blogId)?.name;
+        const createdPost = postsModel.addNewPost({ ...req.body, blogName });
         res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
     },
     getPost(req: Request, res: Response) {
