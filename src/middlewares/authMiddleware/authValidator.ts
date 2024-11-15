@@ -6,13 +6,11 @@ export const authSchema: Schema = {
         in: ['headers'],
         custom: {
             options: (value) => {
-                const expectedToken = process.env.AUTH_ADMIN;
-                console.log('expectedToken', expectedToken);
+                const expectedToken = process.env.ADMIN_AUTH;
                 const decodedValue = Buffer.from(
                     value.replace('Basic ', ''),
                     'base64'
                 ).toString('utf8');
-                console.log('decodedValue', decodedValue);
                 if (decodedValue !== expectedToken) {
                     return false;
                 }
