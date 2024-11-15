@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { blogsController } from "../controllers/blogs-controller";
+import { blogsController } from "../controllers";
 import { blogsValidators } from "../middlewares";
 
 export const blogsRouter = Router();

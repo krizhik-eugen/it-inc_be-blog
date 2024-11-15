@@ -1,4 +1,4 @@
-import { Database } from '../../src/db/db';
+import { Database } from '../../src/db';
 
 describe('Database class', () => {
     let db: Database<{ id: string; name: string }>;

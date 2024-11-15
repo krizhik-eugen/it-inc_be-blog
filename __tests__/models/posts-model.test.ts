@@ -1,5 +1,4 @@
-import { postsModel } from '../../src/models/posts-model';
-import { TPost } from '../../src/models/types';
+import { postsModel, TPost } from '../../src/models';
 
 describe('postsModel', () => {
     beforeEach(() => {

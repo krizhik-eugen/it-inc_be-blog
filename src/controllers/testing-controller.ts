@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { testingModel } from "../models/testing-model";
+import { testingModel } from "../models";
 
 export const testingController = {
     deleteAllData(req: Request, res: Response) {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { postsController } from "../controllers/posts-controller";
+import { postsController } from "../controllers";
 import { postsValidators } from "../middlewares";
 
 export const postsRouter = Router();

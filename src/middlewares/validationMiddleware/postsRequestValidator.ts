@@ -1,6 +1,6 @@
 import { Schema } from "express-validator";
-import { blogsModel } from "../../models/blogs-model";
-import { requestValidator } from "./requestValidatorHelpers";
+import { blogsModel } from "../../models";
+import { requestValidator } from "../requestValidatorHelpers";
 
 const titleLength = 30;
 const shortDescriptionLength = 100;

@@ -1,4 +1,4 @@
-import { Database } from '../db/db';
+import { Database } from '../db';
 import { generateId } from '../utils';
 import { TBlog } from './types';
 

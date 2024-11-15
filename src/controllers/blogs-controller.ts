@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { blogsModel } from "../models/blogs-model";
+import { blogsModel } from "../models";
 import { HTTP_STATUS_CODES } from "../constants";
 
 export const blogsController = {

@@ -1,11 +1,8 @@
 import request from 'supertest';
 import { app } from '../../src/app'; // assuming your app is exported in app.ts
-import { testingModel } from '../../src/models/testing-model';
-import { blogsModel } from '../../src/models/blogs-model';
-import { TBlog, TPost } from '../../src/models/types';
-import { postsModel } from '../../src/models/posts-model';
+import { blogsModel, postsModel, testingModel, TBlog, TPost } from '../../src/models';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { baseRoutes } from '../../src/configs/routes-config';
+import { baseRoutes } from '../../src/configs';
 
 describe('Testing Controller', () => {
     const testPost: Omit<TPost, 'id'> = {

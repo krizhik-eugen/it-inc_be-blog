@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { postsModel } from "../models/posts-model";
+import { postsModel } from "../models";
 import { HTTP_STATUS_CODES } from "../constants";
 
 export const postsController = {

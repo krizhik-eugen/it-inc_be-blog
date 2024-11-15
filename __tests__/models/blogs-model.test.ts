@@ -1,5 +1,4 @@
-import { blogsModel } from '../../src/models/blogs-model';
-import { TBlog } from '../../src/models/types';
+import { blogsModel, TBlog } from '../../src/models';
 
 describe('blogsModel', () => {
     beforeEach(() => {

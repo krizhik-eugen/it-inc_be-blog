@@ -1,4 +1,4 @@
-import { TDBBaseInstance } from "../db/db";
+import { TDBBaseInstance } from "../db";
 
 export type TBlog = TDBBaseInstance & {
     name: string;

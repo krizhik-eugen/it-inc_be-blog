@@ -1,9 +1,8 @@
 import request from 'supertest';
 import { app } from '../../src/app'; // assuming your app is exported in app.ts
-import { blogsModel } from '../../src/models/blogs-model';
+import { blogsModel, TBlog } from '../../src/models';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { TBlog } from '../../src/models/types';
-import { baseRoutes } from '../../src/configs/routes-config';
+import { baseRoutes } from '../../src/configs';
 
 describe('Blogs Controller', () => {
     beforeEach(async () => {
