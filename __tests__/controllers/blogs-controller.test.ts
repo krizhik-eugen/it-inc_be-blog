@@ -31,20 +31,35 @@ describe('Blogs Controller', () => {
     });
 
     describe('POST /blogs', () => {
+        it('can not create a new blog without authorization', async () => {
+            const response = await request(app)
+                .post(baseRoutes.blogs)
+                .send(testBlog);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
         it('creates a new blog', async () => {
             const response = await request(app)
                 .post(baseRoutes.blogs)
+                .auth('admin', 'qwerty', { type: 'basic' })
                 .send(testBlog);
             expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
             expect(response.body).toEqual(expect.objectContaining(testBlog));
         });
 
         it('returns an error if required fields are missing', async () => {
-            const newBlog = { description: 'Test description' };
-            const response = await request(app)
-                .post(baseRoutes.blogs)
-                .send(newBlog);
-            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+            (Object.keys(testBlog) as (keyof typeof testBlog)[]).forEach(
+                async (key) => {
+                    const newBlog = { ...testBlog };
+                    delete newBlog[key];
+                    const response = await request(app)
+                        .post(baseRoutes.blogs)
+                        .auth('admin', 'qwerty', { type: 'basic' })
+                        .send(newBlog)
+                        .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+                    expect(response.body.errorsMessages[0].field).toEqual(key);
+                }
+            );
         });
     });
 
@@ -64,21 +79,77 @@ describe('Blogs Controller', () => {
         });
     });
 
+    describe('PUT /blogs/:id', () => {
+        it('can not update a blog without authorization', async () => {
+            const blogId = '12345';
+            const updatedBlog = {
+                ...testBlog,
+                name: 'Updated name',
+            };
+
+            const response = await request(app)
+                .put(`/blogs/${blogId}`)
+                .send(updatedBlog);
+
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('updates a blog', async () => {
+            await blogsModel.addNewBlog(testBlog);
+            const response = await request(app).get('/blogs');
+            const blogId = response.body[0].id;
+            const updatedBlog = {
+                ...testBlog,
+                name: 'Updated name',
+            };
+
+            const updateResponse = await request(app)
+                .put(`/blogs/${blogId}`)
+                .auth('admin', 'qwerty', { type: 'basic' })
+                .send(updatedBlog);
+
+            expect(updateResponse.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+        });
+
+        it('returns 404 if blog is not found', async () => {
+            const blogId = 'non-existent-id';
+            const updatedBlog = {
+                ...testBlog,
+                name: 'Updated name',
+            };
+
+            const response = await request(app)
+                .put(`/blogs/${blogId}`)
+                .auth('admin', 'qwerty', { type: 'basic' })
+                .send(updatedBlog);
+
+            expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
+    });
+
     describe('DELETE /blogs/:id', () => {
-        it('deletes a blog', async () => {
+        it('can not delete a blog without authorization', async () => {
             const createdBlog = await blogsModel.addNewBlog(testBlog);
             const response = await request(app).delete(
                 `${baseRoutes.blogs}/${createdBlog.id}`
             );
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('deletes a blog', async () => {
+            const createdBlog = await blogsModel.addNewBlog(testBlog);
+            const response = await request(app)
+                .delete(`${baseRoutes.blogs}/${createdBlog.id}`)
+                .auth('admin', 'qwerty', { type: 'basic' });
             expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
             const deletedBlog = await blogsModel.getBlog(createdBlog.id);
             expect(deletedBlog).toBeUndefined();
         });
 
         it('returns an error if blog is not found', async () => {
-            const response = await request(app).delete(
-                `${baseRoutes.blogs}/123`
-            );
+            const response = await request(app)
+                .delete(`${baseRoutes.blogs}/123`)
+                .auth('admin', 'qwerty', { type: 'basic' });
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });
     });
