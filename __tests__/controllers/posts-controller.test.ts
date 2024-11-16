@@ -9,11 +9,10 @@ describe('Posts Controller', () => {
         await postsModel.deleteAllPosts();
     });
 
-    const testPost: Omit<TPost, 'id'> = {
+    const testPost: Omit<TPost, 'id' | 'blogName'> = {
         title: 'Test Post',
         content: 'Test content',
         blogId: '',
-        blogName: '',
         shortDescription: 'test shortDescription',
     };
 
@@ -25,10 +24,8 @@ describe('Posts Controller', () => {
             description: 'Test description',
             websiteUrl: 'https://test.com',
         };
-
         const createdBlog = await blogsModel.addNewBlog(newBlog);
         testBlog = createdBlog;
-        testPost.blogName = testBlog.name;
         testPost.blogId = testBlog.id;
     });
 
@@ -48,20 +45,36 @@ describe('Posts Controller', () => {
     });
 
     describe('POST /posts', () => {
-        it('creates a new post', async () => {
+        it('can not create a new post without authorization', async () => {
             const response = await request(app)
                 .post(baseRoutes.posts)
                 .send(testPost);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('creates a new post', async () => {
+            const response = await request(app)
+                .post(baseRoutes.posts)
+                .auth('admin', 'qwerty', { type: 'basic' })
+                .send(testPost);
             expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
             expect(response.body).toEqual(expect.objectContaining(testPost));
+            expect(response.body.blogName).toEqual(testBlog.name);
         });
 
         it('returns an error if required fields are missing', async () => {
-            const newPost = { content: 'Test content' };
-            const response = await request(app)
-                .post(baseRoutes.posts)
-                .send(newPost);
-            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+            (Object.keys(testPost) as (keyof typeof testPost)[]).forEach(
+                async (key) => {
+                    const newPost = { ...testPost };
+                    delete newPost[key];
+                    const response = await request(app)
+                        .post(baseRoutes.posts)
+                        .auth('admin', 'qwerty', { type: 'basic' })
+                        .send(newPost)
+                        .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+                    expect(response.body.errorsMessages[0].field).toEqual(key);
+                }
+            );
         });
     });
 
@@ -82,11 +95,24 @@ describe('Posts Controller', () => {
     });
 
     describe('PUT /posts/:id', () => {
+        it('can not update a post without authorization', async () => {
+            const postId = '12345';
+            const updatedPost = {
+                ...testPost,
+                title: 'Updated title',
+            };
+            const response = await request(app)
+                .put(`/blogs/${postId}`)
+                .send(updatedPost);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
         it('updates a post', async () => {
             const createdPost = await postsModel.addNewPost(testPost);
             const updatedPost = { ...testPost, title: 'Updated Post' };
             const response = await request(app)
                 .put(`${baseRoutes.posts}/${createdPost.id}`)
+                .auth('admin', 'qwerty', { type: 'basic' })
                 .send(updatedPost);
             expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
             const updatedPostInDB = await postsModel.getPost(createdPost.id);
@@ -99,26 +125,35 @@ describe('Posts Controller', () => {
             const updatedPost = { ...testPost, title: 'Updated Post' };
             const response = await request(app)
                 .put(`${baseRoutes.posts}/123`)
+                .auth('admin', 'qwerty', { type: 'basic' })
                 .send(updatedPost);
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });
     });
 
     describe('DELETE /posts/:id', () => {
-        it('deletes a post', async () => {
+        it('can not delete a post without authorization', async () => {
             const createdPost = await postsModel.addNewPost(testPost);
             const response = await request(app).delete(
                 `${baseRoutes.posts}/${createdPost.id}`
             );
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('deletes a post', async () => {
+            const createdPost = await postsModel.addNewPost(testPost);
+            const response = await request(app)
+                .delete(`${baseRoutes.posts}/${createdPost.id}`)
+                .auth('admin', 'qwerty', { type: 'basic' });
             expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
             const postInDB = await postsModel.getPost(createdPost.id);
             expect(postInDB).toBeUndefined();
         });
 
         it('returns an error if post is not found', async () => {
-            const response = await request(app).delete(
-                `${baseRoutes.posts}/123`
-            );
+            const response = await request(app)
+                .delete(`${baseRoutes.posts}/123`)
+                .auth('admin', 'qwerty', { type: 'basic' });
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });
     });

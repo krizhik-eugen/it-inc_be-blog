@@ -11,5 +11,5 @@ export type TPost = TDBBaseInstance & {
     shortDescription: string;
     content: string;
     blogId: string;
-    blogName: string;
+    blogName?: string;
 };

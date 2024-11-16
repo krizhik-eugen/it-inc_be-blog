@@ -86,11 +86,9 @@ describe('Blogs Controller', () => {
                 ...testBlog,
                 name: 'Updated name',
             };
-
             const response = await request(app)
                 .put(`/blogs/${blogId}`)
                 .send(updatedBlog);
-
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
@@ -102,12 +100,10 @@ describe('Blogs Controller', () => {
                 ...testBlog,
                 name: 'Updated name',
             };
-
             const updateResponse = await request(app)
                 .put(`/blogs/${blogId}`)
                 .auth('admin', 'qwerty', { type: 'basic' })
                 .send(updatedBlog);
-
             expect(updateResponse.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
         });
 
@@ -117,12 +113,10 @@ describe('Blogs Controller', () => {
                 ...testBlog,
                 name: 'Updated name',
             };
-
             const response = await request(app)
                 .put(`/blogs/${blogId}`)
                 .auth('admin', 'qwerty', { type: 'basic' })
                 .send(updatedBlog);
-
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });
     });
