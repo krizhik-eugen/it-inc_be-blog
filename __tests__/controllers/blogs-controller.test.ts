@@ -38,6 +38,14 @@ describe('Blogs Controller', () => {
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
+        it('can not delete a blog if auth data is invalid', async () => {
+            const createdBlog = await blogsModel.addNewBlog(testBlog);
+            const response = await request(app)
+                .delete(`${baseRoutes.blogs}/${createdBlog.id}`)
+                .auth('admin', 'zxcvbn', { type: 'basic' });
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
         it('creates a new blog', async () => {
             const response = await request(app)
                 .post(baseRoutes.blogs)

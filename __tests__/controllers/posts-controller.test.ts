@@ -140,6 +140,14 @@ describe('Posts Controller', () => {
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
+        it('can not delete a post if auth data is invalid', async () => {
+            const createdPost = await postsModel.addNewPost(testPost);
+            const response = await request(app)
+                .delete(`${baseRoutes.posts}/${createdPost.id}`)
+                .auth('admin', 'zxcvbn', { type: 'basic' });
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
         it('deletes a post', async () => {
             const createdPost = await postsModel.addNewPost(testPost);
             const response = await request(app)
