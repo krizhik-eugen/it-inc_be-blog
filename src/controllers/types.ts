@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { TBlog, TPost } from '../models';
 
 export type TParam = Pick<TPost, 'id'>;
