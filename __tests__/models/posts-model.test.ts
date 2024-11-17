@@ -1,8 +1,8 @@
 import { postsModel, TPost } from '../../src/models';
 
 describe('postsModel', () => {
-    beforeEach(() => {
-        postsModel.deleteAllPosts();
+    beforeEach(async () => {
+        await postsModel.deleteAllPosts();
     });
 
     const newPost1: TPost = {
@@ -22,40 +22,40 @@ describe('postsModel', () => {
         shortDescription: 'Short post 2 description',
     };
 
-    it('getAllPosts returns an empty array initially', () => {
-        expect(postsModel.getAllPosts()).toEqual([]);
+    it('getAllPosts returns an empty array initially', async () => {
+        expect(await postsModel.getAllPosts()).toEqual([]);
     });
 
-    it('addNewPost adds a new post to the database', () => {
-        const addedPost = postsModel.addNewPost(newPost1);
+    it('addNewPost adds a new post to the database', async () => {
+        const addedPost = await postsModel.addNewPost(newPost1);
         expect(addedPost).toHaveProperty('id');
-        expect(postsModel.getAllPosts()).toEqual([addedPost]);
+        expect(await postsModel.getAllPosts()).toEqual([addedPost]);
     });
 
-    it('getPost returns a post by id', () => {
-        const addedPost = postsModel.addNewPost(newPost1);
-        const retrievedPost = postsModel.getPost(addedPost.id);
+    it('getPost returns a post by id', async () => {
+        const addedPost = await postsModel.addNewPost(newPost1);
+        const retrievedPost = await postsModel.getPost(addedPost.id);
         expect(retrievedPost).toEqual(addedPost);
     });
 
-    it('updatePost updates a post in the database', () => {
-        const addedPost = postsModel.addNewPost(newPost1);
+    it('updatePost updates a post in the database', async () => {
+        const addedPost = await postsModel.addNewPost(newPost1);
         const updatedPost = { ...addedPost, title: 'Updated Post 1' };
-        postsModel.updatePost(updatedPost);
-        const retrievedPost = postsModel.getPost(addedPost.id);
+        await postsModel.updatePost(updatedPost);
+        const retrievedPost = await postsModel.getPost(addedPost.id);
         expect(retrievedPost).toEqual(updatedPost);
     });
 
-    it('deletePost deletes a post from the database', () => {
-        const addedPost = postsModel.addNewPost(newPost1);
-        postsModel.deletePost(addedPost.id);
-        expect(postsModel.getPost(addedPost.id)).toBeUndefined();
+    it('deletePost deletes a post from the database', async () => {
+        const addedPost = await postsModel.addNewPost(newPost1);
+        await postsModel.deletePost(addedPost.id);
+        expect(await postsModel.getPost(addedPost.id)).toBeUndefined();
     });
 
-    it('deleteAllPosts deletes all posts from the database', () => {
-        postsModel.addNewPost(newPost1);
-        postsModel.addNewPost(newPost2);
-        postsModel.deleteAllPosts();
-        expect(postsModel.getAllPosts()).toEqual([]);
+    it('deleteAllPosts deletes all posts from the database', async () => {
+        await postsModel.addNewPost(newPost1);
+        await postsModel.addNewPost(newPost2);
+        await postsModel.deleteAllPosts();
+        expect(await postsModel.getAllPosts()).toEqual([]);
     });
 });

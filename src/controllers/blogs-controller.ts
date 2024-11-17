@@ -3,16 +3,16 @@ import { blogsModel } from '../models';
 import { HTTP_STATUS_CODES } from '../constants';
 
 export const blogsController = {
-    getAllBlogs(req: Request, res: Response) {
-        const blogs = blogsModel.getAllBlogs();
+    async getAllBlogs(req: Request, res: Response) {
+        const blogs = await blogsModel.getAllBlogs();
         res.status(HTTP_STATUS_CODES.OK).json(blogs);
     },
-    createNewBlog(req: Request, res: Response) {
-        const createdBlog = blogsModel.addNewBlog(req.body);
+    async createNewBlog(req: Request, res: Response) {
+        const createdBlog = await blogsModel.addNewBlog(req.body);
         res.status(HTTP_STATUS_CODES.CREATED).json(createdBlog);
     },
-    getBlog(req: Request, res: Response) {
-        const foundBlog = blogsModel.getBlog(req.params.id);
+    async getBlog(req: Request, res: Response) {
+        const foundBlog = await blogsModel.getBlog(req.params.id);
 
         if (!foundBlog) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
@@ -20,8 +20,8 @@ export const blogsController = {
         }
         res.status(HTTP_STATUS_CODES.OK).json(foundBlog);
     },
-    updateBlog(req: Request, res: Response) {
-        const isBlogUpdated = blogsModel.updateBlog({
+    async updateBlog(req: Request, res: Response) {
+        const isBlogUpdated = await blogsModel.updateBlog({
             ...req.body,
             id: req.params.id,
         });
@@ -31,8 +31,8 @@ export const blogsController = {
                 : HTTP_STATUS_CODES.NOT_FOUND
         );
     },
-    deleteBlog(req: Request, res: Response) {
-        const isBlogDeleted = blogsModel.deleteBlog(req.params.id);
+    async deleteBlog(req: Request, res: Response) {
+        const isBlogDeleted = await blogsModel.deleteBlog(req.params.id);
         res.sendStatus(
             isBlogDeleted
                 ? HTTP_STATUS_CODES.NO_CONTENT

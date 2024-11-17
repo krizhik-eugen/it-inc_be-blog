@@ -5,22 +5,22 @@ import { TPost } from './types';
 const postsDb = new Database<TPost>();
 
 export const postsModel = {
-    getAllPosts() {
-        return postsDb.getAllData();
+    async getAllPosts() {
+        return await postsDb.getAllData();
     },
-    addNewPost(newPost: Omit<TPost, 'id'>) {
-        return postsDb.addInstance({ id: generateId(), ...newPost });
+    async addNewPost(newPost: Omit<TPost, 'id'>) {
+        return await postsDb.addInstance({ id: generateId(), ...newPost });
     },
-    getPost(id: TPost['id']) {
-        return postsDb.getInstance(id);
+    async getPost(id: TPost['id']) {
+        return await postsDb.getInstance(id);
     },
-    updatePost(updatedPost: TPost) {
-        return postsDb.updateInstance(updatedPost);
+    async updatePost(updatedPost: TPost) {
+        return await postsDb.updateInstance(updatedPost);
     },
-    deletePost(id: TPost['id']) {
-        return postsDb.deleteInstance(id);
+    async deletePost(id: TPost['id']) {
+        return await postsDb.deleteInstance(id);
     },
-    deleteAllPosts() {
-        postsDb.setDB([]);
+    async deleteAllPosts() {
+        await postsDb.setDB([]);
     },
 };

@@ -8,24 +8,24 @@ export class Database<T extends TDBBaseInstance> {
         this.db = [];
     }
 
-    public setDB(dataset: T[]) {
+    public async setDB(dataset: T[]) {
         this.db = dataset;
     }
 
-    public getAllData() {
+    public async getAllData() {
         return this.db;
     }
 
-    public getInstance(id: TDBBaseInstance['id']) {
+    public async getInstance(id: TDBBaseInstance['id']) {
         return this.db.find((instance) => instance.id === id);
     }
 
-    public addInstance(newInstance: T) {
+    public async addInstance(newInstance: T) {
         this.db = [...this.db, newInstance];
         return newInstance;
     }
 
-    public updateInstance(updatedInstance: T) {
+    public async updateInstance(updatedInstance: T) {
         const foundInstance = this.db.find(
             (instance) => instance.id === updatedInstance.id
         );
@@ -38,7 +38,7 @@ export class Database<T extends TDBBaseInstance> {
         return true;
     }
 
-    public deleteInstance(id: TDBBaseInstance['id']) {
+    public async deleteInstance(id: TDBBaseInstance['id']) {
         const foundInstance = this.db.find((instance) => instance.id === id);
         if (!foundInstance) return false;
         this.db = this.db.filter(

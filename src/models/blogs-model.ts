@@ -5,22 +5,22 @@ import { TBlog } from './types';
 const blogsDb = new Database<TBlog>();
 
 export const blogsModel = {
-    getAllBlogs() {
-        return blogsDb.getAllData();
+    async getAllBlogs() {
+        return await blogsDb.getAllData();
     },
-    addNewBlog(newBlog: Omit<TBlog, 'id'>) {
-        return blogsDb.addInstance({ id: generateId(), ...newBlog });
+    async addNewBlog(newBlog: Omit<TBlog, 'id'>) {
+        return await blogsDb.addInstance({ id: generateId(), ...newBlog });
     },
-    getBlog(id: TBlog['id']) {
+    async getBlog(id: TBlog['id']) {
         return blogsDb.getInstance(id);
     },
-    updateBlog(updatedBlog: TBlog) {
-        return blogsDb.updateInstance(updatedBlog);
+    async updateBlog(updatedBlog: TBlog) {
+        return await blogsDb.updateInstance(updatedBlog);
     },
-    deleteBlog(id: TBlog['id']) {
-        return blogsDb.deleteInstance(id);
+    async deleteBlog(id: TBlog['id']) {
+        return await blogsDb.deleteInstance(id);
     },
-    deleteAllBlogs() {
-        blogsDb.setDB([]);
+    async deleteAllBlogs() {
+        await blogsDb.setDB([]);
     },
 };
