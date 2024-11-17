@@ -1,17 +1,18 @@
 import { Request, Response } from 'express';
-import { blogsModel } from '../models';
+import { blogsModel, TBlog } from '../models';
 import { HTTP_STATUS_CODES } from '../constants';
+import { TCreateUpdateBlogRequest, TGetDeleteDBInstanceRequest } from './types';
 
 export const blogsController = {
-    async getAllBlogs(req: Request, res: Response) {
+    async getAllBlogs(req: Request, res: Response<TBlog[]>) {
         const blogs = await blogsModel.getAllBlogs();
         res.status(HTTP_STATUS_CODES.OK).json(blogs);
     },
-    async createNewBlog(req: Request, res: Response) {
+    async createNewBlog(req: TCreateUpdateBlogRequest, res: Response<TBlog>) {
         const createdBlog = await blogsModel.addNewBlog(req.body);
         res.status(HTTP_STATUS_CODES.CREATED).json(createdBlog);
     },
-    async getBlog(req: Request, res: Response) {
+    async getBlog(req: TGetDeleteDBInstanceRequest, res: Response<TBlog>) {
         const foundBlog = await blogsModel.getBlog(req.params.id);
 
         if (!foundBlog) {
@@ -20,7 +21,7 @@ export const blogsController = {
         }
         res.status(HTTP_STATUS_CODES.OK).json(foundBlog);
     },
-    async updateBlog(req: Request, res: Response) {
+    async updateBlog(req: TCreateUpdateBlogRequest, res: Response) {
         const isBlogUpdated = await blogsModel.updateBlog({
             ...req.body,
             id: req.params.id,
@@ -31,7 +32,7 @@ export const blogsController = {
                 : HTTP_STATUS_CODES.NOT_FOUND
         );
     },
-    async deleteBlog(req: Request, res: Response) {
+    async deleteBlog(req: TGetDeleteDBInstanceRequest, res: Response) {
         const isBlogDeleted = await blogsModel.deleteBlog(req.params.id);
         res.sendStatus(
             isBlogDeleted
