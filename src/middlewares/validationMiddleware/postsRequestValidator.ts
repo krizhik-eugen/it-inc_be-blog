@@ -74,7 +74,7 @@ const bodySchema: Schema = {
         },
         custom: {
             options: async (value) => {
-                const foundBlog = blogsModel.getBlog(value);
+                const foundBlog = await blogsModel.getBlog(value);
                 if (!foundBlog) {
                     throw 'Invalid BlogId';
                 }
