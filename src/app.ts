@@ -1,6 +1,8 @@
 import express from 'express';
 import { baseRoutes } from './configs';
-import { blogsRouter, postsRouter, testingRouter } from './routes';
+import { postsRouter } from './posts';
+import { testingRouter } from './testing';
+import { blogsRouter } from './blogs';
 // import cors from 'cors';
 
 export const app = express();

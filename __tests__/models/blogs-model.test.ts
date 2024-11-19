@@ -1,4 +1,4 @@
-import { blogsModel, TBlog } from '../../src/models';
+import { blogsModel, TBlog } from '../../src/blogs';
 
 describe('blogsModel', () => {
     beforeEach(async () => {
