@@ -12,6 +12,8 @@ import { mongoDBName, mongoDBUrl } from '../configs/app-config';
 const client: MongoClient = new MongoClient(mongoDBUrl);
 export const db: Db = client.db(mongoDBName);
 export const connectToDB = async () => {
+    console.log('connectToDB tests');
+
     try {
         await client.connect();
         console.log('connected to db');
