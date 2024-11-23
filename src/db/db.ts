@@ -7,10 +7,10 @@ import {
     Filter,
     OptionalUnlessRequiredId,
 } from 'mongodb';
-import { mongoDBUrl } from '../configs/app-config';
+import { mongoDBName, mongoDBUrl } from '../configs/app-config';
 
 const client: MongoClient = new MongoClient(mongoDBUrl);
-export const db: Db = client.db('mongo');
+export const db: Db = client.db(mongoDBName);
 export const connectToDB = async () => {
     try {
         await client.connect();
