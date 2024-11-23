@@ -7,6 +7,7 @@ export type TPost = {
     content: string;
     blogId: string;
     blogName?: string;
+    createdAt?: string;
 };
 export type TParam = { id: string };
 export type TGetDeleteDBInstanceRequest = Request<TParam, object, object>;

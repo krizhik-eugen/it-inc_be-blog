@@ -52,12 +52,14 @@ export class MongoDBCollection<T extends Document & { id: string }> {
     }
 
     public async addInstance(newInstance: Omit<T, 'id'>) {
-        const result = await this.collection.insertOne(
-            newInstance as OptionalUnlessRequiredId<Omit<T, 'id'>>
-        );
+        const result = await this.collection.insertOne({
+            ...(newInstance as OptionalUnlessRequiredId<Omit<T, 'id'>>),
+            createdAt: new Date(),
+        });
         const addedInstance = await this.getInstance(
             result.insertedId.toString()
         );
+
         return addedInstance;
     }
 

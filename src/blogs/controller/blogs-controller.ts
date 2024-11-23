@@ -13,7 +13,10 @@ export const blogsController = {
         res.status(HTTP_STATUS_CODES.OK).json(blogs);
     },
     async createNewBlog(req: TCreateUpdateBlogRequest, res: Response<TBlog>) {
-        const createdBlog = await blogsModel.addNewBlog(req.body);
+        const createdBlog = await blogsModel.addNewBlog({
+            ...req.body,
+            isMembership: false,
+        });
         res.status(HTTP_STATUS_CODES.CREATED).json(createdBlog);
     },
     async getBlog(req: TGetDeleteDBInstanceRequest, res: Response<TBlog>) {
