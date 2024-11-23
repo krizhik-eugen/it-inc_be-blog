@@ -1,3 +1,3 @@
-import { Database, TDBBaseInstance } from './db';
+import { connectToDB, MongoDBCollection } from './db';
 
-export { Database, TDBBaseInstance };
+export { connectToDB, MongoDBCollection };

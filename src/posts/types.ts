@@ -1,14 +1,14 @@
 import { Request } from 'express';
-import { TDBBaseInstance } from '../db';
 
-export type TPost = TDBBaseInstance & {
+export type TPost = {
+    id: string;
     title: string;
     shortDescription: string;
     content: string;
     blogId: string;
     blogName?: string;
 };
-export type TParam = Pick<TPost, 'id'>;
+export type TParam = { id: string };
 export type TGetDeleteDBInstanceRequest = Request<TParam, object, object>;
 export type TCreateUpdatePostRequest = Request<
     TParam,

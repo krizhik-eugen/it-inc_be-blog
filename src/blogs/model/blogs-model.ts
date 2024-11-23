@@ -1,26 +1,25 @@
-import { Database } from '../../db';
-import { generateId } from '../../utils';
+import { MongoDBCollection } from '../../db';
 import { TBlog } from '../types';
 
-const blogsDb = new Database<TBlog>();
+const blogsCollection = new MongoDBCollection<TBlog>('blogs');
 
 export const blogsModel = {
     async getAllBlogs() {
-        return await blogsDb.getAllData();
+        return await blogsCollection.getAllData() as unknown as TBlog[];
     },
-    async addNewBlog(newBlog: Omit<TBlog, 'id'>) {
-        return await blogsDb.addInstance({ id: generateId(), ...newBlog });
+    async addNewBlog(newBlog: Omit<TBlog, 'id'>){
+        return await blogsCollection.addInstance(newBlog) as unknown as TBlog;
     },
     async getBlog(id: TBlog['id']) {
-        return blogsDb.getInstance(id);
+        return blogsCollection.getInstance(id) as unknown as TBlog | undefined;
     },
     async updateBlog(updatedBlog: TBlog) {
-        return await blogsDb.updateInstance(updatedBlog);
+        return await blogsCollection.updateInstance(updatedBlog);
     },
     async deleteBlog(id: TBlog['id']) {
-        return await blogsDb.deleteInstance(id);
+        return await blogsCollection.deleteInstance(id);
     },
     async deleteAllBlogs() {
-        await blogsDb.setDB([]);
+        await blogsCollection.setDB([]);
     },
 };

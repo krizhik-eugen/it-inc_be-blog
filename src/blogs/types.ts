@@ -1,7 +1,7 @@
 import { Request } from 'express';
-import { TDBBaseInstance } from '../db';
 
-export type TBlog = TDBBaseInstance & {
+export type TBlog = {
+    id:string
     name: string;
     description: string;
     websiteUrl: string;

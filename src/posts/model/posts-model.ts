@@ -1,26 +1,27 @@
-import { Database } from '../../db';
-import { generateId } from '../../utils';
+import { MongoDBCollection } from '../../db';
 import { TPost } from '../types';
 
-const postsDb = new Database<TPost>();
+const postsCollection = new MongoDBCollection<TPost>('posts');
 
 export const postsModel = {
     async getAllPosts() {
-        return await postsDb.getAllData();
+        return (await postsCollection.getAllData()) as unknown as TPost[];
     },
     async addNewPost(newPost: Omit<TPost, 'id'>) {
-        return await postsDb.addInstance({ id: generateId(), ...newPost });
+        return (await postsCollection.addInstance(newPost)) as unknown as TPost;
     },
     async getPost(id: TPost['id']) {
-        return await postsDb.getInstance(id);
+        return (await postsCollection.getInstance(id)) as unknown as
+            | TPost
+            | undefined;
     },
     async updatePost(updatedPost: TPost) {
-        return await postsDb.updateInstance(updatedPost);
+        return await postsCollection.updateInstance(updatedPost);
     },
     async deletePost(id: TPost['id']) {
-        return await postsDb.deleteInstance(id);
+        return await postsCollection.deleteInstance(id);
     },
     async deleteAllPosts() {
-        await postsDb.setDB([]);
+        await postsCollection.setDB([]);
     },
 };
