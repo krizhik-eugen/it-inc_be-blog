@@ -4,6 +4,6 @@ export default async (): Promise<Config> => {
     return {
         preset: 'ts-jest',
         testEnvironment: 'node',
-        testRegex: '(/__tests__/.*|\\.(test|spec))\\.ts$',
+        testRegex: '(/__tests__/.*|\\.(test|spec|e2e\\.test))\\.ts$',
     };
 };

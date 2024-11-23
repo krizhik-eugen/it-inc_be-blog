@@ -8,7 +8,6 @@ import {
     OptionalUnlessRequiredId,
 } from 'mongodb';
 import { mongoDBUrl } from '../configs/app-config';
-import { log } from 'console';
 
 const client: MongoClient = new MongoClient(mongoDBUrl);
 export const db: Db = client.db('mongo');

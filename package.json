@@ -13,8 +13,8 @@
     "scripts": {
         "watch": "tsc -w",
         "dev": "yarn nodemon --inspect dist/index.js",
-        "jest": "jest -i",
-        "jest:coverage": "jest -i --coverage",
+        "test": "jest -i",
+        "test:coverage": "jest -i --coverage",
         "lint": "eslint src/**/*.ts",
         "lint:fix": "eslint src/**/*.ts --fix",
         "format": "prettier . --write"
