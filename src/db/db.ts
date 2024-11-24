@@ -9,7 +9,7 @@ import {
 } from 'mongodb';
 import { mongoDBName, mongoDBUrl } from '../configs/app-config';
 
-const client: MongoClient = new MongoClient(mongoDBUrl);
+export const client: MongoClient = new MongoClient(mongoDBUrl);
 export const db: Db = client.db(mongoDBName);
 export const connectToDB = async () => {
     try {
@@ -54,12 +54,11 @@ export class MongoDBCollection<T extends Document & { id: string }> {
     public async addInstance(newInstance: Omit<T, 'id'>) {
         const result = await this.collection.insertOne({
             ...(newInstance as OptionalUnlessRequiredId<Omit<T, 'id'>>),
-            createdAt: new Date(),
+            createdAt: new Date().toISOString(),
         });
         const addedInstance = await this.getInstance(
             result.insertedId.toString()
         );
-
         return addedInstance;
     }
 

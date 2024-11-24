@@ -18,15 +18,18 @@ const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     next();
 };
 
-export const requestValidator = (bodySchema: Schema, paramSchema?: Schema) => {
+export const requestValidator = (
+    bodySchema: Schema = {},
+    paramSchema: Schema = {}
+) => {
     const schema: Schema = {
         ...bodySchema,
-        ...(paramSchema || {}),
+        ...paramSchema,
     };
 
-    const scopes: Parameters<typeof checkSchema>[1] = paramSchema
-        ? ['body', 'params']
-        : ['body'];
+    const scopes: Parameters<typeof checkSchema>[1] = [];
+    if (Object.keys(bodySchema).length) scopes.push('body');
+    if (Object.keys(paramSchema).length) scopes.push('params');
 
     return [checkSchema(schema, scopes), errorValidator];
 };

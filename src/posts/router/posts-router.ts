@@ -14,7 +14,7 @@ postsRouter.post(
     postsController.createNewPost
 );
 
-postsRouter.get('/:id', postsController.getPost);
+postsRouter.get('/:id', ...postsValidators.getRequest, postsController.getPost);
 
 postsRouter.put(
     '/:id',
@@ -23,4 +23,9 @@ postsRouter.put(
     postsController.updatePost
 );
 
-postsRouter.delete('/:id', ...authValidator, postsController.deletePost);
+postsRouter.delete(
+    '/:id',
+    ...authValidator,
+    ...postsValidators.deleteRequest,
+    postsController.deletePost
+);

@@ -1,6 +1,7 @@
 import { Schema } from 'express-validator';
 import { blogsModel } from '../../blogs';
 import { requestValidator } from '../../helpers';
+import { ObjectId } from 'mongodb';
 
 const titleLength = 30;
 const shortDescriptionLength = 100;
@@ -10,8 +11,9 @@ const paramSchema: Schema = {
     id: {
         in: ['params'],
         isString: true,
-        notEmpty: {
-            errorMessage: 'ID is required',
+        custom: {
+            options: (value) => ObjectId.isValid(value),
+            errorMessage: 'ID is not a valid ObjectId',
         },
     },
 };
@@ -74,9 +76,13 @@ const bodySchema: Schema = {
         },
         custom: {
             options: async (value) => {
+                const isValid = ObjectId.isValid(value);
+                if (!isValid) {
+                    throw 'Invalid BlogId';
+                }
                 const foundBlog = await blogsModel.getBlog(value);
                 if (!foundBlog) {
-                    throw 'Invalid BlogId';
+                    throw 'Incorrect BlogId, no blogs associated';
                 }
                 return true;
             },
@@ -85,6 +91,8 @@ const bodySchema: Schema = {
 };
 
 export const postsValidators = {
+    getRequest: requestValidator(paramSchema),
     postRequest: requestValidator(bodySchema),
     putRequest: requestValidator(bodySchema, paramSchema),
+    deleteRequest: requestValidator(paramSchema),
 };

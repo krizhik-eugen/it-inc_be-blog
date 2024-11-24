@@ -14,7 +14,7 @@ blogsRouter.post(
     blogsController.createNewBlog
 );
 
-blogsRouter.get('/:id', blogsController.getBlog);
+blogsRouter.get('/:id', ...blogsValidators.getRequest, blogsController.getBlog);
 
 blogsRouter.put(
     '/:id',
@@ -23,4 +23,9 @@ blogsRouter.put(
     blogsController.updateBlog
 );
 
-blogsRouter.delete('/:id', ...authValidator, blogsController.deleteBlog);
+blogsRouter.delete(
+    '/:id',
+    ...authValidator,
+    ...blogsValidators.deleteRequest,
+    blogsController.deleteBlog
+);
