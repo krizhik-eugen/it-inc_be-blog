@@ -7,7 +7,7 @@ export const blogsModel = {
     async getAllBlogs() {
         return await blogsCollection.getAllData() as unknown as TBlog[];
     },
-    async addNewBlog(newBlog: Omit<TBlog, 'id'>){
+    async addNewBlog(newBlog: Omit<TBlog, 'id' | 'createdAt'>){
         return await blogsCollection.addInstance(newBlog) as unknown as TBlog;
     },
     async getBlog(id: TBlog['id']) {

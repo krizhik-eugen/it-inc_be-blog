@@ -7,7 +7,7 @@ export const postsModel = {
     async getAllPosts() {
         return (await postsCollection.getAllData()) as unknown as TPost[];
     },
-    async addNewPost(newPost: Omit<TPost, 'id'>) {
+    async addNewPost(newPost: Omit<TPost, 'id' | 'createdAt'>) {
         return (await postsCollection.addInstance(newPost)) as unknown as TPost;
     },
     async getPost(id: TPost['id']) {
