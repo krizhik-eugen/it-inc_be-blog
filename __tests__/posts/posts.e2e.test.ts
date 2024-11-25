@@ -206,6 +206,25 @@ describe('Posts Controller', () => {
     });
 
     describe('PUT /posts/:id', () => {
+        it('can not update a post without authorization', async () => {
+            const updatedPost = {
+                ...testPost,
+                title: 'Updated title',
+            };
+            const response = await req
+                .put(`${baseRoutes.posts}/${validObjectId}`)
+                .send(updatedPost);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('can not update a post if auth data is invalid', async () => {
+            const response = await req
+                .put(`${baseRoutes.posts}/${validObjectId}`)
+                .auth(...invalidAuthData)
+                .send(testPost);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
         it('updates a post', async () => {
             const createdPost = await addNewPost(testPost);
             const updatedPost = { ...createdPost, title: 'Updated Post' };
@@ -220,17 +239,6 @@ describe('Posts Controller', () => {
             expect(response_2.body).toEqual(
                 expect.objectContaining(updatedPost)
             );
-        });
-
-        it('can not update a post without authorization', async () => {
-            const updatedPost = {
-                ...testPost,
-                title: 'Updated title',
-            };
-            const response = await req
-                .put(`${baseRoutes.posts}/${validObjectId}`)
-                .send(updatedPost);
-            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
         it('returns an error if post is not found', async () => {
@@ -255,6 +263,93 @@ describe('Posts Controller', () => {
                 postsValidationErrorMessages.id.format
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+        });
+
+        it('returns an error if title field is not valid', async () => {
+            const newPost = {
+                ...testPost,
+            };
+
+            newPost.title = invalidPostsFields.title.length;
+
+            const response = await req
+                .put(`${baseRoutes.posts}/${validObjectId}`)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('title');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.title.length
+            );
+        });
+
+        it('returns an error if shortDescription field is not valid', async () => {
+            const newPost = {
+                ...testPost,
+            };
+
+            newPost.shortDescription =
+                invalidPostsFields.shortDescription.length;
+
+            const response = await req
+                .put(`${baseRoutes.posts}/${validObjectId}`)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual(
+                'shortDescription'
+            );
+            expect(response.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.shortDescription.length
+            );
+        });
+
+        it('returns an error if content field is not valid', async () => {
+            const newPost = {
+                ...testPost,
+            };
+
+            newPost.content = invalidPostsFields.content.length;
+
+            const response = await req
+                .put(`${baseRoutes.posts}/${validObjectId}`)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('content');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.content.length
+            );
+        });
+
+        it('returns an error if blogId field is not valid', async () => {
+            const newPost = {
+                ...testPost,
+            };
+
+            newPost.blogId = invalidObjectId;
+
+            const response_1 = await req
+                .put(`${baseRoutes.posts}/${validObjectId}`)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response_1.body.errorsMessages[0].field).toEqual('blogId');
+            expect(response_1.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.blogId.format
+            );
+
+            newPost.blogId = validObjectId;
+
+            const response_2 = await req
+                .put(`${baseRoutes.posts}/${validObjectId}`)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response_2.body.errorsMessages[0].field).toEqual('blogId');
+            expect(response_2.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.blogId.value
+            );
         });
     });
 
