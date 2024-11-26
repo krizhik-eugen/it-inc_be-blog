@@ -1,3 +1,3 @@
-import { blogsModel } from './blogs-model';
+import { blogsCollection } from './blogs-model';
 
-export { blogsModel };
+export { blogsCollection };

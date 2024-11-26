@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { testingModel } from '../model';
+import { testingRepository } from '../repository';
 
 export const testingController = {
     async deleteAllData(req: Request, res: Response) {
-        await testingModel.deleteAllData();
+        await testingRepository.deleteAllData();
         res.sendStatus(204);
     },
 };

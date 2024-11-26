@@ -1,3 +1,3 @@
-import { postsModel } from './posts-model';
+import { postsCollection } from './posts-model';
 
-export { postsModel };
+export { postsCollection };

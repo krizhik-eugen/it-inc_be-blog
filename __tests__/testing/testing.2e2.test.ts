@@ -1,11 +1,9 @@
-import request from 'supertest';
-import { app } from '../../src/app';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { baseRoutes } from '../../src/configs';
 import { testingModel } from '../../src/testing';
-import { postsModel, TPost } from '../../src/posts';
-import { blogsModel, TBlog } from '../../src/blogs';
-import { DBHandlers } from '../test-helpers';
+import { postsRepository, TPost } from '../../src/posts';
+import { blogsRepository, TBlog } from '../../src/blogs';
+import { DBHandlers, req } from '../test-helpers';
 
 describe('Testing Controller', () => {
     const testPost: Omit<TPost, 'id'> = {
@@ -26,11 +24,11 @@ describe('Testing Controller', () => {
             websiteUrl: 'https://test.com',
         };
 
-        const createdBlog = await blogsModel.addNewBlog(newBlog);
-        testBlog = createdBlog;
+        const createdBlog = await blogsRepository.addNewBlog(newBlog);
+        testBlog = createdBlog || ({} as TBlog);
         testPost.blogName = testBlog.name;
         testPost.blogId = testBlog.id;
-        await postsModel.addNewPost(testPost);
+        await postsRepository.addNewPost(testPost);
     });
 
     afterAll(async () => {

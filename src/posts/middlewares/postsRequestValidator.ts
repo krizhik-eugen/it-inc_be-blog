@@ -1,5 +1,5 @@
 import { Schema } from 'express-validator';
-import { blogsModel } from '../../blogs';
+import { blogsRepository } from '../../blogs';
 import { requestValidator } from '../../helpers';
 import { ObjectId } from 'mongodb';
 
@@ -80,7 +80,7 @@ const bodySchema: Schema = {
                 if (!isValid) {
                     throw 'Invalid BlogId';
                 }
-                const foundBlog = await blogsModel.getBlog(value);
+                const foundBlog = await blogsRepository.getBlog(value);
                 if (!foundBlog) {
                     throw 'Incorrect BlogId, no blogs associated';
                 }

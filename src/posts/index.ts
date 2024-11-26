@@ -1,6 +1,6 @@
 import { postsController } from './controller';
 import { postsValidators } from './middlewares';
-import { postsModel } from './model';
+import { postsRepository } from './repository';
 import { postsRouter } from './router';
 import {
     TCreateUpdatePostRequest,
@@ -10,7 +10,7 @@ import {
 
 export {
     postsController,
-    postsModel,
+    postsRepository,
     postsRouter,
     postsValidators,
     TCreateUpdatePostRequest,

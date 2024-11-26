@@ -1,5 +1,5 @@
 import { baseRoutes } from '../../src/configs';
-import { postsModel } from '../../src/posts';
+import { postsRepository } from '../../src/posts';
 import { TBlog } from '../../src/blogs';
 import {
     addNewBlog,
@@ -21,7 +21,7 @@ describe('Posts Controller', () => {
     let createdBlog: TBlog;
 
     beforeEach(async () => {
-        await postsModel.deleteAllPosts();
+        await postsRepository.setPosts([]);
         createdBlog = await addNewBlog(testBlog);
         testPost.blogId = createdBlog.id;
     });

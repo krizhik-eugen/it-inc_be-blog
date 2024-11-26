@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { blogsModel } from '../model';
+import { blogsRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../constants';
 import {
     TBlog,
@@ -9,18 +9,17 @@ import {
 
 export const blogsController = {
     async getAllBlogs(req: Request, res: Response<TBlog[]>) {
-        const blogs = await blogsModel.getAllBlogs();
+        const blogs = await blogsRepository.getAllBlogs();
         res.status(HTTP_STATUS_CODES.OK).json(blogs);
     },
     async createNewBlog(req: TCreateUpdateBlogRequest, res: Response<TBlog>) {
-        const createdBlog = await blogsModel.addNewBlog({
+        const createdBlog = await blogsRepository.addNewBlog({
             ...req.body,
-            isMembership: false,
         });
         res.status(HTTP_STATUS_CODES.CREATED).json(createdBlog);
     },
     async getBlog(req: TGetDeleteDBInstanceRequest, res: Response<TBlog>) {
-        const foundBlog = await blogsModel.getBlog(req.params.id);
+        const foundBlog = await blogsRepository.getBlog(req.params.id);
 
         if (!foundBlog) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
@@ -29,7 +28,7 @@ export const blogsController = {
         res.status(HTTP_STATUS_CODES.OK).json(foundBlog);
     },
     async updateBlog(req: TCreateUpdateBlogRequest, res: Response) {
-        const isBlogUpdated = await blogsModel.updateBlog({
+        const isBlogUpdated = await blogsRepository.updateBlog({
             ...req.body,
             id: req.params.id,
         });
@@ -40,7 +39,7 @@ export const blogsController = {
         );
     },
     async deleteBlog(req: TGetDeleteDBInstanceRequest, res: Response) {
-        const isBlogDeleted = await blogsModel.deleteBlog(req.params.id);
+        const isBlogDeleted = await blogsRepository.deleteBlog(req.params.id);
         res.sendStatus(
             isBlogDeleted
                 ? HTTP_STATUS_CODES.NO_CONTENT

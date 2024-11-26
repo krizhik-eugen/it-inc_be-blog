@@ -1,6 +1,6 @@
 import { blogsController } from './controller';
 import { blogsValidators } from './middlewares';
-import { blogsModel } from './model';
+import { blogsRepository } from './repository';
 import { blogsRouter } from './router';
 import {
     TBlog,
@@ -11,7 +11,7 @@ import {
 
 export {
     blogsController,
-    blogsModel,
+    blogsRepository,
     blogsRouter,
     blogsValidators,
     TBlog,

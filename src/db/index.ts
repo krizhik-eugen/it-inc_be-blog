@@ -1,3 +1,3 @@
-import { client, connectToDB, db, MongoDBCollection } from './db';
+import { client, connectToDB, db } from './db';
 
-export { client, connectToDB, db, MongoDBCollection };
+export { client, connectToDB, db };

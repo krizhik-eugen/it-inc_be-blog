@@ -1,5 +1,5 @@
 import { baseRoutes } from '../../src/configs';
-import { blogsModel } from '../../src/blogs';
+import { blogsRepository } from '../../src/blogs';
 import {
     addNewBlog,
     blogsValidationErrorMessages,
@@ -20,7 +20,7 @@ describe('Blogs Controller', () => {
     });
 
     beforeEach(async () => {
-        await blogsModel.deleteAllBlogs();
+        await blogsRepository.setBlogs([]);
     });
 
     afterAll(async () => {

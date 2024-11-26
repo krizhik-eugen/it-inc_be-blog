@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { postsModel } from '../model';
-import { blogsModel } from '../../blogs';
+import { postsRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../constants';
 import {
     TCreateUpdatePostRequest,
@@ -10,19 +9,17 @@ import {
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response<TPost[]>) {
-        const posts = await postsModel.getAllPosts();
+        const posts = await postsRepository.getAllPosts();
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
     async createNewPost(req: TCreateUpdatePostRequest, res: Response<TPost>) {
-        const blog = await blogsModel.getBlog(req.body.blogId);
-        const createdPost = await postsModel.addNewPost({
+        const createdPost = await postsRepository.addNewPost({
             ...req.body,
-            blogName: blog?.name,
         });
         res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
     },
     async getPost(req: TGetDeleteDBInstanceRequest, res: Response<TPost>) {
-        const foundPost = await postsModel.getPost(req.params.id);
+        const foundPost = await postsRepository.getPost(req.params.id);
 
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
@@ -31,7 +28,7 @@ export const postsController = {
         res.status(HTTP_STATUS_CODES.OK).json(foundPost);
     },
     async updatePost(req: TCreateUpdatePostRequest, res: Response) {
-        const isPostUpdated = await postsModel.updatePost({
+        const isPostUpdated = await postsRepository.updatePost({
             ...req.body,
             id: req.params.id,
         });
@@ -42,7 +39,7 @@ export const postsController = {
         );
     },
     async deletePost(req: TGetDeleteDBInstanceRequest, res: Response) {
-        const isPostDeleted = await postsModel.deletePost(req.params.id);
+        const isPostDeleted = await postsRepository.deletePost(req.params.id);
         res.sendStatus(
             isPostDeleted
                 ? HTTP_STATUS_CODES.NO_CONTENT
