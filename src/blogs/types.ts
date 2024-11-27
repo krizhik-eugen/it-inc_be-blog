@@ -1,4 +1,6 @@
 import { Request } from 'express';
+import { TPost } from '../posts/types';
+import { TSearchQueryParams } from '../types';
 
 export type TBlog = {
     id: string;
@@ -10,14 +12,20 @@ export type TBlog = {
 };
 
 export type TBlogQueryParams = {
-    searchNameTerm?: string;
-    sortBy?: 'createdAt' | 'name';
-    sortDirection?: 'asc' | 'desc';
-    pageNumber?: number;
-    pageSize?: number;
+    term: string;
+} & TSearchQueryParams;
+
+export type TGetBlogsResponse = {
+    pagesCount: number;
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    items: TBlog[] | TPost[];
 };
 
-export type TGetBlogsRequest = Request<object, object, object, TBlogQueryParams>;
+export type TBlogSearchParams = Request<object, object, object ,TSearchQueryParams & {
+    term: string;
+}>;
 export type TParam = Pick<TBlog, 'id'>;
 export type TGetDeleteDBInstanceRequest = Request<TParam, object, object>;
 export type TCreateUpdateBlogRequest = Request<

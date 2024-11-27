@@ -1,15 +1,18 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { blogsRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../constants';
 import {
     TBlog,
+    TBlogSearchParams,
     TCreateUpdateBlogRequest,
+    TGetBlogsResponse,
     TGetDeleteDBInstanceRequest,
 } from '../types';
+import { blogsService } from '../service';
 
 export const blogsController = {
-    async getAllBlogs(req: Request, res: Response<TBlog[]>) {
-        const blogs = await blogsRepository.getAllBlogs();
+    async getBlogs(req: TBlogSearchParams, res: Response<TGetBlogsResponse>) {
+        const blogs = await blogsService.getBlogs(req.query);
         res.status(HTTP_STATUS_CODES.OK).json(blogs);
     },
     async createNewBlog(req: TCreateUpdateBlogRequest, res: Response<TBlog>) {

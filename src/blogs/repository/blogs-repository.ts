@@ -1,10 +1,22 @@
 import { ObjectId } from 'mongodb';
 import { blogsCollection } from '../model';
-import { TBlog } from '../types';
+import { TBlog, TBlogQueryParams } from '../types';
 
 export const blogsRepository = {
-    async getAllBlogs(): Promise<TBlog[]> {
-        const allData = await blogsCollection.find().toArray();
+
+    async getBlogsCount(term: string = ''): Promise<number> {
+        return await blogsCollection.countDocuments({name: {$regex: term, $options: 'i'}});
+    },  
+
+    async getBlogs(searchQueries: TBlogQueryParams): Promise<TBlog[]> {    
+
+        const allData = await blogsCollection
+        .find({name: { $regex: searchQueries.term ?? '', $options: 'i' }})
+        .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
+        .skip((searchQueries.pageNumber - 1) * searchQueries.pageSize)
+        .limit(searchQueries.pageSize)
+        .toArray();
+        
         return allData.map((blog) => {
             const { _id, ...blogWithoutId } = blog;
             return { ...blogWithoutId, id: _id.toString() };

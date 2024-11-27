@@ -9,7 +9,7 @@ blogsRouter.get(
     '/',
     ...searchQueryParamsValidator,
     ...blogsValidators.getBlogsRequest,
-    blogsController.getAllBlogs
+    blogsController.getBlogs
 );
 
 blogsRouter.get('/:id', ...blogsValidators.getBlogRequest, blogsController.getBlog);

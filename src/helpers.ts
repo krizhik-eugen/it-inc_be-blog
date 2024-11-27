@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from 'express';
-import { checkSchema, query, Schema, validationResult } from 'express-validator';
+import { checkSchema, Schema, validationResult } from 'express-validator';
 import { HTTP_STATUS_CODES } from './constants';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {
@@ -40,4 +40,15 @@ export const requestValidator = (
     if (querySchema) scopes.push('query');
 
     return [checkSchema(schema, scopes), errorValidator];
+};
+
+export const getSearchParams = (req: Request<>) => {
+    const { sortBy, sortDirection, pageNumber, pageSize } =
+        req.query;
+    return {
+        sortBy: sortBy || 'createdAt',
+        sortDirection: sortDirection || 'desc',
+        pageNumber: pageNumber || 1,
+        pageSize: pageSize || 10,
+    };
 };
