@@ -1,3 +1,3 @@
-import { blogsValidators } from './blogsRequestValidator';
+import { blogsValidators } from './blogs-request-validator';
 
 export { blogsValidators };

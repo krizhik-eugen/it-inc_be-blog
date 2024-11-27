@@ -1,5 +1,5 @@
 import { checkSchema, Schema } from 'express-validator';
-import { errorAuthValidator } from './authValidatorHelpers';
+import { errorAuthValidator } from './auth-validator-helpers';
 
 export const authSchema: Schema = {
     Authorization: {

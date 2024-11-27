@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from 'express';
-import { checkSchema, Schema, validationResult } from 'express-validator';
+import { checkSchema, query, Schema, validationResult } from 'express-validator';
 import { HTTP_STATUS_CODES } from './constants';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {

@@ -1,4 +1,4 @@
-import { authValidator } from './authMiddleware/authValidator';
-import { searchQueryParamsValidator } from './searchQueriesMiddleware/searchParamsValidator';
+import { authValidator } from './auth-middleware/auth-validator';
+import { searchQueryParamsValidator } from './search-queries-middleware/search-params-validator';
 
 export { authValidator, searchQueryParamsValidator };
