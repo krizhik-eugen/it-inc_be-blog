@@ -1,11 +1,24 @@
 import { Router } from 'express';
 import { blogsController } from '../controller';
-import { authValidator } from '../../app-middlewares';
+import { authValidator, searchQueryParamsValidator } from '../../app-middlewares';
 import { blogsValidators } from '../middlewares';
 
 export const blogsRouter = Router();
 
-blogsRouter.get('/', blogsController.getAllBlogs);
+blogsRouter.get(
+    '/',
+    ...searchQueryParamsValidator,
+    ...blogsValidators.getBlogsRequest,
+    blogsController.getAllBlogs
+);
+
+blogsRouter.get('/:id', ...blogsValidators.getBlogRequest, blogsController.getBlog);
+
+blogsRouter.get('/:id/posts', 
+    ...searchQueryParamsValidator,
+    ...blogsValidators.getBlogRequest, 
+    blogsController.getBlog
+);
 
 blogsRouter.post(
     '/',
@@ -14,7 +27,6 @@ blogsRouter.post(
     blogsController.createNewBlog
 );
 
-blogsRouter.get('/:id', ...blogsValidators.getBlogRequest, blogsController.getBlog);
 
 blogsRouter.put(
     '/:id',

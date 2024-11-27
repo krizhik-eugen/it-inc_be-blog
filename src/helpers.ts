@@ -31,6 +31,7 @@ export const requestValidator = (
     const schema: Schema = {
         ...bodySchema,
         ...paramSchema,
+        ...querySchema,
     };
 
     const scopes: Parameters<typeof checkSchema>[1] = [];
