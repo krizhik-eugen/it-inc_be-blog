@@ -72,8 +72,8 @@ const bodySchema: Schema = {
 };
 
 export const blogsValidators = {
-    getRequest: requestValidator(paramSchema),
-    postRequest: requestValidator(bodySchema),
-    putRequest: requestValidator(bodySchema, paramSchema),
-    deleteRequest: requestValidator(paramSchema),
+    getBlogRequest: requestValidator({paramSchema}),
+    createNewBlogRequest: requestValidator({ bodySchema }),
+    updateBlogRequest: requestValidator({ bodySchema, paramSchema }),
+    deleteBlogRequest: requestValidator({ paramSchema }),
 };

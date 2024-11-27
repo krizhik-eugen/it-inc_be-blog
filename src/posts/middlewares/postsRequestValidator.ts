@@ -91,8 +91,8 @@ const bodySchema: Schema = {
 };
 
 export const postsValidators = {
-    getRequest: requestValidator(paramSchema),
-    postRequest: requestValidator(bodySchema),
-    putRequest: requestValidator(bodySchema, paramSchema),
-    deleteRequest: requestValidator(paramSchema),
+    getPostRequest: requestValidator({ paramSchema }),
+    createNewPostRequest: requestValidator({ bodySchema }),
+    updatePostRequest: requestValidator({ bodySchema, paramSchema }),
+    deletePostRequest: requestValidator({ paramSchema }),
 };

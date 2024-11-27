@@ -10,22 +10,22 @@ postsRouter.get('/', postsController.getAllPosts);
 postsRouter.post(
     '/',
     ...authValidator,
-    ...postsValidators.postRequest,
+    ...postsValidators.createNewPostRequest,
     postsController.createNewPost
 );
 
-postsRouter.get('/:id', ...postsValidators.getRequest, postsController.getPost);
+postsRouter.get('/:id', ...postsValidators.getPostRequest, postsController.getPost);
 
 postsRouter.put(
     '/:id',
     ...authValidator,
-    ...postsValidators.putRequest,
+    ...postsValidators.updatePostRequest,
     postsController.updatePost
 );
 
 postsRouter.delete(
     '/:id',
     ...authValidator,
-    ...postsValidators.deleteRequest,
+    ...postsValidators.deletePostRequest,
     postsController.deletePost
 );

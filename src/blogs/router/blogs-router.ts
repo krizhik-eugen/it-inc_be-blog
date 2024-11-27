@@ -10,22 +10,22 @@ blogsRouter.get('/', blogsController.getAllBlogs);
 blogsRouter.post(
     '/',
     ...authValidator,
-    ...blogsValidators.postRequest,
+    ...blogsValidators.createNewBlogRequest,
     blogsController.createNewBlog
 );
 
-blogsRouter.get('/:id', ...blogsValidators.getRequest, blogsController.getBlog);
+blogsRouter.get('/:id', ...blogsValidators.getBlogRequest, blogsController.getBlog);
 
 blogsRouter.put(
     '/:id',
     ...authValidator,
-    ...blogsValidators.putRequest,
+    ...blogsValidators.updateBlogRequest,
     blogsController.updateBlog
 );
 
 blogsRouter.delete(
     '/:id',
     ...authValidator,
-    ...blogsValidators.deleteRequest,
+    ...blogsValidators.deleteBlogRequest,
     blogsController.deleteBlog
 );

@@ -9,7 +9,7 @@ export const req = agent(app);
 
 export const DBHandlers = {
     connectToDB: async () => {
-        connectToDB();
+       await connectToDB();
     },
     closeDB: async () => {
         db.dropDatabase();
