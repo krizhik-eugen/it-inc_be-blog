@@ -12,7 +12,7 @@ export type TBlog = {
 };
 
 export type TBlogQueryParams = {
-    term: string;
+    searchNameTerm?: string;
 } & TSearchQueryParams;
 
 export type TGetBlogsResponse = {
@@ -23,11 +23,10 @@ export type TGetBlogsResponse = {
     items: TBlog[] | TPost[];
 };
 
-export type TBlogSearchParams = Request<object, object, object ,TSearchQueryParams & {
-    term: string;
-}>;
+
+export type TBlogSearchParams = Request<object, object, object , TBlogQueryParams>;
 export type TParam = Pick<TBlog, 'id'>;
-export type TGetDeleteDBInstanceRequest = Request<TParam, object, object>;
+export type TGetDeleteDBInstanceRequest = Request<TParam, object, object, object>;
 export type TCreateUpdateBlogRequest = Request<
     TParam,
     object,

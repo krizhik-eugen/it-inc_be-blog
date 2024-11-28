@@ -3,10 +3,19 @@ import { blogsRepository } from '../../blogs';
 import { postsCollection } from '../model';
 import { TPost } from '../types';
 import { TPostInstance } from '../model/posts-model';
+import { TDBSearchParams } from '../../types';
 
 export const postsRepository = {
-    async getAllPosts(): Promise<TPost[]> {
-        const allData = await postsCollection.find().toArray();
+     async getPostsCount(): Promise<number> {
+        return await postsCollection.countDocuments();
+    },  
+    async getPosts(searchQueries: Required<TDBSearchParams>): Promise<TPost[]> {
+        const allData = await postsCollection
+        .find()
+        .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
+        .skip((searchQueries.pageNumber - 1) * searchQueries.pageSize)
+        .limit(searchQueries.pageSize)
+        .toArray();
         return allData.map((post) => {
             const { _id, ...postWithoutId } = post;
             return { ...postWithoutId, id: _id.toString() };

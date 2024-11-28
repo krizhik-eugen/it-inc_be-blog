@@ -1,4 +1,4 @@
-import { TSearchQueryParams } from "./types";
+import { TDBSearchParams, TSearchQueryParams } from "./types";
 
 export const HTTP_STATUS_CODES = {
     OK: 200,
@@ -9,9 +9,9 @@ export const HTTP_STATUS_CODES = {
     NOT_FOUND: 404,
 } as const;
 
-export const DEFAULT_SEARCH_PARAMS: Required<TSearchQueryParams> = {
+export const DEFAULT_SEARCH_PARAMS: Required<TDBSearchParams> = {
     sortBy: 'createdAt',
-    sortDirection: 'desc',
+    sortDirection: -1,
     pageNumber: 1,
     pageSize: 10,
-} as const;
+};

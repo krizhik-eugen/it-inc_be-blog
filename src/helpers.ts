@@ -1,6 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
 import { checkSchema, Schema, validationResult } from 'express-validator';
-import { HTTP_STATUS_CODES } from './constants';
+import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from './constants';
+import { TDBSearchParams, TSearchQueryParams } from './types';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array({ onlyFirstError: true });
@@ -42,13 +43,23 @@ export const requestValidator = (
     return [checkSchema(schema, scopes), errorValidator];
 };
 
-export const getSearchParams = (req: Request<>) => {
-    const { sortBy, sortDirection, pageNumber, pageSize } =
-        req.query;
-    return {
-        sortBy: sortBy || 'createdAt',
-        sortDirection: sortDirection || 'desc',
-        pageNumber: pageNumber || 1,
-        pageSize: pageSize || 10,
-    };
+
+export const getSortDirectionValue = ( sortDirection: TSearchQueryParams['sortDirection'] ) => {
+            if ( sortDirection === 'asc'  ) {
+                return 1;
+            }  else if ( sortDirection === 'desc' ) {
+                return -1;
+            }
+            return DEFAULT_SEARCH_PARAMS.sortDirection;
+        };
+
+export const getSearchQueries = (queries: TSearchQueryParams) => {
+    const {sortBy, sortDirection, pageNumber, pageSize } = queries;
+    const searchQueries: Required<TDBSearchParams> = {
+            sortBy: sortBy || DEFAULT_SEARCH_PARAMS.sortBy,
+            sortDirection: getSortDirectionValue(sortDirection),
+            pageNumber: Number(pageNumber) || DEFAULT_SEARCH_PARAMS.pageNumber,
+            pageSize: Number(pageSize) || DEFAULT_SEARCH_PARAMS.pageSize,
+        };
+    return searchQueries
 };

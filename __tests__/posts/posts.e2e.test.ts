@@ -21,7 +21,7 @@ describe('Posts Controller', () => {
     let createdBlog: TBlog;
 
     beforeEach(async () => {
-        await postsRepository.setPosts([]);
+        // await postsRepository.setPosts([]);
         createdBlog = await addNewBlog(testBlog);
         testPost.blogId = createdBlog.id;
     });

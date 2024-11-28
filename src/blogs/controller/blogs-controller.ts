@@ -9,11 +9,16 @@ import {
     TGetDeleteDBInstanceRequest,
 } from '../types';
 import { blogsService } from '../service';
+import { TSearchQueryParams } from '../../types';
 
 export const blogsController = {
     async getBlogs(req: TBlogSearchParams, res: Response<TGetBlogsResponse>) {
-        const blogs = await blogsService.getBlogs(req.query);
+        const blogs = await blogsService.getBlogs(req);
         res.status(HTTP_STATUS_CODES.OK).json(blogs);
+    },
+    async getBlogPosts(req: TSearchQueryParams, res: Response<TGetBlogsResponse>) {
+        const posts = await blogsService.getBlogPosts(req);
+        res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
     async createNewBlog(req: TCreateUpdateBlogRequest, res: Response<TBlog>) {
         const createdBlog = await blogsRepository.addNewBlog({

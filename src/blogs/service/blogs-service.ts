@@ -1,38 +1,34 @@
-import { TBlogQueryParams } from '../types';
-import { DEFAULT_SEARCH_PARAMS } from '../../constants';
+import { TBlogSearchParams } from '../types';
 import { blogsRepository } from '../repository';
+import { getSearchQueries } from '../../helpers';
 import { TSearchQueryParams } from '../../types';
+import { postsRepository } from '../../posts';
 
 export const blogsService = {
-    async getBlogs(queries: TBlogQueryParams) {
-        const { term, sortBy, sortDirection, pageNumber, pageSize } = queries;
-        const getSortDirectionValue = ( sortDirection: TBlogQueryParams['sortDirection'] ) => {
-            if ( sortDirection === 'asc' || sortDirection === 1 ) {
-                return 1;
-            } 
-            return -1;
-        };
-
-        const totalCount = await blogsRepository.getBlogsCount(term ?? '');
-
-        const searchQueries: TSearchQueryParams = {
-            sortBy: sortBy || DEFAULT_SEARCH_PARAMS.sortBy,
-            sortDirection: getSortDirectionValue(sortDirection),
-            pageNumber: pageNumber ?? DEFAULT_SEARCH_PARAMS.pageNumber,
-            pageSize: pageSize || DEFAULT_SEARCH_PARAMS.pageSize,
-        };
-
-        const foundBlogs = await blogsRepository.getBlogs({term, ...searchQueries});
-
+    async getBlogs(req: TBlogSearchParams) {
+        const { searchNameTerm, ...restQueries } = req.query;
+        const searchNameTermValue = searchNameTerm ?? '';
+        const searchQueries = getSearchQueries(restQueries);
+        const totalCount = await blogsRepository.getBlogsCount(searchNameTermValue);
+        const foundBlogs = await blogsRepository.getBlogs({searchNameTerm: searchNameTermValue, ...searchQueries});
         return {
-            pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
+            pagesCount: Math.ceil(totalCount / Number(searchQueries.pageSize)),
             page: searchQueries.pageNumber,
             pageSize: searchQueries.pageSize,
             totalCount,
             items: foundBlogs,
         };
-
-
+    },
+    async getBlogPosts (req: TSearchQueryParams) {
+        const searchQueries = getSearchQueries(req);
+        const totalCount = await postsRepository.getPostsCount();
+        const foundPosts = await postsRepository.getPosts(searchQueries);
+        return {
+            pagesCount: Math.ceil(totalCount / Number(searchQueries.pageSize)),
+            page: searchQueries.pageNumber,
+            pageSize: searchQueries.pageSize,
+            totalCount,
+            items: foundPosts,
+        };
     }
-    
 };

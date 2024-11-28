@@ -20,7 +20,7 @@ describe('Blogs Controller', () => {
     });
 
     beforeEach(async () => {
-        await blogsRepository.setBlogs([]);
+        // await blogsRepository.setBlogs([]);
     });
 
     afterAll(async () => {

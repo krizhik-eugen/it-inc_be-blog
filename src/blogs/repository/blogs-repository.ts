@@ -1,17 +1,18 @@
 import { ObjectId } from 'mongodb';
 import { blogsCollection } from '../model';
 import { TBlog, TBlogQueryParams } from '../types';
+import { TDBSearchParams } from '../../types';
 
 export const blogsRepository = {
 
-    async getBlogsCount(term: string = ''): Promise<number> {
-        return await blogsCollection.countDocuments({name: {$regex: term, $options: 'i'}});
+    async getBlogsCount(searchNameTerm = ''): Promise<number> {
+        return await blogsCollection.countDocuments({name: {$regex: searchNameTerm ?? '', $options: 'i'}});
     },  
 
-    async getBlogs(searchQueries: TBlogQueryParams): Promise<TBlog[]> {    
+    async getBlogs(searchQueries: Required<TDBSearchParams & {searchNameTerm: string}>): Promise<TBlog[]> {    
 
         const allData = await blogsCollection
-        .find({name: { $regex: searchQueries.term ?? '', $options: 'i' }})
+        .find({name: { $regex: searchQueries.searchNameTerm ?? '', $options: 'i' }})
         .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
         .skip((searchQueries.pageNumber - 1) * searchQueries.pageSize)
         .limit(searchQueries.pageSize)
