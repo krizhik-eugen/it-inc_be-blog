@@ -4,12 +4,14 @@ import { HTTP_STATUS_CODES } from '../../constants';
 import {
     TCreateUpdatePostRequest,
     TGetDeleteDBInstanceRequest,
+    TGetPostsResponse,
     TPost,
 } from '../types';
+import { postsService } from '../service/posts-service';
 
 export const postsController = {
-    async getAllPosts(req: Request, res: Response<TPost[]>) {
-        const posts = await postsRepository.getAllPosts();
+    async getAllPosts(req: Request, res: Response<TGetPostsResponse>) {
+        const posts = await postsService.getPosts(req);
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
     async createNewPost(req: TCreateUpdatePostRequest, res: Response<TPost>) {

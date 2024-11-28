@@ -6,17 +6,17 @@ import { TPostInstance } from '../model/posts-model';
 import { TDBSearchParams } from '../../types';
 
 export const postsRepository = {
-     async getPostsCount(): Promise<number> {
+    async getPostsCount(): Promise<number> {
         return await postsCollection.countDocuments();
     },  
-    async getPosts(searchQueries: Required<TDBSearchParams>): Promise<TPost[]> {
-        const allData = await postsCollection
+    async getPosts(searchQueries: TDBSearchParams): Promise<TPost[]> {
+        const foundPosts = await postsCollection
         .find()
         .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
-        .skip((searchQueries.pageNumber - 1) * searchQueries.pageSize)
-        .limit(searchQueries.pageSize)
+        .skip(searchQueries.skip)
+        .limit(searchQueries.limit)
         .toArray();
-        return allData.map((post) => {
+        return foundPosts.map((post) => {
             const { _id, ...postWithoutId } = post;
             return { ...postWithoutId, id: _id.toString() };
         });

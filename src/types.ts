@@ -5,9 +5,17 @@ export type TSearchQueryParams = {
     pageSize?: string
 }
 
+export type TMappedSearchQueryParams = {
+    sortBy: 'createdAt' | 'name',
+    sortDirection: 1 | -1,
+    pageNumber: number,
+    pageSize: number,
+}
+
 export type TDBSearchParams = {
-    sortBy?: 'createdAt' | 'name',
-    sortDirection?: 1 | -1,
-    pageNumber?: number,
-    pageSize?: number,
+    findName?: string,
+    sortBy: 'createdAt' | 'name',
+    sortDirection: 1 | -1,
+    skip: number,
+    limit: number,
 }

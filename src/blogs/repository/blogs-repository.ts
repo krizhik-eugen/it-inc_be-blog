@@ -1,24 +1,22 @@
 import { ObjectId } from 'mongodb';
 import { blogsCollection } from '../model';
-import { TBlog, TBlogQueryParams } from '../types';
+import { TBlog } from '../types';
 import { TDBSearchParams } from '../../types';
 
 export const blogsRepository = {
 
-    async getBlogsCount(searchNameTerm = ''): Promise<number> {
-        return await blogsCollection.countDocuments({name: {$regex: searchNameTerm ?? '', $options: 'i'}});
+    async getBlogsCount(findName = ''): Promise<number> {
+        return await blogsCollection.countDocuments({name: {$regex: findName, $options: 'i'}});
     },  
 
-    async getBlogs(searchQueries: Required<TDBSearchParams & {searchNameTerm: string}>): Promise<TBlog[]> {    
-
-        const allData = await blogsCollection
-        .find({name: { $regex: searchQueries.searchNameTerm ?? '', $options: 'i' }})
+    async getBlogs(searchQueries: TDBSearchParams): Promise<TBlog[]> {    
+        const foundBlogs = await blogsCollection
+        .find({name: { $regex: searchQueries.findName ?? '', $options: 'i' }})
         .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
-        .skip((searchQueries.pageNumber - 1) * searchQueries.pageSize)
-        .limit(searchQueries.pageSize)
+        .skip(searchQueries.skip)
+        .limit(searchQueries.limit)
         .toArray();
-        
-        return allData.map((blog) => {
+        return foundBlogs.map((blog) => {
             const { _id, ...blogWithoutId } = blog;
             return { ...blogWithoutId, id: _id.toString() };
         });
