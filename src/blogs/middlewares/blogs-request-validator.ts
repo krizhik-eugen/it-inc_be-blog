@@ -76,13 +76,15 @@ const searchNameTermQuerySchema: Schema = {
         in: ['query'],
         optional: true,
         isString: true,
-        errorMessage: 'searchNameTerm must be a string'
+        errorMessage: 'searchNameTerm must be a string',
     },
-}
+};
 
 export const blogsValidators = {
-    getBlogsRequest: requestValidator({ querySchema: searchNameTermQuerySchema }),
-    getBlogRequest: requestValidator({paramSchema}),
+    getBlogsRequest: requestValidator({
+        querySchema: searchNameTermQuerySchema,
+    }),
+    getBlogRequest: requestValidator({ paramSchema }),
     createNewBlogRequest: requestValidator({ bodySchema }),
     updateBlogRequest: requestValidator({ bodySchema, paramSchema }),
     deleteBlogRequest: requestValidator({ paramSchema }),

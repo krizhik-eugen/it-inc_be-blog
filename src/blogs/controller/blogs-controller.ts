@@ -16,7 +16,10 @@ export const blogsController = {
         const blogs = await blogsService.getBlogs(req);
         res.status(HTTP_STATUS_CODES.OK).json(blogs);
     },
-    async getBlogPosts(req: TSearchQueryParams, res: Response<TGetBlogsResponse>) {
+    async getBlogPosts(
+        req: TSearchQueryParams,
+        res: Response<TGetBlogsResponse>
+    ) {
         const posts = await blogsService.getBlogPosts(req);
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },

@@ -19,7 +19,6 @@ export const authSchema: Schema = {
             errorMessage: 'Invalid Authorization token',
         },
     },
-
 };
 
 export const authValidator = [checkSchema(authSchema), errorAuthValidator];

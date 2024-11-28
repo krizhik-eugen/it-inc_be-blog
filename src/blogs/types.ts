@@ -23,10 +23,19 @@ export type TGetBlogsResponse = {
     items: TBlog[] | TPost[];
 };
 
-
-export type TBlogSearchParams = Request<object, object, object , TBlogQueryParams>;
+export type TBlogSearchParams = Request<
+    object,
+    object,
+    object,
+    TBlogQueryParams
+>;
 export type TParam = Pick<TBlog, 'id'>;
-export type TGetDeleteDBInstanceRequest = Request<TParam, object, object, object>;
+export type TGetDeleteDBInstanceRequest = Request<
+    TParam,
+    object,
+    object,
+    object
+>;
 export type TCreateUpdateBlogRequest = Request<
     TParam,
     object,

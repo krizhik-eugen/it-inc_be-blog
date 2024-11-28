@@ -1,11 +1,15 @@
 import { Router } from 'express';
 import { postsController } from '../controller';
-import { authValidator, searchQueryParamsValidator } from '../../app-middlewares';
+import {
+    authValidator,
+    searchQueryParamsValidator,
+} from '../../app-middlewares';
 import { postsValidators } from '../middlewares';
 
 export const postsRouter = Router();
 
-postsRouter.get('/', 
+postsRouter.get(
+    '/',
     ...searchQueryParamsValidator,
     postsController.getAllPosts
 );
@@ -17,7 +21,11 @@ postsRouter.post(
     postsController.createNewPost
 );
 
-postsRouter.get('/:id', ...postsValidators.getPostRequest, postsController.getPost);
+postsRouter.get(
+    '/:id',
+    ...postsValidators.getPostRequest,
+    postsController.getPost
+);
 
 postsRouter.put(
     '/:id',

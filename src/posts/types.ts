@@ -19,8 +19,12 @@ export type TGetPostsResponse = {
     items: TPost[];
 };
 
-
-export type TPostSearchParams = Request<object, object, object , TSearchQueryParams>;
+export type TPostSearchParams = Request<
+    object,
+    object,
+    object,
+    TSearchQueryParams
+>;
 export type TParam = { id: string };
 export type TGetDeleteDBInstanceRequest = Request<TParam, object, object>;
 export type TCreateUpdatePostRequest = Request<

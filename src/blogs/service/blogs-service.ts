@@ -21,10 +21,10 @@ export const blogsService = {
         };
     },
 
-    async getBlogPosts (req: TSearchQueryParams) {
+    async getBlogPosts(req: TSearchQueryParams) {
         const searchQueries = getSearchQueries(req);
         const totalCount = await postsRepository.getPostsCount();
-        const dbSearchQueries = getDBSearchQueries(searchQueries)
+        const dbSearchQueries = getDBSearchQueries(searchQueries);
         const foundPosts = await postsRepository.getPosts(dbSearchQueries);
         return {
             pagesCount: Math.ceil(totalCount / Number(searchQueries.pageSize)),
@@ -33,5 +33,5 @@ export const blogsService = {
             totalCount,
             items: foundPosts,
         };
-    }
+    },
 };

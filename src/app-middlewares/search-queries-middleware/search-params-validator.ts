@@ -1,6 +1,5 @@
-import { Schema } from "express-validator";
-import { requestValidator } from "../../helpers";
-
+import { Schema } from 'express-validator';
+import { requestValidator } from '../../helpers';
 
 export const querySchema: Schema = {
     sortBy: {
@@ -8,36 +7,35 @@ export const querySchema: Schema = {
         optional: true,
         isIn: {
             options: [['createdAt', 'name']],
-            errorMessage: "sortBy must be either 'createdAt' or 'name'"
-        }
+            errorMessage: "sortBy must be either 'createdAt' or 'name'",
+        },
     },
     sortDirection: {
         in: ['query'],
         optional: true,
         isIn: {
             options: [['asc', 'desc', 1, -1]],
-            errorMessage: 'sortDirection must be either "asc" or "desc"'
-        }
+            errorMessage: 'sortDirection must be either "asc" or "desc"',
+        },
     },
     pageNumber: {
         in: ['query'],
         optional: true,
         isInt: {
             options: { min: 0 },
-            errorMessage: 'pageNumber must be a non-negative integer'
+            errorMessage: 'pageNumber must be a non-negative integer',
         },
-        toInt: true
+        toInt: true,
     },
     pageSize: {
         in: ['query'],
         optional: true,
         isInt: {
             options: { min: 1 },
-            errorMessage: 'pageSize must be a positive integer'
+            errorMessage: 'pageSize must be a positive integer',
         },
-        toInt: true
-    }
+        toInt: true,
+    },
 };
-
 
 export const searchQueryParamsValidator = requestValidator({ querySchema });

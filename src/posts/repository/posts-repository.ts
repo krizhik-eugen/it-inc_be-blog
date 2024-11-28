@@ -8,14 +8,14 @@ import { TDBSearchParams } from '../../types';
 export const postsRepository = {
     async getPostsCount(): Promise<number> {
         return await postsCollection.countDocuments();
-    },  
+    },
     async getPosts(searchQueries: TDBSearchParams): Promise<TPost[]> {
         const foundPosts = await postsCollection
-        .find()
-        .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
-        .skip(searchQueries.skip)
-        .limit(searchQueries.limit)
-        .toArray();
+            .find()
+            .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
+            .skip(searchQueries.skip)
+            .limit(searchQueries.limit)
+            .toArray();
         return foundPosts.map((post) => {
             const { _id, ...postWithoutId } = post;
             return { ...postWithoutId, id: _id.toString() };
