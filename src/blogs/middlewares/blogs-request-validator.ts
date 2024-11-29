@@ -1,7 +1,7 @@
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../helpers';
 import { ObjectId } from 'mongodb';
-import { postsBodySchema } from '../../posts/middlewares';
+import { postsBodySchema, postsQuerySchema } from '../../posts/middlewares';
 
 const nameLength = 15;
 const descriptionLength = 500;
@@ -72,7 +72,7 @@ export const blogsBodySchema: Schema = {
     },
 };
 
-export const bodyQuerySchema: Schema = {
+export const blogsQuerySchema: Schema = {
     searchNameTerm: {
         in: ['query'],
         optional: true,
@@ -119,10 +119,10 @@ delete postsBodySchema.blogId;
 
 export const blogsValidators = {
     getBlogsRequest: requestValidator({
-        querySchema: bodyQuerySchema,
+        querySchema: blogsQuerySchema,
     }),
-    getBlogRequest: requestValidator({ paramSchema,  }),
-    getBlogPostsRequest: requestValidator({ paramSchema, querySchema: bodyQuerySchema }),
+    getBlogRequest: requestValidator({ paramSchema }),
+    getBlogPostsRequest: requestValidator({ paramSchema, querySchema: postsQuerySchema }),
     createNewBlogRequest: requestValidator({ bodySchema: blogsBodySchema }),
     createNewPostForBlogRequest: requestValidator({ bodySchema: postsBodySchema, paramSchema }),
     updateBlogRequest: requestValidator({ bodySchema: blogsBodySchema, paramSchema }),

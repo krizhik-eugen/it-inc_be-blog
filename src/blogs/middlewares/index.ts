@@ -1,3 +1,4 @@
-import { blogsValidators } from './blogs-request-validator';
+import { blogsValidators, blogsQuerySchema } from './blogs-request-validator';
 
-export { blogsValidators };
+export { blogsValidators, blogsQuerySchema };
+

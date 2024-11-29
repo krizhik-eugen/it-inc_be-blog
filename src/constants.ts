@@ -1,7 +1,5 @@
 import {
-    TDBSearchParams,
     TMappedSearchQueryParams,
-    TSearchQueryParams,
 } from './types';
 
 export const HTTP_STATUS_CODES = {
