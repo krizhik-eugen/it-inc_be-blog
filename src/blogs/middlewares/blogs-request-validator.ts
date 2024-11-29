@@ -72,12 +72,46 @@ export const blogsBodySchema: Schema = {
     },
 };
 
-const searchNameTermQuerySchema: Schema = {
+export const bodyQuerySchema: Schema = {
     searchNameTerm: {
         in: ['query'],
         optional: true,
         isString: true,
         errorMessage: 'searchNameTerm must be a string',
+    },
+    sortBy: {
+        in: ['query'],
+        optional: true,
+        isIn: {
+            options: [['createdAt', 'name']],
+            errorMessage: "sortBy must be either 'createdAt' or 'name'",
+        },
+    },
+    sortDirection: {
+        in: ['query'],
+        optional: true,
+        isIn: {
+            options: [['asc', 'desc']],
+            errorMessage: 'sortDirection must be either "asc" or "desc"',
+        },
+    },
+    pageNumber: {
+        in: ['query'],
+        optional: true,
+        isInt: {
+            options: { min: 0 },
+            errorMessage: 'pageNumber must be a non-negative integer',
+        },
+        toInt: true,
+    },
+    pageSize: {
+        in: ['query'],
+        optional: true,
+        isInt: {
+            options: { min: 1 },
+            errorMessage: 'pageSize must be a positive integer',
+        },
+        toInt: true,
     },
 };
 
@@ -85,10 +119,10 @@ delete postsBodySchema.blogId;
 
 export const blogsValidators = {
     getBlogsRequest: requestValidator({
-        querySchema: searchNameTermQuerySchema,
+        querySchema: bodyQuerySchema,
     }),
-    getBlogRequest: requestValidator({ paramSchema }),
-    getBlogPostsRequest: requestValidator({ paramSchema, querySchema: searchNameTermQuerySchema }),
+    getBlogRequest: requestValidator({ paramSchema,  }),
+    getBlogPostsRequest: requestValidator({ paramSchema, querySchema: bodyQuerySchema }),
     createNewBlogRequest: requestValidator({ bodySchema: blogsBodySchema }),
     createNewPostForBlogRequest: requestValidator({ bodySchema: postsBodySchema, paramSchema }),
     updateBlogRequest: requestValidator({ bodySchema: blogsBodySchema, paramSchema }),
