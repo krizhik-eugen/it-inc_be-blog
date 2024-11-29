@@ -35,6 +35,10 @@ export const blogsController = {
 
     async createNewPostForBlog(req: Omit<TCreateUpdatePostRequest, 'blogId'>, res: Response<TPost>) {
         const createdPost = await blogsService.createNewPostForBlog(req);
+        if (!createdPost) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            return;
+        }
         res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
     },
 
