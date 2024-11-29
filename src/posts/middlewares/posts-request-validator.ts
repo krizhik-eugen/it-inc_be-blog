@@ -95,8 +95,8 @@ export const postsQuerySchema: Schema = {
         in: ['query'],
         optional: true,
         isIn: {
-            options: [['createdAt', 'title']],
-            errorMessage: "sortBy must be either 'createdAt' or 'name'",
+            options: [['createdAt', 'title', 'blogName']],
+            errorMessage: "sortBy must be either 'createdAt', 'title' or 'blogName'",
         },
     },
     sortDirection: {

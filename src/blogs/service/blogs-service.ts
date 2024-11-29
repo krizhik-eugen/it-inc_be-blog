@@ -22,7 +22,6 @@ export const blogsService = {
     async getBlogPosts(req: TBlogPostsRequest) {
         const blogId = req.params.id;
         const blog = await blogsRepository.getBlog(req.params.id);
-        console.log('blog', blog);
         if (!blog) {
             return undefined;
         }
@@ -41,7 +40,6 @@ export const blogsService = {
 
     async createNewPostForBlog(req: Omit<TCreateUpdatePostRequest, 'blogId'>) {
         const blog = await blogsRepository.getBlog(req.params.id);
-        console.log('blog', blog);
         if (!blog) {
             return undefined;
         }
