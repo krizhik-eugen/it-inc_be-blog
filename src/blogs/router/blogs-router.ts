@@ -24,8 +24,8 @@ blogsRouter.get(
 blogsRouter.get(
     '/:id/posts',
     ...searchQueryParamsValidator,
-    ...blogsValidators.getBlogRequest,
-    blogsController.getBlog
+    ...blogsValidators.getBlogPostsRequest,
+    blogsController.getBlogPosts
 );
 
 blogsRouter.post(
@@ -33,6 +33,13 @@ blogsRouter.post(
     ...authValidator,
     ...blogsValidators.createNewBlogRequest,
     blogsController.createNewBlog
+);
+
+blogsRouter.post(
+    '/:id/posts',
+    ...authValidator,
+    ...blogsValidators.createNewPostForBlogRequest,
+    blogsController.createNewPostForBlog
 );
 
 blogsRouter.put(

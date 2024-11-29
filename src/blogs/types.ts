@@ -29,6 +29,14 @@ export type TBlogSearchParams = Request<
     object,
     TBlogQueryParams
 >;
+
+export type TBlogPostsRequest = Request<
+    TParam,
+    object,
+    object,
+    TSearchQueryParams
+>;
+
 export type TParam = Pick<TBlog, 'id'>;
 export type TGetDeleteDBInstanceRequest = Request<
     TParam,

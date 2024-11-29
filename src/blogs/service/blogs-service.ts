@@ -1,8 +1,7 @@
-import { TBlogSearchParams } from '../types';
+import { TBlogPostsRequest, TBlogSearchParams } from '../types';
 import { blogsRepository } from '../repository';
 import { getSearchQueries, getDBSearchQueries } from '../../helpers';
-import { TSearchQueryParams } from '../../types';
-import { postsRepository } from '../../posts';
+import { postsRepository, TCreateUpdatePostRequest } from '../../posts';
 
 export const blogsService = {
     async getBlogs(req: TBlogSearchParams) {
@@ -11,7 +10,6 @@ export const blogsService = {
         const dbSearchQueries = getDBSearchQueries(searchQueries);
         const totalCount = await blogsRepository.getBlogsCount(searchNameTerm);
         const foundBlogs = await blogsRepository.getBlogs(dbSearchQueries);
-
         return {
             pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
             page: searchQueries.pageNumber,
@@ -21,11 +19,12 @@ export const blogsService = {
         };
     },
 
-    async getBlogPosts(req: TSearchQueryParams) {
-        const searchQueries = getSearchQueries(req);
-        const totalCount = await postsRepository.getPostsCount();
+    async getBlogPosts(req: TBlogPostsRequest) {
+        const blogId = req.params.id;
+        const searchQueries = getSearchQueries(req.query);
+        const totalCount = await postsRepository.getPostsCount(blogId);
         const dbSearchQueries = getDBSearchQueries(searchQueries);
-        const foundPosts = await postsRepository.getPosts(dbSearchQueries);
+        const foundPosts = await postsRepository.getPosts({ ...dbSearchQueries, blogId });
         return {
             pagesCount: Math.ceil(totalCount / Number(searchQueries.pageSize)),
             page: searchQueries.pageNumber,
@@ -33,5 +32,16 @@ export const blogsService = {
             totalCount,
             items: foundPosts,
         };
+    },
+
+    async createNewPostForBlog(req: Omit<TCreateUpdatePostRequest, 'blogId'>) {
+        const blog = await blogsRepository.getBlog(req.params.id);
+        console.log('blog', blog);
+        if (!blog) {
+            return undefined;
+        }
+        const newPost = { ...req.body, blogName: blog.name };
+        const createdPost = await postsRepository.addNewPost(newPost);
+        return createdPost;
     },
 };

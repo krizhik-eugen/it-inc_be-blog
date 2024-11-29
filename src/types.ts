@@ -13,6 +13,7 @@ export type TMappedSearchQueryParams = {
 };
 
 export type TDBSearchParams = {
+    blogId?: string;
     findName?: string;
     sortBy: 'createdAt' | 'name';
     sortDirection: 1 | -1;

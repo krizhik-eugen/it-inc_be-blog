@@ -24,6 +24,7 @@ export const blogsRepository = {
             return { ...blogWithoutId, id: _id.toString() };
         });
     },
+
     async addNewBlog(
         newBlog: Omit<TBlog, 'id' | 'createdAt' | 'isMembership'>
     ): Promise<TBlog | undefined> {
@@ -34,6 +35,7 @@ export const blogsRepository = {
         });
         return this.getBlog(result.insertedId.toString());
     },
+
     async getBlog(id: TBlog['id']): Promise<TBlog | undefined> {
         const foundBlog = await blogsCollection.findOne({
             _id: new ObjectId(id),
@@ -42,6 +44,7 @@ export const blogsRepository = {
         const { _id, ...foundBlogWithoutId } = foundBlog;
         return { ...foundBlogWithoutId, id: _id.toString() };
     },
+
     async updateBlog(updatedBlog: TBlog) {
         const { id, ...blogToInsert } = updatedBlog;
         const _id = new ObjectId(id);
@@ -51,11 +54,13 @@ export const blogsRepository = {
         );
         return result.modifiedCount > 0;
     },
+    
     async deleteBlog(id: TBlog['id']) {
         const _id = new ObjectId(id);
         const result = await blogsCollection.deleteOne({ _id });
         return result.deletedCount > 0;
     },
+
     async setBlogs(blogs: TBlog[]) {
         if (blogs.length > 0) {
             const mappedBlogs = blogs.map((blog) => {

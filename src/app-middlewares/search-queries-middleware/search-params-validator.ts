@@ -14,7 +14,7 @@ export const querySchema: Schema = {
         in: ['query'],
         optional: true,
         isIn: {
-            options: [['asc', 'desc', 1, -1]],
+            options: [['asc', 'desc']],
             errorMessage: 'sortDirection must be either "asc" or "desc"',
         },
     },

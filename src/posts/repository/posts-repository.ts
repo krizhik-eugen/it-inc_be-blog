@@ -6,12 +6,15 @@ import { TPostInstance } from '../model/posts-model';
 import { TDBSearchParams } from '../../types';
 
 export const postsRepository = {
-    async getPostsCount(): Promise<number> {
-        return await postsCollection.countDocuments();
+    async getPostsCount(blogId = ''): Promise<number> {
+        return await postsCollection.countDocuments({ blogId });
     },
+
     async getPosts(searchQueries: TDBSearchParams): Promise<TPost[]> {
         const foundPosts = await postsCollection
-            .find()
+            .find({
+                blogId: searchQueries.blogId ?? '',
+            })
             .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
             .skip(searchQueries.skip)
             .limit(searchQueries.limit)
@@ -21,18 +24,15 @@ export const postsRepository = {
             return { ...postWithoutId, id: _id.toString() };
         });
     },
-    async addNewPost(newPost: Omit<TPost, 'id' | 'createdAt' | 'blogName'>) {
-        const blog = await blogsRepository.getBlog(newPost.blogId);
-        if (!blog) {
-            return undefined;
-        }
+
+    async addNewPost(newPost: Required<Omit<TPost, 'id' | 'createdAt'>>) {
         const result = await postsCollection.insertOne({
             ...newPost,
-            blogName: blog.name,
             createdAt: new Date().toISOString(),
         });
         return this.getPost(result.insertedId.toString());
     },
+
     async getPost(id: TPost['id']) {
         const foundPost = await postsCollection.findOne({
             _id: new ObjectId(id),
@@ -41,6 +41,7 @@ export const postsRepository = {
         const { _id, ...foundPostWithoutId } = foundPost;
         return { ...foundPostWithoutId, id: _id.toString() };
     },
+
     async updatePost(updatedPost: TPost) {
         const { id, ...postToInsert } = updatedPost;
         const _id = new ObjectId(id);
@@ -50,11 +51,13 @@ export const postsRepository = {
         );
         return result.modifiedCount > 0;
     },
+
     async deletePost(id: TPost['id']) {
         const _id = new ObjectId(id);
         const result = await postsCollection.deleteOne({ _id });
         return result.deletedCount > 0;
     },
+
     async setPosts(posts: TPost[]) {
         if (posts.length > 0) {
             const mappedPosts = await posts.reduce<Promise<TPostInstance[]>>(

@@ -18,7 +18,7 @@ const paramSchema: Schema = {
     },
 };
 
-const bodySchema: Schema = {
+export const postsBodySchema: Schema = {
     title: {
         in: ['body'],
         exists: {
@@ -92,7 +92,7 @@ const bodySchema: Schema = {
 
 export const postsValidators = {
     getPostRequest: requestValidator({ paramSchema }),
-    createNewPostRequest: requestValidator({ bodySchema }),
-    updatePostRequest: requestValidator({ bodySchema, paramSchema }),
+    createNewPostRequest: requestValidator({ bodySchema: postsBodySchema }),
+    updatePostRequest: requestValidator({ bodySchema: postsBodySchema, paramSchema }),
     deletePostRequest: requestValidator({ paramSchema }),
 };

@@ -14,12 +14,12 @@ export const postsController = {
         const posts = await postsService.getPosts(req);
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
+
     async createNewPost(req: TCreateUpdatePostRequest, res: Response<TPost>) {
-        const createdPost = await postsRepository.addNewPost({
-            ...req.body,
-        });
+        const createdPost = await postsService.createNewPost(req);
         res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
     },
+
     async getPost(req: TGetDeleteDBInstanceRequest, res: Response<TPost>) {
         const foundPost = await postsRepository.getPost(req.params.id);
 
@@ -29,6 +29,7 @@ export const postsController = {
         }
         res.status(HTTP_STATUS_CODES.OK).json(foundPost);
     },
+
     async updatePost(req: TCreateUpdatePostRequest, res: Response) {
         const isPostUpdated = await postsRepository.updatePost({
             ...req.body,
@@ -40,6 +41,7 @@ export const postsController = {
                 : HTTP_STATUS_CODES.NOT_FOUND
         );
     },
+    
     async deletePost(req: TGetDeleteDBInstanceRequest, res: Response) {
         const isPostDeleted = await postsRepository.deletePost(req.params.id);
         res.sendStatus(

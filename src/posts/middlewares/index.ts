@@ -1,3 +1,4 @@
-import { postsValidators } from './postsRequestValidator';
+import { postsBodySchema, postsValidators } from './posts-request-validator';
 
-export { postsValidators };
+export { postsBodySchema, postsValidators };
+
