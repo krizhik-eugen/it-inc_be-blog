@@ -21,6 +21,11 @@ export const blogsService = {
 
     async getBlogPosts(req: TBlogPostsRequest) {
         const blogId = req.params.id;
+        const blog = await blogsRepository.getBlog(req.params.id);
+        console.log('blog', blog);
+        if (!blog) {
+            return undefined;
+        }
         const searchQueries = getSearchQueries(req.query);
         const totalCount = await postsRepository.getPostsCount(blogId);
         const dbSearchQueries = getDBSearchQueries(searchQueries);

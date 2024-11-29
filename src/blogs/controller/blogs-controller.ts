@@ -23,6 +23,10 @@ export const blogsController = {
         res: Response<TGetBlogsResponse>
     ) {
         const posts = await blogsService.getBlogPosts(req);
+        if (!posts) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            return;
+        }
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
 
