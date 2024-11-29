@@ -7,13 +7,13 @@ import { TDBSearchParams } from '../../types';
 
 export const postsRepository = {
     async getPostsCount(blogId = ''): Promise<number> {
-        return await postsCollection.countDocuments({ blogId });
+        return await postsCollection.countDocuments({ blogId: { $regex: blogId ?? '', $options: 'i' } });
     },
 
     async getPosts(searchQueries: TDBSearchParams): Promise<TPost[]> {
         const foundPosts = await postsCollection
             .find({
-                blogId: searchQueries.blogId ?? '',
+                blogId: { $regex: searchQueries.blogId ?? '', $options: 'i' },
             })
             .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
             .skip(searchQueries.skip)
