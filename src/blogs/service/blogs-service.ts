@@ -40,7 +40,7 @@ export const blogsService = {
         if (!blog) {
             return undefined;
         }
-        const newPost = { ...req.body, blogName: blog.name };
+        const newPost = { ...req.body, blogName: blog.name, blogId: blog.id };
         const createdPost = await postsRepository.addNewPost(newPost);
         return createdPost;
     },
