@@ -9,7 +9,7 @@ export const blogsService = {
         const searchQueries = getSearchQueries(restQueries);
         const dbSearchQueries = getDBSearchQueries(searchQueries);
         const totalCount = await blogsRepository.getBlogsCount(searchNameTerm);
-        const foundBlogs = await blogsRepository.getBlogs(dbSearchQueries);
+        const foundBlogs = await blogsRepository.getBlogs({ ...dbSearchQueries, findName: searchNameTerm });
         return {
             pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
             page: searchQueries.pageNumber,
