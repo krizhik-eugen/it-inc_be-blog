@@ -2,6 +2,7 @@ import { Schema } from 'express-validator';
 import { blogsRepository } from '../../blogs';
 import { requestValidator } from '../../helpers';
 import { ObjectId } from 'mongodb';
+import { get } from 'http';
 
 const titleLength = 30;
 const shortDescriptionLength = 100;
@@ -96,7 +97,8 @@ export const postsQuerySchema: Schema = {
         optional: true,
         isIn: {
             options: [['createdAt', 'title', 'blogName']],
-            errorMessage: "sortBy must be either 'createdAt', 'title' or 'blogName'",
+            errorMessage:
+                "sortBy must be either 'createdAt', 'title' or 'blogName'",
         },
     },
     sortDirection: {
@@ -128,8 +130,12 @@ export const postsQuerySchema: Schema = {
 };
 
 export const postsValidators = {
-    getPostRequest: requestValidator({ paramSchema, querySchema: postsQuerySchema }),
+    getPostRequest: requestValidator({ paramSchema }),
+    getPostsRequest: requestValidator({ querySchema: postsQuerySchema }),
     createNewPostRequest: requestValidator({ bodySchema: postsBodySchema }),
-    updatePostRequest: requestValidator({ bodySchema: postsBodySchema, paramSchema }),
+    updatePostRequest: requestValidator({
+        bodySchema: postsBodySchema,
+        paramSchema,
+    }),
     deletePostRequest: requestValidator({ paramSchema }),
 };

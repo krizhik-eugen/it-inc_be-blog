@@ -10,8 +10,8 @@ import {
     invalidPostsFields,
     postsValidationErrorMessages,
     req,
-    testBlog,
-    testPost,
+    testBlogs,
+    testPosts,
     validAuthData,
     validObjectId,
 } from '../test-helpers';
@@ -19,10 +19,11 @@ import { HTTP_STATUS_CODES } from '../../src/constants';
 
 describe('Posts Controller', () => {
     let createdBlog: TBlog;
+    const testPost = testPosts[0];
 
     beforeEach(async () => {
-        // await postsRepository.setPosts([]);
-        createdBlog = await addNewBlog(testBlog);
+        await postsRepository.setPosts([]);
+        createdBlog = await addNewBlog(testBlogs[0]);
         testPost.blogId = createdBlog.id;
     });
 
@@ -34,18 +35,122 @@ describe('Posts Controller', () => {
         await DBHandlers.closeDB();
     });
 
+    const setTestPosts = async (blogId: string) => {
+        for (let i = 0; i < testPosts.length; i++) {
+            await addNewPost({ ...testPosts[i], blogId });
+        }
+    };
+
     describe('GET /posts', () => {
+        beforeEach(async () => {
+            await setTestPosts(createdBlog.id);
+        });
+
         it('returns an empty array initially', async () => {
+            await postsRepository.setPosts([]);
             const response = await req.get(baseRoutes.posts);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body).toEqual([]);
+            expect(response.body.totalCount).toEqual(0);
+            expect(response.body.items).toEqual([]);
         });
 
         it('returns a list of posts after creating one', async () => {
-            await addNewPost(testPost);
-            const response = await req.get(baseRoutes.posts);
+            const response = await req.get(`${baseRoutes.posts}`);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body).toEqual([expect.objectContaining(testPost)]);
+            expect(response.body.totalCount).toEqual(9);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.pagesCount).toEqual(1);
+            expect(response.body.items[0]).toHaveProperty('createdAt');
+            expect(response.body.items[0].title).toEqual(testPosts[8].title);
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeGreaterThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+        });
+
+        it('returns errors if invalid search params are provided', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}?sortDirection=ascqwerty&sortBy=createdAtqwerty&pageSize=0&pageNumber=big_number`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages.length).toEqual(4);
+            const errorsParams = response.body.errorsMessages.map(
+                (error: { message: string; field: string }) => error.field
+            );
+            ['sortDirection', 'sortBy', 'pageSize', 'pageNumber'].forEach(
+                (param) => {
+                    expect(errorsParams).toContain(param);
+                }
+            );
+        });
+
+        it('returns a list of posts sorted by createdAt and ascending order', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}?sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].title).toEqual(testPosts[0].title);
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeLessThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+            expect(response.body.pagesCount).toEqual(1);
+            expect(response.body.totalCount).toEqual(9);
+        });
+
+        it('returns a list of posts sorted by title and descending order', async () => {
+            const response = await req.get(`${baseRoutes.posts}?sortBy=title`);
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].title).toEqual(testPosts[8].title);
+            expect(
+                response.body.items[0].title > response.body.items[8].title
+            ).toBeTruthy();
+        });
+
+        it('returns a list of posts sorted by title and ascending order', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}?sortBy=title&sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].title).toEqual(testPosts[0].title);
+            expect(
+                response.body.items[8].title > response.body.items[0].title
+            ).toBeTruthy();
+        });
+
+        it('returns a list of posts with pagination and page size 3', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}?pageSize=3&sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.items[2].title).toEqual(testPosts[2].title);
+        });
+
+        it('returns a list of posts with pagination, page size 3, and page number 2', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}?pageSize=3&sortDirection=asc&pageNumber=2`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(2);
+            expect(response.body.items[2].title).toEqual(testPosts[5].title);
+        });
+
+        it('returns a list of posts with pagination, page size 4, and page number 3', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}?pageSize=4&sortDirection=asc&pageNumber=3`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(1);
+            expect(response.body.pageSize).toEqual(4);
+            expect(response.body.page).toEqual(3);
+            expect(response.body.items[0].title).toEqual(testPosts[8].title);
         });
     });
 

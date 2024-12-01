@@ -54,14 +54,14 @@ export const blogsRepository = {
         );
         return result.modifiedCount > 0;
     },
-    
+
     async deleteBlog(id: TBlog['id']) {
         const _id = new ObjectId(id);
         const result = await blogsCollection.deleteOne({ _id });
         return result.deletedCount > 0;
     },
 
-    async setBlogs(blogs: TBlog[]) {
+    async setBlogs(blogs: Omit<TBlog, 'id' | 'createdAt' | 'isMembership'>[]) {
         if (blogs.length > 0) {
             const mappedBlogs = blogs.map((blog) => {
                 return {

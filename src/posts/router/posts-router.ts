@@ -1,14 +1,13 @@
 import { Router } from 'express';
 import { postsController } from '../controller';
-import {
-    authValidator
-} from '../../app-middlewares';
+import { authValidator } from '../../app-middlewares';
 import { postsValidators } from '../middlewares';
 
 export const postsRouter = Router();
 
 postsRouter.get(
     '/',
+    ...postsValidators.getPostsRequest,
     postsController.getAllPosts
 );
 

@@ -9,7 +9,7 @@ export const req = agent(app);
 
 export const DBHandlers = {
     connectToDB: async () => {
-       await connectToDB();
+        await connectToDB();
     },
     closeDB: async () => {
         db.dropDatabase();
@@ -45,18 +45,110 @@ export const postsValidationErrorMessages = {
     },
 };
 
-export const testBlog: Omit<TBlog, 'id'> = {
-    name: 'Test Blog',
-    description: 'Test description',
-    websiteUrl: 'https://test.com',
-};
+export const testBlogs: Omit<TBlog, 'id' | 'createdAt' | 'isMembership'>[] = [
+    {
+        name: 'Test Blog 1',
+        description: 'Test description 1',
+        websiteUrl: 'https://test1.com',
+    },
+    {
+        name: 'Test Blog 2',
+        description: 'Test description 2',
+        websiteUrl: 'https://test2.com',
+    },
+    {
+        name: 'Test Blog 3',
+        description: 'Test description 3',
+        websiteUrl: 'https://test3.com',
+    },
+    {
+        name: 'Test Blog 4',
+        description: 'Test description 4',
+        websiteUrl: 'https://test4.com',
+    },
+    {
+        name: 'Test Blog 5',
+        description: 'Test description 5',
+        websiteUrl: 'https://test5.com',
+    },
+    {
+        name: 'Test Blog 6',
+        description: 'Test description 6',
+        websiteUrl: 'https://test6.com',
+    },
+    {
+        name: 'Test Blog 7',
+        description: 'Test description 7',
+        websiteUrl: 'https://test7.com',
+    },
+    {
+        name: 'Test Blog 8',
+        description: 'Test description 8',
+        websiteUrl: 'https://test8.com',
+    },
+    {
+        name: 'Test Blog 9',
+        description: 'Test description 9',
+        websiteUrl: 'https://test9.com',
+    },
+];
 
-export const testPost: Omit<TPost, 'id' | 'blogName'> = {
-    title: 'Test Post',
-    content: 'Test content',
-    blogId: '',
-    shortDescription: 'test shortDescription',
-};
+export const testPosts: Omit<TPost, 'id' | 'blogName' | 'createdAt'>[] = [
+    {
+        title: 'Test Post 1',
+        content: 'Test content 1',
+        blogId: '',
+        shortDescription: 'test shortDescription 1',
+    },
+    {
+        title: 'Test Post 2',
+        content: 'Test content 2',
+        blogId: '',
+        shortDescription: 'test shortDescription 2',
+    },
+    {
+        title: 'Test Post 3',
+        content: 'Test content 3',
+        blogId: '',
+        shortDescription: 'test shortDescription 3',
+    },
+    {
+        title: 'Test Post 4',
+        content: 'Test content 4',
+        blogId: '',
+        shortDescription: 'test shortDescription 4',
+    },
+    {
+        title: 'Test Post 5',
+        content: 'Test content 5',
+        blogId: '',
+        shortDescription: 'test shortDescription 5',
+    },
+    {
+        title: 'Test Post 6',
+        content: 'Test content 6',
+        blogId: '',
+        shortDescription: 'test shortDescription 6',
+    },
+    {
+        title: 'Test Post 7',
+        content: 'Test content 7',
+        blogId: '',
+        shortDescription: 'test shortDescription 7',
+    },
+    {
+        title: 'Test Post 8',
+        content: 'Test content 8',
+        blogId: '',
+        shortDescription: 'test shortDescription 8',
+    },
+    {
+        title: 'Test Post 9',
+        content: 'Test content 9',
+        blogId: '',
+        shortDescription: 'test shortDescription 9',
+    },
+];
 
 export const validObjectId = '67430b985302e02a9657421c';
 export const invalidObjectId = 'qwerty1234567890';

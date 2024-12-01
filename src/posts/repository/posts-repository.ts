@@ -7,7 +7,9 @@ import { TDBSearchParams } from '../../types';
 
 export const postsRepository = {
     async getPostsCount(blogId = ''): Promise<number> {
-        return await postsCollection.countDocuments({ blogId: { $regex: blogId ?? '', $options: 'i' } });
+        return await postsCollection.countDocuments({
+            blogId: { $regex: blogId ?? '', $options: 'i' },
+        });
     },
 
     async getPosts(searchQueries: TDBSearchParams): Promise<TPost[]> {
@@ -58,7 +60,7 @@ export const postsRepository = {
         return result.deletedCount > 0;
     },
 
-    async setPosts(posts: TPost[]) {
+    async setPosts(posts: Omit<TPost, 'createdAt' | 'blogName' | 'id'>[]) {
         if (posts.length > 0) {
             const mappedPosts = await posts.reduce<Promise<TPostInstance[]>>(
                 async (accPromise, post) => {

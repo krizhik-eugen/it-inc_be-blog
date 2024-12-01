@@ -1,18 +1,23 @@
 import { baseRoutes } from '../../src/configs';
-import { blogsRepository } from '../../src/blogs';
+import { blogsRepository, TBlog } from '../../src/blogs';
 import {
     addNewBlog,
+    addNewPost,
     blogsValidationErrorMessages,
     DBHandlers,
     invalidAuthData,
     invalidBlogsFields,
     invalidObjectId,
+    invalidPostsFields,
+    postsValidationErrorMessages,
     req,
-    testBlog,
+    testBlogs,
+    testPosts,
     validAuthData,
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
+import { postsRepository } from '../../src/posts';
 
 describe('Blogs Controller', () => {
     beforeAll(async () => {
@@ -20,31 +25,461 @@ describe('Blogs Controller', () => {
     });
 
     beforeEach(async () => {
-        // await blogsRepository.setBlogs([]);
+        await blogsRepository.setBlogs([]);
     });
 
     afterAll(async () => {
         await DBHandlers.closeDB();
     });
 
+    const setTestBlogs = async () => {
+        for (let i = 0; i < testBlogs.length; i++) {
+            await addNewBlog(testBlogs[i]);
+        }
+    };
+
+    const setTestPosts = async (blogId: string) => {
+        for (let i = 0; i < testPosts.length; i++) {
+            await addNewPost({ ...testPosts[i], blogId });
+        }
+    };
+
     describe('GET /blogs', () => {
         it('returns an empty array initially', async () => {
             const response = await req.get(baseRoutes.blogs);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body).toEqual([]);
+            expect(response.body.totalCount).toEqual(0);
+            expect(response.body.items).toEqual([]);
         });
 
         it('returns a list of blogs after creating one', async () => {
-            await addNewBlog(testBlog);
+            await addNewBlog(testBlogs[0]);
             const response = await req.get(baseRoutes.blogs);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body).toEqual([expect.objectContaining(testBlog)]);
+            expect(response.body.totalCount).toEqual(1);
+            expect(response.body.items[0].name).toEqual(testBlogs[0].name);
+            expect(response.body.items[0]).toHaveProperty('createdAt');
+            expect(response.body.items[0]).toHaveProperty('isMembership');
+            expect(response.body.items[0]).toHaveProperty('websiteUrl');
+        });
+
+        it('returns a list of blogs sorted by createdAt and descending order by default', async () => {
+            await setTestBlogs();
+            const response = await req.get(`${baseRoutes.blogs}`);
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].name).toEqual(testBlogs[8].name);
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeGreaterThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+            expect(response.body.pagesCount).toEqual(1);
+            expect(response.body.totalCount).toEqual(9);
+            expect(response.body.items[0]).toHaveProperty('createdAt');
+            expect(response.body.items[0]).toHaveProperty('isMembership');
+            expect(response.body.items[0]).toHaveProperty('websiteUrl');
+        });
+
+        it('returns errors if invalid search params are provided', async () => {
+            await setTestBlogs();
+            const response = await req.get(
+                `${baseRoutes.blogs}?sortDirection=ascqwerty&sortBy=createdAtqwerty&pageSize=0&pageNumber=big_number`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages.length).toEqual(4);
+            const errorsParams = response.body.errorsMessages.map(
+                (error: { message: string; field: string }) => error.field
+            );
+            ['sortDirection', 'sortBy', 'pageSize', 'pageNumber'].forEach(
+                (param) => {
+                    expect(errorsParams).toContain(param);
+                }
+            );
+        });
+
+        it('returns a list of blogs sorted by createdAt and ascending order', async () => {
+            await setTestBlogs();
+            const response = await req.get(
+                `${baseRoutes.blogs}?sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].name).toEqual(testBlogs[0].name);
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeLessThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+            expect(response.body.pagesCount).toEqual(1);
+            expect(response.body.totalCount).toEqual(9);
+        });
+
+        it('returns a list of blogs sorted by name and descending order', async () => {
+            await setTestBlogs();
+            const response = await req.get(`${baseRoutes.blogs}?sortBy=name`);
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].name).toEqual(testBlogs[8].name);
+            expect(
+                response.body.items[0].name > response.body.items[8].name
+            ).toBeTruthy();
+        });
+
+        it('returns a list of blogs sorted by name and ascending order', async () => {
+            await blogsRepository.setBlogs([...testBlogs]);
+            const response = await req.get(
+                `${baseRoutes.blogs}?sortBy=name&sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].name).toEqual(testBlogs[0].name);
+            expect(
+                response.body.items[8].name > response.body.items[0].name
+            ).toBeTruthy();
+        });
+
+        it('returns a list of blogs with pagination and page size 3', async () => {
+            await blogsRepository.setBlogs([...testBlogs]);
+            const response = await req.get(
+                `${baseRoutes.blogs}?pageSize=3&sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.items[2].name).toEqual(testBlogs[2].name);
+        });
+
+        it('returns a list of blogs with pagination, page size 3, and page number 2', async () => {
+            await blogsRepository.setBlogs([...testBlogs]);
+            const response = await req.get(
+                `${baseRoutes.blogs}?pageSize=3&sortDirection=asc&pageNumber=2`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(2);
+            expect(response.body.items[2].name).toEqual(testBlogs[5].name);
+        });
+
+        it('returns a list of blogs with pagination, page size 4, and page number 3', async () => {
+            await blogsRepository.setBlogs([...testBlogs]);
+            const response = await req.get(
+                `${baseRoutes.blogs}?pageSize=4&sortDirection=asc&pageNumber=3`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(1);
+            expect(response.body.pageSize).toEqual(4);
+            expect(response.body.page).toEqual(3);
+            expect(response.body.items[0].name).toEqual(testBlogs[8].name);
+        });
+
+        it('returns a list of blogs with the name matching the search term', async () => {
+            await setTestBlogs();
+            await blogsRepository.setBlogs([
+                {
+                    name: 'Test Blog10',
+                    description: 'Test description 10',
+                    websiteUrl: 'https://test10.com',
+                },
+                {
+                    name: 'Test Blog11',
+                    description: 'Test description 11',
+                    websiteUrl: 'https://test11.com',
+                },
+                {
+                    name: 'Test Blog12',
+                    description: 'Test description 11',
+                    websiteUrl: 'https://test11.com',
+                },
+            ]);
+            const response_1 = await req.get(
+                `${baseRoutes.blogs}?searchNameTerm=blog`
+            );
+            expect(response_1.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response_1.body.totalCount).toEqual(12);
+
+            const response_2 = await req.get(
+                `${baseRoutes.blogs}?searchNameTerm=blog1`
+            );
+            expect(response_2.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response_2.body.totalCount).toEqual(3);
+
+            ['Test Blog10', 'Test Blog11', 'Test Blog12'].forEach(
+                (blogName) => {
+                    expect(
+                        response_2.body.items.some(
+                            (blog: TBlog) => blog.name === blogName
+                        )
+                    ).toBeTruthy();
+                }
+            );
+        });
+    });
+
+    describe('POST /blogs/:blogId/posts', () => {
+        let createdBlog: TBlog;
+        const testPost = testPosts[0];
+
+        beforeEach(async () => {
+            await postsRepository.setPosts([]);
+            createdBlog = await addNewBlog(testBlogs[0]);
+            testPost.blogId = createdBlog.id;
+        });
+
+        it('can not create a new post for particular blog without authorization', async () => {
+            const response = await req.post(baseRoutes.posts).send(testPost);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('can not create a post if auth data is invalid', async () => {
+            const response = await req
+                .post(baseRoutes.posts)
+                .auth(...invalidAuthData)
+                .send(testPost);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('creates a new post', async () => {
+            const response = await req
+                .post(baseRoutes.posts)
+                .auth(...validAuthData)
+                .send(testPost);
+            expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
+            expect(response.body).toEqual(expect.objectContaining(testPost));
+            expect(response.body.blogName).toEqual(createdBlog.name);
+        });
+
+        it('returns an error if required fields are missing', async () => {
+            (Object.keys(testPost) as (keyof typeof testPost)[]).forEach(
+                async (key) => {
+                    const newPost = { ...testPost };
+                    delete newPost[key];
+                    const response = await req
+                        .post(baseRoutes.posts)
+                        .auth(...validAuthData)
+                        .send(newPost)
+                        .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+                    expect(response.body.errorsMessages[0].field).toEqual(key);
+                }
+            );
+        });
+
+        it('returns an error if title field is not valid', async () => {
+            const newPost = {
+                ...testPost,
+            };
+
+            newPost.title = invalidPostsFields.title.length;
+
+            const response = await req
+                .post(baseRoutes.posts)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('title');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.title.length
+            );
+        });
+
+        it('returns an error if shortDescription field is not valid', async () => {
+            const newPost = {
+                ...testPost,
+            };
+
+            newPost.shortDescription =
+                invalidPostsFields.shortDescription.length;
+
+            const response = await req
+                .post(baseRoutes.posts)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual(
+                'shortDescription'
+            );
+            expect(response.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.shortDescription.length
+            );
+        });
+
+        it('returns an error if content field is not valid', async () => {
+            const newPost = {
+                ...testPost,
+            };
+
+            newPost.content = invalidPostsFields.content.length;
+
+            const response = await req
+                .post(baseRoutes.posts)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('content');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.content.length
+            );
+        });
+
+        it('returns an error if blogId field is not valid', async () => {
+            const newPost = {
+                ...testPost,
+            };
+
+            newPost.blogId = invalidObjectId;
+
+            const response_1 = await req
+                .post(baseRoutes.posts)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response_1.body.errorsMessages[0].field).toEqual('blogId');
+            expect(response_1.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.blogId.format
+            );
+
+            newPost.blogId = validObjectId;
+
+            const response_2 = await req
+                .post(baseRoutes.posts)
+                .auth(...validAuthData)
+                .send(newPost)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response_2.body.errorsMessages[0].field).toEqual('blogId');
+            expect(response_2.body.errorsMessages[0].message).toEqual(
+                postsValidationErrorMessages.blogId.value
+            );
+        });
+    });
+
+    describe('GET /blogs/:blogId/posts', () => {
+        let addedBlogId: TBlog['id'];
+
+        beforeEach(async () => {
+            await addNewBlog(testBlogs[0]);
+            addedBlogId = (await req.get(baseRoutes.blogs)).body.items[0].id;
+            await setTestPosts(addedBlogId);
+        });
+
+        it('returns an empty array initially', async () => {
+            await postsRepository.setPosts([]);
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.totalCount).toEqual(0);
+            expect(response.body.items).toEqual([]);
+        });
+
+        it('returns a list of posts for particular blog sorted by createdAt in descending order by default', async () => {
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.totalCount).toEqual(9);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.pagesCount).toEqual(1);
+            expect(response.body.items[0]).toHaveProperty('createdAt');
+            expect(response.body.items[0].title).toEqual(testPosts[8].title);
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeGreaterThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+            expect(response.body.items[0]).toHaveProperty('createdAt');
+            expect(response.body.items[0]).toHaveProperty('blogName');
+        });
+
+        it('returns errors if invalid search params are provided', async () => {
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts?sortDirection=ascqwerty&sortBy=createdAtqwerty&pageSize=0&pageNumber=big_number`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages.length).toEqual(4);
+            const errorsParams = response.body.errorsMessages.map(
+                (error: { message: string; field: string }) => error.field
+            );
+            ['sortDirection', 'sortBy', 'pageSize', 'pageNumber'].forEach(
+                (param) => {
+                    expect(errorsParams).toContain(param);
+                }
+            );
+        });
+
+        it('returns a list of posts for particular blog sorted by createdAt and ascending order', async () => {
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts?sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].title).toEqual(testPosts[0].title);
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeLessThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+            expect(response.body.pagesCount).toEqual(1);
+            expect(response.body.totalCount).toEqual(9);
+        });
+
+        it('returns a list of posts for particular blog sorted by title and descending order', async () => {
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts?sortBy=title`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].title).toEqual(testPosts[8].title);
+            expect(
+                response.body.items[0].title > response.body.items[8].title
+            ).toBeTruthy();
+        });
+
+        it('returns a list of posts for particular blog sorted by title and ascending order', async () => {
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts?sortBy=title&sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].title).toEqual(testPosts[0].title);
+            expect(
+                response.body.items[8].title > response.body.items[0].title
+            ).toBeTruthy();
+        });
+
+        it('returns a list of posts for particular blog with pagination and page size 3', async () => {
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts?pageSize=3&sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.items[2].title).toEqual(testPosts[2].title);
+        });
+
+        it('returns a list of posts for particular blog with pagination, page size 3, and page number 2', async () => {
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts?pageSize=3&sortDirection=asc&pageNumber=2`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(2);
+            expect(response.body.items[2].title).toEqual(testPosts[5].title);
+        });
+
+        it('returns a list of posts for particular blog with pagination, page size 4, and page number 3', async () => {
+            const response = await req.get(
+                `${baseRoutes.blogs}/${addedBlogId}/posts?pageSize=4&sortDirection=asc&pageNumber=3`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(1);
+            expect(response.body.pageSize).toEqual(4);
+            expect(response.body.page).toEqual(3);
+            expect(response.body.items[0].title).toEqual(testPosts[8].title);
         });
     });
 
     describe('POST /blogs', () => {
         it('can not create a new blog without authorization', async () => {
-            const response = await req.post(baseRoutes.blogs).send(testBlog);
+            const response = await req
+                .post(baseRoutes.blogs)
+                .send(testBlogs[0]);
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
@@ -52,7 +487,7 @@ describe('Blogs Controller', () => {
             const response = await req
                 .post(baseRoutes.blogs)
                 .auth(...invalidAuthData)
-                .send(testBlog);
+                .send(testBlogs[0]);
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
@@ -60,29 +495,30 @@ describe('Blogs Controller', () => {
             const response = await req
                 .post(baseRoutes.blogs)
                 .auth(...validAuthData)
-                .send(testBlog);
+                .send(testBlogs[0]);
             expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
-            expect(response.body).toEqual(expect.objectContaining(testBlog));
+            expect(response.body.name).toEqual(testBlogs[0].name);
+            expect(response.body.description).toEqual(testBlogs[0].description);
         });
 
         it('returns an error if required fields are missing', async () => {
-            (Object.keys(testBlog) as (keyof typeof testBlog)[]).forEach(
-                async (key) => {
-                    const newBlog = { ...testBlog };
-                    delete newBlog[key];
-                    const response = await req
-                        .post(baseRoutes.blogs)
-                        .auth(...validAuthData)
-                        .send(newBlog)
-                        .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-                    expect(response.body.errorsMessages[0].field).toEqual(key);
-                }
-            );
+            (
+                Object.keys(testBlogs[0]) as (keyof (typeof testBlogs)[0])[]
+            ).forEach(async (key) => {
+                const newBlog = { ...testBlogs[0] };
+                delete newBlog[key];
+                const response = await req
+                    .post(baseRoutes.blogs)
+                    .auth(...validAuthData)
+                    .send(newBlog)
+                    .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+                expect(response.body.errorsMessages[0].field).toEqual(key);
+            });
         });
 
         it('returns an error if name field is not valid', async () => {
             const newBlog = {
-                ...testBlog,
+                ...testBlogs[0],
             };
 
             newBlog.name = invalidBlogsFields.name.length;
@@ -100,7 +536,7 @@ describe('Blogs Controller', () => {
 
         it('returns an error if description field is not valid', async () => {
             const newBlog = {
-                ...testBlog,
+                ...testBlogs[0],
             };
 
             newBlog.description = invalidBlogsFields.description.length;
@@ -120,7 +556,7 @@ describe('Blogs Controller', () => {
 
         it('returns an error if websiteUrl field is not valid', async () => {
             const newBlog = {
-                ...testBlog,
+                ...testBlogs[0],
             };
 
             newBlog.websiteUrl = invalidBlogsFields.websiteUrl.format;
@@ -155,7 +591,7 @@ describe('Blogs Controller', () => {
 
     describe('GET /blogs/:id', () => {
         it('returns a blog by id', async () => {
-            const createdBlog = await addNewBlog(testBlog);
+            const createdBlog = await addNewBlog(testBlogs[0]);
             const response = await req.get(
                 `${baseRoutes.blogs}/${createdBlog.id}`
             );
@@ -164,7 +600,7 @@ describe('Blogs Controller', () => {
         });
 
         it("returns an error if blog's id is not valid", async () => {
-            const createdBlog = await addNewBlog(testBlog);
+            const createdBlog = await addNewBlog(testBlogs[0]);
             const response = await req.get(
                 `${baseRoutes.blogs}/${createdBlog.id.slice(1, 7)}`
             );
@@ -185,7 +621,7 @@ describe('Blogs Controller', () => {
     describe('PUT /blogs/:id', () => {
         it('can not update a blog without authorization', async () => {
             const updatedBlog = {
-                ...testBlog,
+                ...testBlogs[0],
                 name: 'Updated name',
             };
             const response = await req
@@ -196,7 +632,7 @@ describe('Blogs Controller', () => {
 
         it('can not update a blog if auth data is invalid', async () => {
             const updatedBlog = {
-                ...testBlog,
+                ...testBlogs[0],
                 name: 'Updated name',
             };
             const response = await req
@@ -207,15 +643,17 @@ describe('Blogs Controller', () => {
         });
 
         it('updates a blog', async () => {
-            await addNewBlog(testBlog);
-            const response = await req.get(baseRoutes.blogs);
-            const blogId = response.body[0].id;
+            const createdBlogId = (await addNewBlog(testBlogs[0])).id;
+            const response = await req.get(
+                `${baseRoutes.blogs}/${createdBlogId}`
+            );
+            expect(response.body.id).toBe(createdBlogId);
             const updatedBlog = {
-                ...testBlog,
+                ...testBlogs[0],
                 name: 'Updated name',
             };
             const updateResponse = await req
-                .put(`${baseRoutes.blogs}/${blogId}`)
+                .put(`${baseRoutes.blogs}/${createdBlogId}`)
                 .auth(...validAuthData)
                 .send(updatedBlog);
             expect(updateResponse.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
@@ -223,7 +661,7 @@ describe('Blogs Controller', () => {
 
         it('returns an error if blog is not found', async () => {
             const updatedBlog = {
-                ...testBlog,
+                ...testBlogs[0],
                 name: 'Updated name',
             };
             const response = await req
@@ -235,7 +673,7 @@ describe('Blogs Controller', () => {
 
         it("returns an error if blog's id is not valid", async () => {
             const updatedBlog = {
-                ...testBlog,
+                ...testBlogs[0],
                 name: 'Updated name',
             };
             const response = await req
@@ -250,7 +688,7 @@ describe('Blogs Controller', () => {
 
         it('returns an error if name field is not valid', async () => {
             const newBlog = {
-                ...testBlog,
+                ...testBlogs[0],
             };
 
             newBlog.name = invalidBlogsFields.name.length;
@@ -268,7 +706,7 @@ describe('Blogs Controller', () => {
 
         it('returns an error if description field is not valid', async () => {
             const newBlog = {
-                ...testBlog,
+                ...testBlogs[0],
             };
 
             newBlog.description = invalidBlogsFields.description.length;
@@ -288,7 +726,7 @@ describe('Blogs Controller', () => {
 
         it('returns an error if websiteUrl field is not valid', async () => {
             const newBlog = {
-                ...testBlog,
+                ...testBlogs[0],
             };
 
             newBlog.websiteUrl = invalidBlogsFields.websiteUrl.format;
@@ -323,7 +761,7 @@ describe('Blogs Controller', () => {
 
     describe('DELETE /blogs/:id', () => {
         it('can not delete a blog without authorization', async () => {
-            const createdBlog = await addNewBlog(testBlog);
+            const createdBlog = await addNewBlog(testBlogs[0]);
             const response = await req.delete(
                 `${baseRoutes.blogs}/${createdBlog.id}`
             );
@@ -331,7 +769,7 @@ describe('Blogs Controller', () => {
         });
 
         it('can not delete a blog if auth data is invalid', async () => {
-            const createdBlog = await addNewBlog(testBlog);
+            const createdBlog = await addNewBlog(testBlogs[0]);
             const response = await req
                 .delete(`${baseRoutes.blogs}/${createdBlog.id}`)
                 .auth(...invalidAuthData);
@@ -339,7 +777,7 @@ describe('Blogs Controller', () => {
         });
 
         it('deletes a blog', async () => {
-            const createdBlog = await addNewBlog(testBlog);
+            const createdBlog = await addNewBlog(testBlogs[0]);
             const response_1 = await req
                 .delete(`${baseRoutes.blogs}/${createdBlog.id}`)
                 .auth(...validAuthData);

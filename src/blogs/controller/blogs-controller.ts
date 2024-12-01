@@ -37,7 +37,10 @@ export const blogsController = {
         res.status(HTTP_STATUS_CODES.CREATED).json(createdBlog);
     },
 
-    async createNewPostForBlog(req: Omit<TCreateUpdatePostRequest, 'blogId'>, res: Response<TPost>) {
+    async createNewPostForBlog(
+        req: Omit<TCreateUpdatePostRequest, 'blogId'>,
+        res: Response<TPost>
+    ) {
         const createdPost = await blogsService.createNewPostForBlog(req);
         if (!createdPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
@@ -47,7 +50,6 @@ export const blogsController = {
     },
 
     async getBlog(req: TGetDeleteDBInstanceRequest, res: Response<TBlog>) {
-        console.log('getBlog');
         const foundBlog = await blogsRepository.getBlog(req.params.id);
 
         if (!foundBlog) {
