@@ -70,9 +70,9 @@ export const getSearchQueries = (queries: TSearchQueryParams) => {
 
 export const getDBSearchQueries = (
     searchQueries: TMappedSearchQueryParams
-): TDBSearchParams => {
+) => {
     const { sortBy, sortDirection, pageNumber, pageSize } = searchQueries;
-    const dbSearchQueries: TDBSearchParams = {
+    const dbSearchQueries = {
         sortBy,
         sortDirection,
         skip: (pageNumber - 1) * pageSize,
