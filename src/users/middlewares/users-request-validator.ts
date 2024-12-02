@@ -122,7 +122,7 @@ export const usersQuerySchema: Schema = {
     },
 };
 
-export const postsValidators = {
+export const usersValidators = {
     getUsersRequest: requestValidator({ querySchema: usersQuerySchema }),
     createNewUserRequest: requestValidator({ bodySchema: usersBodySchema }),
     deleteUserRequest: requestValidator({ paramSchema }),

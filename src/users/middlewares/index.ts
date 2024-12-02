@@ -1,4 +1,4 @@
-import { postsBodySchema, postsValidators, postsQuerySchema } from './users-request-validator';
+import { usersValidators } from './users-request-validator';
 
-export { postsBodySchema, postsValidators, postsQuerySchema };
+export { usersValidators };
 

@@ -2,7 +2,6 @@ import { NextFunction, Response, Request } from 'express';
 import { checkSchema, Schema, validationResult } from 'express-validator';
 import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from './constants';
 import {
-    TDBSearchParams,
     TMappedSearchQueryParams,
     TSearchQueryParams,
 } from './types';
@@ -46,30 +45,29 @@ export const requestValidator = ({
     return [checkSchema(schema, scopes), errorValidator];
 };
 
-export const getSortDirectionValue = (
-    sortDirection: TSearchQueryParams['sortDirection']
-) => {
-    if (sortDirection === 'asc') {
-        return 1;
-    } else if (sortDirection === 'desc') {
-        return -1;
-    }
-    return DEFAULT_SEARCH_PARAMS.sortDirection;
-};
-
-export const getSearchQueries = (queries: TSearchQueryParams) => {
+export const getSearchQueries = <T>(queries: TSearchQueryParams<T>) => {
     const { sortBy, sortDirection, pageNumber, pageSize } = queries;
-    const searchQueries: TMappedSearchQueryParams = {
+
+    let mappedSortDirection;
+    if (sortDirection === 'asc') {
+        mappedSortDirection = 1;
+    } else if (sortDirection === 'desc') {
+        mappedSortDirection=  -1;
+    } else {
+        mappedSortDirection =  DEFAULT_SEARCH_PARAMS.sortDirection;
+    }
+
+    const searchQueries: TMappedSearchQueryParams<T> = {
         sortBy: sortBy || DEFAULT_SEARCH_PARAMS.sortBy,
-        sortDirection: getSortDirectionValue(sortDirection),
+        sortDirection: mappedSortDirection,
         pageNumber: Number(pageNumber) || DEFAULT_SEARCH_PARAMS.pageNumber,
         pageSize: Number(pageSize) || DEFAULT_SEARCH_PARAMS.pageSize,
     };
     return searchQueries;
 };
 
-export const getDBSearchQueries = (
-    searchQueries: TMappedSearchQueryParams
+export const getDBSearchQueries = <T>(
+    searchQueries: TMappedSearchQueryParams<T>
 ) => {
     const { sortBy, sortDirection, pageNumber, pageSize } = searchQueries;
     const dbSearchQueries = {

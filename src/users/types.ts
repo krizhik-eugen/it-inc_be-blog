@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { TSearchQueryParams } from '../types';
+import { TIDParam, TSearchQueryParams } from '../types';
+import { UsersDBSearchParams } from './model';
 
 export type UserViewModel = {
     id: string;
@@ -22,12 +23,14 @@ export type AllUsersResponseModel = {
     items: UserViewModel[];
 };
 
-export type TGetAllUsersRequestQueries = TSearchQueryParams & { searchLoginTerm?: string, searchEmailTerm?: string };
+export type TGetAllUsersRequestQueries = TSearchQueryParams<UsersDBSearchParams['sortBy']> & { searchLoginTerm?: string, searchEmailTerm?: string };
 
 export type TGetAllUsersRequest = Request<object, object, object, TGetAllUsersRequestQueries>;
 
+export type TGetAllUsersResponse = Response<AllUsersResponseModel>;
+
 export type TCreateNewUserRequest = Request<object, object, UserCreateRequestModel>;
 
-export type TDeleteUserRequest = Request<{ id: string }>;
+export type TDeleteUserRequest = Request<TIDParam>;
 
 export type TCreateNewUserResponse = Response<UserViewModel | { errorsMessages: { message: string, field: string }[]}>;

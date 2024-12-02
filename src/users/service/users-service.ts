@@ -1,7 +1,6 @@
-import { TCreateNewUserRequest, TCreateUpdatePostRequest, TPostSearchParams } from '../types';
-import { postsRepository, usersRepository } from '../repository';
-import { getDBSearchQueries, getSearchQueries } from '../../helpers';
-import { blogsRepository } from '../../blogs';
+import { TCreateNewUserRequest, UserCreateRequestModel } from '../types';
+import { usersRepository } from '../repository';
+import { ObjectId } from 'mongodb';
 
 export const usersService = {
     async createNewUser(req: TCreateNewUserRequest) {
@@ -22,7 +21,7 @@ export const usersService = {
         //TODO: add password encryption
         const newUser = { login, email, password: '', createdAt: new Date().toISOString() };
         const newUserId = await usersRepository.addNewUser(newUser);
-        const addedUser = await usersRepository.findUserById(newUserId)
+        const addedUser = await usersRepository.findUserById(new ObjectId(newUserId))
         if (!addedUser) {
             return undefined;
         }
@@ -33,4 +32,20 @@ export const usersService = {
             createdAt: addedUser.createdAt,
         };
     },
+
+    async deleteUser(id: string) {
+        const isDeleted = await usersRepository.deleteUser(new ObjectId(id));
+        return isDeleted;
+    },
+
+    async setUsers (users: UserCreateRequestModel[]) {
+        const mappedUsers = users.map((user) => {
+            return {
+                login: user.login,
+                email: user.email,
+                password: user.password,
+                createdAt: new Date().toISOString(),
+        }});
+        await usersRepository.setUsers(mappedUsers);
+    }
 };

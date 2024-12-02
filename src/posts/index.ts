@@ -3,9 +3,9 @@ import { postsValidators, postsQuerySchema } from './middlewares';
 import { postsRepository } from './repository';
 import { postsRouter } from './router';
 import {
-    TCreateUpdatePostRequest,
-    TGetDeleteDBInstanceRequest,
-    TPost,
+    PostViewModel,
+    TGetAllPostsRequestQueries,
+    PostCreateRequestModel
 } from './types';
 
 export {
@@ -14,7 +14,7 @@ export {
     postsRouter,
     postsValidators,
     postsQuerySchema,
-    TCreateUpdatePostRequest,
-    TGetDeleteDBInstanceRequest,
-    TPost,
+    PostViewModel,
+    TGetAllPostsRequestQueries,
+    PostCreateRequestModel
 };

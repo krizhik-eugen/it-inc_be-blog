@@ -2,17 +2,16 @@ import { ObjectId } from 'mongodb';
 import { blogsRepository } from '../../blogs';
 import { postsCollection } from '../model';
 import { TPost } from '../types';
-import { TPostInstance } from '../model/posts-model';
-import { TDBSearchParams } from '../../types';
+import { PostDBModel, TPostInstance } from '../model/posts-model';
 
 export const postsRepository = {
-    async getPostsCount(blogId = ''): Promise<number> {
+    async getPostsCount(blogId = ''){
         return await postsCollection.countDocuments({
             blogId: { $regex: blogId ?? '', $options: 'i' },
         });
     },
 
-    async getPosts(searchQueries: TDBSearchParams): Promise<TPost[]> {
+    async getPosts(searchQueries): Promise<TPost[]> {
         const foundPosts = await postsCollection
             .find({
                 blogId: { $regex: searchQueries.blogId ?? '', $options: 'i' },
@@ -27,21 +26,13 @@ export const postsRepository = {
         });
     },
 
-    async addNewPost(newPost: Required<Omit<TPost, 'id' | 'createdAt'>>) {
-        const result = await postsCollection.insertOne({
-            ...newPost,
-            createdAt: new Date().toISOString(),
-        });
+    async addNewPost(newPost: PostDBModel) {
+        const result = await postsCollection.insertOne(newPost);
         return this.getPost(result.insertedId.toString());
     },
 
-    async getPost(id: TPost['id']) {
-        const foundPost = await postsCollection.findOne({
-            _id: new ObjectId(id),
-        });
-        if (!foundPost) return undefined;
-        const { _id, ...foundPostWithoutId } = foundPost;
-        return { ...foundPostWithoutId, id: _id.toString() };
+    async getPost(_id: PostDBModel['_id']) {
+        return await postsCollection.findOne({_id});
     },
 
     async updatePost(updatedPost: TPost) {

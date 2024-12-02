@@ -1,22 +1,25 @@
-export type TSearchQueryParams = {
-    sortBy?: 'createdAt' | 'name' | 'title' | 'blogName';
+export type TSearchQueryParams<T> = {
+    sortBy?: T;
     sortDirection?: 'asc' | 'desc';
     pageNumber?: string;
     pageSize?: string;
 };
 
-export type TMappedSearchQueryParams = {
-    sortBy: 'createdAt' | 'name' | 'title' | 'blogName';
+export type TMappedSearchQueryParams<T> = {
+    sortBy: T;
     sortDirection: 1 | -1;
     pageNumber: number;
     pageSize: number;
 };
 
-export type TDBSearchParams = {
-    blogId?: string;
-    findName?: string;
-    sortBy: 'createdAt' | 'name' | 'title' | 'blogName';
-    sortDirection: 1 | -1;
-    skip: number;
-    limit: number;
+export type TIDParam = {
+    id: string;
+}
+
+export type AllItemsViewModel<T> = {
+    pagesCount: number;
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    items: T[];
 };
