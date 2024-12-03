@@ -6,7 +6,7 @@ import { blogsRepository, BlogViewModel } from '../../src/blogs';
 import { DBHandlers, req } from '../test-helpers';
 
 describe('Testing Controller', () => {
-    const testPost: Required< Omit<PostViewModel, 'id'>> = {
+    const testPost: Required<Omit<PostViewModel, 'id'>> = {
         title: 'Test Post',
         content: 'Test content',
         blogId: '',
@@ -28,7 +28,9 @@ describe('Testing Controller', () => {
         };
 
         const createdBlogId = await blogsRepository.addNewBlog(newBlog);
-        const createdBlog = await blogsRepository.findBlogById(new ObjectId(createdBlogId));
+        const createdBlog = await blogsRepository.findBlogById(
+            new ObjectId(createdBlogId)
+        );
         testBlog = {
             id: createdBlog?._id.toString() || '',
             name: createdBlog?.name || '',
@@ -37,7 +39,7 @@ describe('Testing Controller', () => {
             createdAt: createdBlog?.createdAt || '',
             isMembership: createdBlog?.isMembership || false,
         };
-        testPost.blogName = testBlog.name ;
+        testPost.blogName = testBlog.name;
         testPost.blogId = testBlog.id;
         await postsRepository.addNewPost(testPost);
     });

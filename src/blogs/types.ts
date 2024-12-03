@@ -1,7 +1,15 @@
 import { Request, Response } from 'express';
-import { AllItemsViewModel, TIDParam, TSearchQueryParams } from '../common-types';
+import {
+    AllItemsViewModel,
+    TIDParam,
+    TSearchQueryParams,
+} from '../common-types';
 import { BlogsDBSearchParams } from './model';
-import { PostViewModel, TGetAllPostsRequestQueries , PostCreateRequestModel} from '../posts';
+import {
+    PostViewModel,
+    TGetAllPostsRequestQueries,
+    PostCreateRequestModel,
+} from '../posts';
 
 export type BlogViewModel = {
     id: string;
@@ -18,28 +26,54 @@ export type BlogCreateRequestModel = {
     websiteUrl: string;
 };
 
-export type TGetAllBlogsRequestQueries = TSearchQueryParams<BlogsDBSearchParams['sortBy']> & {searchNameTerm?: string }
+export type TGetAllBlogsRequestQueries = TSearchQueryParams<
+    BlogsDBSearchParams['sortBy']
+> & { searchNameTerm?: string };
 
-export type TGetAllBlogsRequest = Request<object,object,object,TGetAllBlogsRequestQueries>;
+export type TGetAllBlogsRequest = Request<
+    object,
+    object,
+    object,
+    TGetAllBlogsRequestQueries
+>;
 
-export type TGetAllBlogsResponse = Response<AllItemsViewModel<BlogViewModel>>
+export type TGetAllBlogsResponse = Response<AllItemsViewModel<BlogViewModel>>;
 
-export type TCreateNewBlogRequest = Request<object,object,BlogCreateRequestModel>;
+export type TCreateNewBlogRequest = Request<
+    object,
+    object,
+    BlogCreateRequestModel
+>;
 
-export type TCreateNewBlogResponse = Response<BlogViewModel>
+export type TCreateNewBlogResponse = Response<BlogViewModel>;
 
-export type TGetBlogRequest = Request<TIDParam,object,object,object>;
+export type TGetBlogRequest = Request<TIDParam, object, object, object>;
 
-export type TGetBlogResponse = Response<BlogViewModel>
+export type TGetBlogResponse = Response<BlogViewModel>;
 
-export type TUpdateBlogRequest = Request<TIDParam,object,BlogCreateRequestModel>;
+export type TUpdateBlogRequest = Request<
+    TIDParam,
+    object,
+    BlogCreateRequestModel
+>;
 
 export type TDeleteBlogRequest = Request<TIDParam>;
 
-export type TGetAllBlogPostsRequest = Request<TIDParam,object,object,TGetAllPostsRequestQueries>
+export type TGetAllBlogPostsRequest = Request<
+    TIDParam,
+    object,
+    object,
+    TGetAllPostsRequestQueries
+>;
 
-export type TGetAllBlogPostsResponse = Response<AllItemsViewModel<PostViewModel>>
+export type TGetAllBlogPostsResponse = Response<
+    AllItemsViewModel<PostViewModel>
+>;
 
-export type TCreateNewBlogPostRequest = Request<TIDParam,object, Omit<PostCreateRequestModel, 'blogId'>>
+export type TCreateNewBlogPostRequest = Request<
+    TIDParam,
+    object,
+    Omit<PostCreateRequestModel, 'blogId'>
+>;
 
-export type TCreateNewBlogPostResponse = Response<PostViewModel>
+export type TCreateNewBlogPostResponse = Response<PostViewModel>;

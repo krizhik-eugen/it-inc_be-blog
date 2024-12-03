@@ -1,6 +1,15 @@
 import { Response } from 'express';
 import { HTTP_STATUS_CODES } from '../../constants';
-import { TCreateNewPostRequest, TCreateNewPostResponse, TDeletePostRequest, TGetAllPostsRequest, TGetAllPostsResponse, TGetPostRequest, TGetPostResponse, TUpdatePostRequest } from '../types';
+import {
+    TCreateNewPostRequest,
+    TCreateNewPostResponse,
+    TDeletePostRequest,
+    TGetAllPostsRequest,
+    TGetAllPostsResponse,
+    TGetPostRequest,
+    TGetPostResponse,
+    TUpdatePostRequest,
+} from '../types';
 import { postsService } from '../service';
 import { postsQueryRepository } from '../repository';
 
@@ -10,7 +19,7 @@ export const postsController = {
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
 
-     async getPost(req: TGetPostRequest, res: TGetPostResponse) {
+    async getPost(req: TGetPostRequest, res: TGetPostResponse) {
         const foundPost = await postsQueryRepository.getPost(req.params.id);
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
@@ -19,7 +28,10 @@ export const postsController = {
         res.status(HTTP_STATUS_CODES.OK).json(foundPost);
     },
 
-    async createNewPost(req: TCreateNewPostRequest, res: TCreateNewPostResponse) {
+    async createNewPost(
+        req: TCreateNewPostRequest,
+        res: TCreateNewPostResponse
+    ) {
         const createdPost = await postsService.createNewPost(req);
         if (!createdPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
@@ -36,7 +48,7 @@ export const postsController = {
                 : HTTP_STATUS_CODES.NOT_FOUND
         );
     },
-    
+
     async deletePost(req: TDeletePostRequest, res: Response) {
         const isPostDeleted = await postsService.deletePost(req);
         res.sendStatus(

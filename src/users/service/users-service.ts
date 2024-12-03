@@ -6,22 +6,32 @@ export const usersService = {
     async createNewUser(req: TCreateNewUserRequest) {
         const { login, email } = req.body;
 
-        const user = await usersRepository.findUserByLoginOrEmail({login, email});
+        const user = await usersRepository.findUserByLoginOrEmail({
+            login,
+            email,
+        });
         if (user) {
             return {
                 errorsMessages: [
                     {
-                        message: 'User with this login or email already exists', 
-                        field: ''
-                    }
-                ]
+                        message: 'User with this login or email already exists',
+                        field: '',
+                    },
+                ],
             };
         }
 
         //TODO: add password encryption
-        const newUser = { login, email, password: '', createdAt: new Date().toISOString() };
+        const newUser = {
+            login,
+            email,
+            password: '',
+            createdAt: new Date().toISOString(),
+        };
         const newUserId = await usersRepository.addNewUser(newUser);
-        const addedUser = await usersRepository.findUserById(new ObjectId(newUserId))
+        const addedUser = await usersRepository.findUserById(
+            new ObjectId(newUserId)
+        );
         if (!addedUser) {
             return undefined;
         }
@@ -38,14 +48,15 @@ export const usersService = {
         return isDeleted;
     },
 
-    async setUsers (users: UserCreateRequestModel[]) {
+    async setUsers(users: UserCreateRequestModel[]) {
         const mappedUsers = users.map((user) => {
             return {
                 login: user.login,
                 email: user.email,
                 password: user.password,
                 createdAt: new Date().toISOString(),
-        }});
+            };
+        });
         await usersRepository.setUsers(mappedUsers);
-    }
+    },
 };

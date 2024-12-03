@@ -37,7 +37,8 @@ export const usersBodySchema: Schema = {
         },
         matches: {
             options: loginPattern,
-            errorMessage: 'Login should contain only latin letters, numbers, - and _',
+            errorMessage:
+                'Login should contain only latin letters, numbers, - and _',
         },
     },
     password: {
@@ -67,19 +68,20 @@ export const usersBodySchema: Schema = {
         },
         matches: {
             options: emailPattern,
-            errorMessage: 'Email should be a valid email address, example: example@example.com',
+            errorMessage:
+                'Email should be a valid email address, example: example@example.com',
         },
     },
 };
 
 export const usersQuerySchema: Schema = {
-     searchLoginTerm: {
+    searchLoginTerm: {
         in: ['query'],
         optional: true,
         isString: true,
         errorMessage: 'searchNameTerm must be a string',
     },
-     searchEmailTerm: {
+    searchEmailTerm: {
         in: ['query'],
         optional: true,
         isString: true,

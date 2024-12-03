@@ -1,26 +1,35 @@
-import { PostViewModel, TCreateNewPostRequest, TDeletePostRequest, TUpdatePostRequest } from '../types';
+import {
+    PostViewModel,
+    TCreateNewPostRequest,
+    TDeletePostRequest,
+    TUpdatePostRequest,
+} from '../types';
 import { postsRepository } from '../repository';
 import { blogsRepository } from '../../blogs';
 import { ObjectId } from 'mongodb';
 import { PostDBModel } from '../model';
 
 export const postsService = {
-    async createNewPost(req: TCreateNewPostRequest){
-        const {title, shortDescription, content, blogId} = req.body;
-        const blog = await blogsRepository.findBlogById(new ObjectId(req.body.blogId));
+    async createNewPost(req: TCreateNewPostRequest) {
+        const { title, shortDescription, content, blogId } = req.body;
+        const blog = await blogsRepository.findBlogById(
+            new ObjectId(req.body.blogId)
+        );
         if (!blog) {
             return undefined;
         }
-        const newPost: PostDBModel = { 
+        const newPost: PostDBModel = {
             blogId,
             title,
             shortDescription,
             content,
             blogName: blog.name,
             createdAt: new Date().toISOString(),
-         };
+        };
         const newPostId = await postsRepository.addNewPost(newPost);
-        const createdPost = await postsRepository.findPostById(new ObjectId(newPostId));
+        const createdPost = await postsRepository.findPostById(
+            new ObjectId(newPostId)
+        );
         if (!createdPost) {
             return undefined;
         }
@@ -36,7 +45,7 @@ export const postsService = {
         return addedPost;
     },
 
-   async updatePost(req: TUpdatePostRequest) {
+    async updatePost(req: TUpdatePostRequest) {
         const isPostUpdated = await postsRepository.updatePost({
             _id: new ObjectId(req.params.id),
             title: req.body.title,
@@ -47,8 +56,10 @@ export const postsService = {
         return isPostUpdated;
     },
 
-     async deletePost(req: TDeletePostRequest) {
-        const isPostDeleted = await postsRepository.deletePost(new ObjectId(req.params.id));
+    async deletePost(req: TDeletePostRequest) {
+        const isPostDeleted = await postsRepository.deletePost(
+            new ObjectId(req.params.id)
+        );
         return isPostDeleted;
     },
 };

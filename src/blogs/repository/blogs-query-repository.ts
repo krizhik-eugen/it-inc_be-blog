@@ -5,10 +5,14 @@ import { AllItemsViewModel } from '../../common-types';
 import { getDBSearchQueries, getSearchQueries } from '../../helpers';
 
 export const blogsQueryRepository = {
-    async getBlogs(req: TGetAllBlogsRequest): Promise<AllItemsViewModel<BlogViewModel>> {
+    async getBlogs(
+        req: TGetAllBlogsRequest
+    ): Promise<AllItemsViewModel<BlogViewModel>> {
         const { searchNameTerm, ...restQueries } = req.query;
-        const searchQueries = getSearchQueries<BlogsDBSearchParams['sortBy']>(restQueries);
-        const dbSearchQueries = getDBSearchQueries<BlogsDBSearchParams['sortBy']>(searchQueries);
+        const searchQueries =
+            getSearchQueries<BlogsDBSearchParams['sortBy']>(restQueries);
+        const dbSearchQueries =
+            getDBSearchQueries<BlogsDBSearchParams['sortBy']>(searchQueries);
         const totalCount = await blogsCollection.countDocuments({
             name: { $regex: searchNameTerm ?? '', $options: 'i' },
         });
@@ -19,15 +23,17 @@ export const blogsQueryRepository = {
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit)
-            .toArray();        
-        const mappedFoundBlogs: BlogViewModel[] = foundBlogs ? foundBlogs.map((blog: Required<BlogDBModel>) => ({
-            id: blog._id.toString(),
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
-            createdAt: blog.createdAt,
-            isMembership: blog.isMembership,
-        })) : [];
+            .toArray();
+        const mappedFoundBlogs: BlogViewModel[] = foundBlogs
+            ? foundBlogs.map((blog: Required<BlogDBModel>) => ({
+                  id: blog._id.toString(),
+                  name: blog.name,
+                  description: blog.description,
+                  websiteUrl: blog.websiteUrl,
+                  createdAt: blog.createdAt,
+                  isMembership: blog.isMembership,
+              }))
+            : [];
         return {
             pagesCount: 1,
             page: searchQueries.pageNumber,

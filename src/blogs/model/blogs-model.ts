@@ -17,5 +17,4 @@ export type BlogsDBSearchParams = {
     limit: number;
 };
 
-export const blogsCollection =
-    db.collection<BlogDBModel>('blogs');
+export const blogsCollection = db.collection<BlogDBModel>('blogs');

@@ -14,7 +14,7 @@ export type TMappedSearchQueryParams<T> = {
 
 export type TIDParam = {
     id: string;
-}
+};
 
 export type AllItemsViewModel<T> = {
     pagesCount: number;

@@ -45,7 +45,10 @@ export const postsValidationErrorMessages = {
     },
 };
 
-export const testBlogs: Omit<BlogViewModel, 'id' | 'createdAt' | 'isMembership'>[] = [
+export const testBlogs: Omit<
+    BlogViewModel,
+    'id' | 'createdAt' | 'isMembership'
+>[] = [
     {
         name: 'Test Blog 1',
         description: 'Test description 1',
@@ -93,62 +96,63 @@ export const testBlogs: Omit<BlogViewModel, 'id' | 'createdAt' | 'isMembership'>
     },
 ];
 
-export const testPosts: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>[] = [
-    {
-        title: 'Test Post 1',
-        content: 'Test content 1',
-        blogId: '',
-        shortDescription: 'test shortDescription 1',
-    },
-    {
-        title: 'Test Post 2',
-        content: 'Test content 2',
-        blogId: '',
-        shortDescription: 'test shortDescription 2',
-    },
-    {
-        title: 'Test Post 3',
-        content: 'Test content 3',
-        blogId: '',
-        shortDescription: 'test shortDescription 3',
-    },
-    {
-        title: 'Test Post 4',
-        content: 'Test content 4',
-        blogId: '',
-        shortDescription: 'test shortDescription 4',
-    },
-    {
-        title: 'Test Post 5',
-        content: 'Test content 5',
-        blogId: '',
-        shortDescription: 'test shortDescription 5',
-    },
-    {
-        title: 'Test Post 6',
-        content: 'Test content 6',
-        blogId: '',
-        shortDescription: 'test shortDescription 6',
-    },
-    {
-        title: 'Test Post 7',
-        content: 'Test content 7',
-        blogId: '',
-        shortDescription: 'test shortDescription 7',
-    },
-    {
-        title: 'Test Post 8',
-        content: 'Test content 8',
-        blogId: '',
-        shortDescription: 'test shortDescription 8',
-    },
-    {
-        title: 'Test Post 9',
-        content: 'Test content 9',
-        blogId: '',
-        shortDescription: 'test shortDescription 9',
-    },
-];
+export const testPosts: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>[] =
+    [
+        {
+            title: 'Test Post 1',
+            content: 'Test content 1',
+            blogId: '',
+            shortDescription: 'test shortDescription 1',
+        },
+        {
+            title: 'Test Post 2',
+            content: 'Test content 2',
+            blogId: '',
+            shortDescription: 'test shortDescription 2',
+        },
+        {
+            title: 'Test Post 3',
+            content: 'Test content 3',
+            blogId: '',
+            shortDescription: 'test shortDescription 3',
+        },
+        {
+            title: 'Test Post 4',
+            content: 'Test content 4',
+            blogId: '',
+            shortDescription: 'test shortDescription 4',
+        },
+        {
+            title: 'Test Post 5',
+            content: 'Test content 5',
+            blogId: '',
+            shortDescription: 'test shortDescription 5',
+        },
+        {
+            title: 'Test Post 6',
+            content: 'Test content 6',
+            blogId: '',
+            shortDescription: 'test shortDescription 6',
+        },
+        {
+            title: 'Test Post 7',
+            content: 'Test content 7',
+            blogId: '',
+            shortDescription: 'test shortDescription 7',
+        },
+        {
+            title: 'Test Post 8',
+            content: 'Test content 8',
+            blogId: '',
+            shortDescription: 'test shortDescription 8',
+        },
+        {
+            title: 'Test Post 9',
+            content: 'Test content 9',
+            blogId: '',
+            shortDescription: 'test shortDescription 9',
+        },
+    ];
 
 export const validObjectId = '67430b985302e02a9657421c';
 export const invalidObjectId = 'qwerty1234567890';
@@ -191,7 +195,9 @@ export const invalidPostsFields = {
     },
 };
 
-export const addNewBlog = async (blog: Omit<BlogViewModel, 'id' | 'createdAt' | 'isMembership'>) => {
+export const addNewBlog = async (
+    blog: Omit<BlogViewModel, 'id' | 'createdAt' | 'isMembership'>
+) => {
     const { body } = await req
         .post(baseRoutes.blogs)
         .auth(...validAuthData)
@@ -199,7 +205,9 @@ export const addNewBlog = async (blog: Omit<BlogViewModel, 'id' | 'createdAt' | 
     return body;
 };
 
-export const addNewPost = async (post: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>) => {
+export const addNewPost = async (
+    post: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>
+) => {
     const { body } = await req
         .post(baseRoutes.posts)
         .auth(...validAuthData)

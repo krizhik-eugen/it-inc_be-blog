@@ -1,7 +1,20 @@
 import { Response } from 'express';
 import { blogsQueryRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../constants';
-import { TCreateNewBlogPostRequest, TCreateNewBlogPostResponse, TCreateNewBlogRequest, TCreateNewBlogResponse, TDeleteBlogRequest, TGetAllBlogPostsRequest, TGetAllBlogPostsResponse, TGetAllBlogsRequest, TGetAllBlogsResponse, TGetBlogRequest, TGetBlogResponse, TUpdateBlogRequest } from '../types';
+import {
+    TCreateNewBlogPostRequest,
+    TCreateNewBlogPostResponse,
+    TCreateNewBlogRequest,
+    TCreateNewBlogResponse,
+    TDeleteBlogRequest,
+    TGetAllBlogPostsRequest,
+    TGetAllBlogPostsResponse,
+    TGetAllBlogsRequest,
+    TGetAllBlogsResponse,
+    TGetBlogRequest,
+    TGetBlogResponse,
+    TUpdateBlogRequest,
+} from '../types';
 import { blogsService } from '../service';
 import { postsQueryRepository } from '../../posts';
 
@@ -32,7 +45,10 @@ export const blogsController = {
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
 
-    async createNewBlog(req: TCreateNewBlogRequest, res: TCreateNewBlogResponse) {
+    async createNewBlog(
+        req: TCreateNewBlogRequest,
+        res: TCreateNewBlogResponse
+    ) {
         const createdBlog = await blogsService.createNewBlog(req);
         if (!createdBlog) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
@@ -41,7 +57,7 @@ export const blogsController = {
         res.status(HTTP_STATUS_CODES.CREATED).json(createdBlog);
     },
 
-     async createNewPostForBlog(
+    async createNewPostForBlog(
         req: TCreateNewBlogPostRequest,
         res: TCreateNewBlogPostResponse
     ) {

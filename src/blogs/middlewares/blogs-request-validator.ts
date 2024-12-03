@@ -122,9 +122,18 @@ export const blogsValidators = {
         querySchema: blogsQuerySchema,
     }),
     getBlogRequest: requestValidator({ paramSchema }),
-    getBlogPostsRequest: requestValidator({ paramSchema, querySchema: postsQuerySchema }),
+    getBlogPostsRequest: requestValidator({
+        paramSchema,
+        querySchema: postsQuerySchema,
+    }),
     createNewBlogRequest: requestValidator({ bodySchema: blogsBodySchema }),
-    createNewPostForBlogRequest: requestValidator({ bodySchema: postsBodySchema, paramSchema }),
-    updateBlogRequest: requestValidator({ bodySchema: blogsBodySchema, paramSchema }),
+    createNewPostForBlogRequest: requestValidator({
+        bodySchema: postsBodySchema,
+        paramSchema,
+    }),
+    updateBlogRequest: requestValidator({
+        bodySchema: blogsBodySchema,
+        paramSchema,
+    }),
     deleteBlogRequest: requestValidator({ paramSchema }),
 };

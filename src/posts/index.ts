@@ -6,7 +6,7 @@ import { postsRouter } from './router';
 import {
     PostViewModel,
     TGetAllPostsRequestQueries,
-    PostCreateRequestModel
+    PostCreateRequestModel,
 } from './types';
 import { postsBodySchema } from './middlewares';
 
@@ -19,8 +19,8 @@ export {
     PostViewModel,
     TGetAllPostsRequestQueries,
     PostCreateRequestModel,
-    PostsDBSearchParams, 
+    PostsDBSearchParams,
     PostDBModel,
     postsQueryRepository,
-    postsBodySchema
+    postsBodySchema,
 };

@@ -14,5 +14,5 @@ export {
     BlogDBModel,
     blogsCollection,
     TGetAllBlogPostsRequest,
-    BlogViewModel
+    BlogViewModel,
 };

@@ -1,52 +1,63 @@
-
 import { ObjectId } from 'mongodb';
 import { blogsRepository } from '../repository';
 import { postsRepository, PostDBModel } from '../../posts';
-import { BlogViewModel, TCreateNewBlogPostRequest, TCreateNewBlogRequest, TDeleteBlogRequest, TUpdateBlogRequest } from '../types';
+import {
+    BlogViewModel,
+    TCreateNewBlogPostRequest,
+    TCreateNewBlogRequest,
+    TDeleteBlogRequest,
+    TUpdateBlogRequest,
+} from '../types';
 import { BlogDBModel } from '../model';
 
 export const blogsService = {
-     async createNewBlog(req: TCreateNewBlogRequest) {
-        const {name, description, websiteUrl} = req.body;
+    async createNewBlog(req: TCreateNewBlogRequest) {
+        const { name, description, websiteUrl } = req.body;
         const newBlog: BlogDBModel = {
             name,
             description,
             websiteUrl,
             createdAt: new Date().toISOString(),
-            isMembership: false
-        }
+            isMembership: false,
+        };
         const newBlogId = await blogsRepository.addNewBlog(newBlog);
-        const createdBlog = await blogsRepository.findBlogById(new ObjectId(newBlogId));
+        const createdBlog = await blogsRepository.findBlogById(
+            new ObjectId(newBlogId)
+        );
         if (!createdBlog) {
-            return undefined
+            return undefined;
         }
         const addedBlog: BlogViewModel = {
             id: createdBlog._id.toString(),
-            name: createdBlog.name, 
+            name: createdBlog.name,
             description: createdBlog.description,
             websiteUrl: createdBlog.websiteUrl,
             createdAt: createdBlog.createdAt,
-            isMembership: createdBlog.isMembership
-        }
+            isMembership: createdBlog.isMembership,
+        };
         return addedBlog;
     },
 
     async createNewPostForBlog(req: TCreateNewBlogPostRequest) {
-        const blog = await blogsRepository.findBlogById( new ObjectId(req.params.id));
+        const blog = await blogsRepository.findBlogById(
+            new ObjectId(req.params.id)
+        );
         if (!blog) {
             return undefined;
         }
-        const newPost: PostDBModel = { 
+        const newPost: PostDBModel = {
             title: req.body.title,
             shortDescription: req.body.shortDescription,
             content: req.body.content,
             blogId: blog._id.toString(),
             blogName: blog.name,
             createdAt: new Date().toISOString(),
-         };
+        };
 
         const createdPostId = await postsRepository.addNewPost(newPost);
-        const addedPost = await postsRepository.findPostById(new ObjectId(createdPostId));
+        const addedPost = await postsRepository.findPostById(
+            new ObjectId(createdPostId)
+        );
         if (!addedPost) {
             return undefined;
         }
@@ -61,8 +72,8 @@ export const blogsService = {
         };
     },
 
-      async updateBlog(req: TUpdateBlogRequest) {
-        const {name, description, websiteUrl} = req.body
+    async updateBlog(req: TUpdateBlogRequest) {
+        const { name, description, websiteUrl } = req.body;
         const isBlogUpdated = await blogsRepository.updateBlog({
             name,
             description,
@@ -73,7 +84,9 @@ export const blogsService = {
     },
 
     async deleteBlog(req: TDeleteBlogRequest) {
-        const isBlogDeleted = await blogsRepository.deleteBlog(new ObjectId(req.params.id));
+        const isBlogDeleted = await blogsRepository.deleteBlog(
+            new ObjectId(req.params.id)
+        );
         return isBlogDeleted;
     },
 };

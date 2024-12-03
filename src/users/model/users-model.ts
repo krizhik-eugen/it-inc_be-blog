@@ -17,5 +17,4 @@ export type UsersDBSearchParams = {
     limit: number;
 };
 
-export const usersCollection =
-    db.collection<UserDBModel>('users');
+export const usersCollection = db.collection<UserDBModel>('users');

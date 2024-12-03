@@ -17,5 +17,4 @@ export type PostsDBSearchParams = {
     limit: number;
 };
 
-export const postsCollection =
-    db.collection<PostDBModel>('posts');
+export const postsCollection = db.collection<PostDBModel>('posts');

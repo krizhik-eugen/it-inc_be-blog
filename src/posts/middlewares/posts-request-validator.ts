@@ -80,7 +80,9 @@ export const postsBodySchema: Schema = {
                 if (!isValid) {
                     throw 'Invalid BlogId';
                 }
-                const foundBlogId = await blogsRepository.findBlogById(new ObjectId(value));
+                const foundBlogId = await blogsRepository.findBlogById(
+                    new ObjectId(value)
+                );
                 if (!foundBlogId) {
                     throw 'Incorrect BlogId, no blogs associated';
                 }

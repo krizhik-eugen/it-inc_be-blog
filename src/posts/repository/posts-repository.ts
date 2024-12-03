@@ -1,16 +1,16 @@
 import { ObjectId } from 'mongodb';
 import { blogsRepository } from '../../blogs';
-import { postsCollection, PostDBModel} from '../model';
+import { postsCollection, PostDBModel } from '../model';
 
 export const postsRepository = {
-    async getPostsCount(blogId = ''){
+    async getPostsCount(blogId = '') {
         return await postsCollection.countDocuments({
             blogId: { $regex: blogId ?? '', $options: 'i' },
         });
     },
 
     async findPostById(_id: PostDBModel['_id']) {
-        return await postsCollection.findOne({_id});
+        return await postsCollection.findOne({ _id });
     },
 
     async addNewPost(newPost: PostDBModel) {
@@ -32,12 +32,16 @@ export const postsRepository = {
         return result.deletedCount > 0;
     },
 
-    async setPosts(posts: Omit<PostDBModel, 'createdAt' | 'blogName' | 'id'>[]) {
+    async setPosts(
+        posts: Omit<PostDBModel, 'createdAt' | 'blogName' | 'id'>[]
+    ) {
         if (posts.length > 0) {
             const mappedPosts = await posts.reduce<Promise<PostDBModel[]>>(
                 async (accPromise, post) => {
                     const acc = await accPromise; // Wait for accumulated results
-                    const blog = await blogsRepository.findBlogById(new ObjectId(post.blogId));
+                    const blog = await blogsRepository.findBlogById(
+                        new ObjectId(post.blogId)
+                    );
                     if (!blog) {
                         return acc; // Skip adding if blog is undefined
                     }

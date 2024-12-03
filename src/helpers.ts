@@ -1,10 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
 import { checkSchema, Schema, validationResult } from 'express-validator';
 import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from './constants';
-import {
-    TMappedSearchQueryParams,
-    TSearchQueryParams,
-} from './common-types';
+import { TMappedSearchQueryParams, TSearchQueryParams } from './common-types';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array({ onlyFirstError: true });
@@ -47,12 +44,12 @@ export const getSearchQueries = <T>(queries: TSearchQueryParams<T>) => {
     if (sortDirection === 'asc') {
         mappedSortDirection = 1;
     } else if (sortDirection === 'desc') {
-        mappedSortDirection=  -1;
+        mappedSortDirection = -1;
     } else {
-        mappedSortDirection =  DEFAULT_SEARCH_PARAMS.sortDirection;
+        mappedSortDirection = DEFAULT_SEARCH_PARAMS.sortDirection;
     }
     const searchQueries: TMappedSearchQueryParams<T> = {
-        sortBy: sortBy || DEFAULT_SEARCH_PARAMS.sortBy as T,
+        sortBy: sortBy || (DEFAULT_SEARCH_PARAMS.sortBy as T),
         sortDirection: mappedSortDirection,
         pageNumber: Number(pageNumber) || DEFAULT_SEARCH_PARAMS.pageNumber,
         pageSize: Number(pageSize) || DEFAULT_SEARCH_PARAMS.pageSize,

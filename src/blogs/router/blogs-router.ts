@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { blogsController } from '../controller';
-import {
-    authValidator,
-} from '../../app-middlewares';
+import { authValidator } from '../../app-middlewares';
 import { blogsValidators } from '../middlewares';
 
 export const blogsRouter = Router();
