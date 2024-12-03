@@ -70,8 +70,4 @@ export const blogsController = {
                 : HTTP_STATUS_CODES.NOT_FOUND
         );
     },
-
-    
-
-   
 };

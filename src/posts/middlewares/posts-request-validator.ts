@@ -75,12 +75,12 @@ export const postsBodySchema: Schema = {
             errorMessage: 'BlogId is required',
         },
         custom: {
-            options: async (value) => {
+            options: async (value: string) => {
                 const isValid = ObjectId.isValid(value);
                 if (!isValid) {
                     throw 'Invalid BlogId';
                 }
-                const foundBlogId = await blogsRepository.findBlogById(value);
+                const foundBlogId = await blogsRepository.findBlogById(new ObjectId(value));
                 if (!foundBlogId) {
                     throw 'Incorrect BlogId, no blogs associated';
                 }
