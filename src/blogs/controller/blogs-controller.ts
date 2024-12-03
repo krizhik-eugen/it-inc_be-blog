@@ -16,7 +16,7 @@ import {
     TUpdateBlogRequest,
 } from '../types';
 import { blogsService } from '../service';
-import { postsQueryRepository } from '../../posts';
+import { postsQueryRepository, postsService } from '../../posts';
 
 export const blogsController = {
     async getBlogs(req: TGetAllBlogsRequest, res: TGetAllBlogsResponse) {
@@ -49,7 +49,14 @@ export const blogsController = {
         req: TCreateNewBlogRequest,
         res: TCreateNewBlogResponse
     ) {
-        const createdBlog = await blogsService.createNewBlog(req);
+        const createdBlogId = await blogsService.createNewBlog(req);
+        if (!createdBlogId) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            return;
+        }
+        const createdBlog = await blogsQueryRepository.getBlog(
+            createdBlogId.toString()
+        );
         if (!createdBlog) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
@@ -61,12 +68,16 @@ export const blogsController = {
         req: TCreateNewBlogPostRequest,
         res: TCreateNewBlogPostResponse
     ) {
-        const createdPost = await blogsService.createNewPostForBlog(req);
-        if (!createdPost) {
+        const createdPostId = await postsService.createNewPostForBlog(req);
+        if (!createdPostId) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
+        const addedPost = await postsQueryRepository.getPost(createdPostId);
+        if (!addedPost) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+        }
+        res.status(HTTP_STATUS_CODES.CREATED).json(addedPost);
     },
 
     async updateBlog(req: TUpdateBlogRequest, res: Response) {

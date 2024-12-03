@@ -9,6 +9,7 @@ import {
     PostCreateRequestModel,
 } from './types';
 import { postsBodySchema } from './middlewares';
+import { postsService } from './service';
 
 export {
     postsController,
@@ -23,4 +24,5 @@ export {
     PostDBModel,
     postsQueryRepository,
     postsBodySchema,
+    postsService,
 };

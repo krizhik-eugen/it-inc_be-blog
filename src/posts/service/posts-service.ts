@@ -5,7 +5,7 @@ import {
     TUpdatePostRequest,
 } from '../types';
 import { postsRepository } from '../repository';
-import { blogsRepository } from '../../blogs';
+import { blogsRepository, TCreateNewBlogPostRequest } from '../../blogs';
 import { ObjectId } from 'mongodb';
 import { PostDBModel } from '../model';
 
@@ -43,6 +43,25 @@ export const postsService = {
             createdAt: createdPost.createdAt,
         };
         return addedPost;
+    },
+
+    async createNewPostForBlog(req: TCreateNewBlogPostRequest) {
+        const blog = await blogsRepository.findBlogById(
+            new ObjectId(req.params.id)
+        );
+        if (!blog) {
+            return undefined;
+        }
+        const newPost: PostDBModel = {
+            title: req.body.title,
+            shortDescription: req.body.shortDescription,
+            content: req.body.content,
+            blogId: blog._id.toString(),
+            blogName: blog.name,
+            createdAt: new Date().toISOString(),
+        };
+
+        return await postsRepository.addNewPost(newPost);
     },
 
     async updatePost(req: TUpdatePostRequest) {

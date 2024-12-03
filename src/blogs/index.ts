@@ -3,7 +3,7 @@ import { blogsValidators, blogsQuerySchema } from './middlewares';
 import { blogsRepository } from './repository';
 import { blogsRouter } from './router';
 import { BlogDBModel, blogsCollection } from './model';
-import { TGetAllBlogPostsRequest, BlogViewModel } from './types';
+import { TGetAllBlogPostsRequest, BlogViewModel, TCreateNewBlogPostRequest } from './types';
 
 export {
     blogsController,
@@ -15,4 +15,5 @@ export {
     blogsCollection,
     TGetAllBlogPostsRequest,
     BlogViewModel,
+    TCreateNewBlogPostRequest
 };
