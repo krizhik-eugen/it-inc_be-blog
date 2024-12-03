@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { TIDParam, TSearchQueryParams } from '../types';
+import { TIDParam, TSearchQueryParams } from '../common-types';
 import { UsersDBSearchParams } from './model';
 
 export type UserViewModel = {

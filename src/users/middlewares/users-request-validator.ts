@@ -1,6 +1,6 @@
+import { ObjectId } from 'mongodb';
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../helpers';
-import { ObjectId } from 'mongodb';
 
 const loginMaxLength = 30;
 const loginMinLength = 3;

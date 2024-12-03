@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { AllItemsViewModel, TIDParam, TSearchQueryParams } from '../types';
-import { BlogsDBSearchParams } from './model/blogs-model';
+import { AllItemsViewModel, TIDParam, TSearchQueryParams } from '../common-types';
+import { BlogsDBSearchParams } from './model';
 import { PostViewModel, TGetAllPostsRequestQueries , PostCreateRequestModel} from '../posts';
 
 export type BlogViewModel = {

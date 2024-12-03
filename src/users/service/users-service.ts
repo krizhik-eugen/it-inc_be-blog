@@ -1,6 +1,6 @@
+import { ObjectId } from 'mongodb';
 import { TCreateNewUserRequest, UserCreateRequestModel } from '../types';
 import { usersRepository } from '../repository';
-import { ObjectId } from 'mongodb';
 
 export const usersService = {
     async createNewUser(req: TCreateNewUserRequest) {

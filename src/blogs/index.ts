@@ -2,12 +2,8 @@ import { blogsController } from './controller';
 import { blogsValidators, blogsQuerySchema } from './middlewares';
 import { blogsRepository } from './repository';
 import { blogsRouter } from './router';
-import {
-    TBlog,
-    TCreateUpdateBlogRequest,
-    TGetDeleteDBInstanceRequest,
-    TParam,
-} from './types';
+import { BlogDBModel, blogsCollection } from './model';
+import { TGetAllBlogPostsRequest, BlogViewModel } from './types';
 
 export {
     blogsController,
@@ -15,8 +11,8 @@ export {
     blogsRouter,
     blogsValidators,
     blogsQuerySchema,
-    TBlog,
-    TCreateUpdateBlogRequest,
-    TGetDeleteDBInstanceRequest,
-    TParam,
+    BlogDBModel,
+    blogsCollection,
+    TGetAllBlogPostsRequest,
+    BlogViewModel
 };

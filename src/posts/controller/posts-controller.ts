@@ -1,28 +1,17 @@
-import { Request, Response } from 'express';
-import { postsRepository } from '../repository';
+import { Response } from 'express';
 import { HTTP_STATUS_CODES } from '../../constants';
-import {
-    TCreateUpdatePostRequest,
-    TGetDeleteDBInstanceRequest,
-    TGetPostsResponse,
-    TPost,
-} from '../types';
-import { postsService } from '../service/posts-service';
+import { TCreateNewPostRequest, TCreateNewPostResponse, TDeletePostRequest, TGetAllPostsRequest, TGetAllPostsResponse, TGetPostRequest, TGetPostResponse, TUpdatePostRequest } from '../types';
+import { postsService } from '../service';
+import { postsQueryRepository } from '../repository';
 
 export const postsController = {
-    async getAllPosts(req: Request, res: Response<TGetPostsResponse>) {
-        const posts = await postsService.getPosts(req);
+    async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {
+        const posts = await postsQueryRepository.getPosts(req);
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
 
-    async createNewPost(req: TCreateUpdatePostRequest, res: Response<TPost>) {
-        const createdPost = await postsService.createNewPost(req);
-        res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
-    },
-
-    async getPost(req: TGetDeleteDBInstanceRequest, res: Response<TPost>) {
-        const foundPost = await postsRepository.getPost(req.params.id);
-
+     async getPost(req: TGetPostRequest, res: TGetPostResponse) {
+        const foundPost = await postsQueryRepository.getPost(req.params.id);
         if (!foundPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
@@ -30,11 +19,17 @@ export const postsController = {
         res.status(HTTP_STATUS_CODES.OK).json(foundPost);
     },
 
-    async updatePost(req: TCreateUpdatePostRequest, res: Response) {
-        const isPostUpdated = await postsRepository.updatePost({
-            ...req.body,
-            id: req.params.id,
-        });
+    async createNewPost(req: TCreateNewPostRequest, res: TCreateNewPostResponse) {
+        const createdPost = await postsService.createNewPost(req);
+        if (!createdPost) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            return;
+        }
+        res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
+    },
+
+    async updatePost(req: TUpdatePostRequest, res: Response) {
+        const isPostUpdated = await postsService.updatePost(req);
         res.sendStatus(
             isPostUpdated
                 ? HTTP_STATUS_CODES.NO_CONTENT
@@ -42,8 +37,8 @@ export const postsController = {
         );
     },
     
-    async deletePost(req: TGetDeleteDBInstanceRequest, res: Response) {
-        const isPostDeleted = await postsRepository.deletePost(req.params.id);
+    async deletePost(req: TDeletePostRequest, res: Response) {
+        const isPostDeleted = await postsService.deletePost(req);
         res.sendStatus(
             isPostDeleted
                 ? HTTP_STATUS_CODES.NO_CONTENT

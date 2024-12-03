@@ -1,7 +1,7 @@
 import express from 'express';
 import { baseRoutes } from './configs';
-import { postsRouter } from './posts';
 import { testingRouter } from './testing';
+import { postsRouter } from './posts';
 import { blogsRouter } from './blogs';
 import { usersRouter } from './users';
 // import cors from 'cors';

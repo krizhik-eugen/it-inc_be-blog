@@ -1,8 +1,7 @@
+import { ObjectId } from 'mongodb';
 import { Schema } from 'express-validator';
 import { blogsRepository } from '../../blogs';
 import { requestValidator } from '../../helpers';
-import { ObjectId } from 'mongodb';
-import { get } from 'http';
 
 const titleLength = 30;
 const shortDescriptionLength = 100;
@@ -81,8 +80,8 @@ export const postsBodySchema: Schema = {
                 if (!isValid) {
                     throw 'Invalid BlogId';
                 }
-                const foundBlog = await blogsRepository.getBlog(value);
-                if (!foundBlog) {
+                const foundBlogId = await blogsRepository.findBlogById(value);
+                if (!foundBlogId) {
                     throw 'Incorrect BlogId, no blogs associated';
                 }
                 return true;

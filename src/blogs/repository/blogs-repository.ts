@@ -1,5 +1,4 @@
-import { blogsCollection } from '../model';
-import { BlogDBModel } from '../model/blogs-model';
+import { blogsCollection, BlogDBModel } from '../model';
 
 export const blogsRepository = {
     async getBlogsCount(findName = ''){

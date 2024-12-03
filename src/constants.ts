@@ -1,6 +1,6 @@
 import {
     TMappedSearchQueryParams,
-} from './types';
+} from './common-types';
 
 export const HTTP_STATUS_CODES = {
     OK: 200,
@@ -11,8 +11,8 @@ export const HTTP_STATUS_CODES = {
     NOT_FOUND: 404,
 } as const;
 
-export const DEFAULT_SEARCH_PARAMS: TMappedSearchQueryParams = {
-    sortBy: 'createdAt',
+export const DEFAULT_SEARCH_PARAMS: TMappedSearchQueryParams<string> = {
+    sortBy: 'createdAt' as string,
     sortDirection: -1,
     pageNumber: 1,
     pageSize: 10,

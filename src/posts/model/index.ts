@@ -1,3 +1,3 @@
-import { postsCollection } from './posts-model';
+import { postsCollection, PostsDBSearchParams, PostDBModel } from './posts-model';
 
-export { postsCollection };
+export { postsCollection, PostsDBSearchParams, PostDBModel };

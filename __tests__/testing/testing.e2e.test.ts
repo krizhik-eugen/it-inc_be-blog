@@ -1,30 +1,42 @@
+import { ObjectId } from 'mongodb';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { baseRoutes } from '../../src/configs';
-import { postsRepository, TPost } from '../../src/posts';
-import { blogsRepository, TBlog } from '../../src/blogs';
+import { postsRepository, PostViewModel } from '../../src/posts';
+import { blogsRepository, BlogViewModel } from '../../src/blogs';
 import { DBHandlers, req } from '../test-helpers';
 
 describe('Testing Controller', () => {
-    const testPost: Required< Omit<TPost, 'id' | 'createdAt'>> = {
+    const testPost: Required< Omit<PostViewModel, 'id'>> = {
         title: 'Test Post',
         content: 'Test content',
         blogId: '',
         blogName: '',
         shortDescription: 'test shortDescription',
+        createdAt: new Date().toISOString(),
     };
 
-    let testBlog: TBlog;
+    let testBlog: BlogViewModel;
     beforeAll(async () => {
         await DBHandlers.connectToDB();
 
-        const newBlog: Omit<TBlog, 'id'> = {
+        const newBlog: Omit<BlogViewModel, 'id'> = {
             name: 'Test Blog',
             description: 'Test description',
             websiteUrl: 'https://test.com',
+            createdAt: new Date().toISOString(),
+            isMembership: false,
         };
 
-        const createdBlog = await blogsRepository.addNewBlog(newBlog);
-        testBlog = createdBlog || ({} as TBlog);
+        const createdBlogId = await blogsRepository.addNewBlog(newBlog);
+        const createdBlog = await blogsRepository.findBlogById(new ObjectId(createdBlogId));
+        testBlog = {
+            id: createdBlog?._id.toString() || '',
+            name: createdBlog?.name || '',
+            description: createdBlog?.description || '',
+            websiteUrl: createdBlog?.websiteUrl || '',
+            createdAt: createdBlog?.createdAt || '',
+            isMembership: createdBlog?.isMembership || false,
+        };
         testPost.blogName = testBlog.name ;
         testPost.blogId = testBlog.id;
         await postsRepository.addNewPost(testPost);

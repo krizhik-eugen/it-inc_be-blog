@@ -11,17 +11,17 @@ postsRouter.get(
     postsController.getAllPosts
 );
 
+postsRouter.get(
+    '/:id',
+    ...postsValidators.getPostRequest,
+    postsController.getPost
+);
+
 postsRouter.post(
     '/',
     ...authValidator,
     ...postsValidators.createNewPostRequest,
     postsController.createNewPost
-);
-
-postsRouter.get(
-    '/:id',
-    ...postsValidators.getPostRequest,
-    postsController.getPost
 );
 
 postsRouter.put(

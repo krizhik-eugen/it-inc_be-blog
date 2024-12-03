@@ -1,8 +1,8 @@
 import { app } from '../src/app';
 import { agent } from 'supertest';
 import { client, connectToDB, db } from '../src/db';
-import { TBlog } from '../src/blogs';
-import { TPost } from '../src/posts';
+import { BlogViewModel } from '../src/blogs';
+import { PostViewModel } from '../src/posts';
 import { baseRoutes } from '../src/configs';
 
 export const req = agent(app);
@@ -45,7 +45,7 @@ export const postsValidationErrorMessages = {
     },
 };
 
-export const testBlogs: Omit<TBlog, 'id' | 'createdAt' | 'isMembership'>[] = [
+export const testBlogs: Omit<BlogViewModel, 'id' | 'createdAt' | 'isMembership'>[] = [
     {
         name: 'Test Blog 1',
         description: 'Test description 1',
@@ -93,7 +93,7 @@ export const testBlogs: Omit<TBlog, 'id' | 'createdAt' | 'isMembership'>[] = [
     },
 ];
 
-export const testPosts: Omit<TPost, 'id' | 'blogName' | 'createdAt'>[] = [
+export const testPosts: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>[] = [
     {
         title: 'Test Post 1',
         content: 'Test content 1',
@@ -191,7 +191,7 @@ export const invalidPostsFields = {
     },
 };
 
-export const addNewBlog = async (blog: Omit<TBlog, 'id'>) => {
+export const addNewBlog = async (blog: Omit<BlogViewModel, 'id' | 'createdAt' | 'isMembership'>) => {
     const { body } = await req
         .post(baseRoutes.blogs)
         .auth(...validAuthData)
@@ -199,7 +199,7 @@ export const addNewBlog = async (blog: Omit<TBlog, 'id'>) => {
     return body;
 };
 
-export const addNewPost = async (post: Omit<TPost, 'id' | 'blogName'>) => {
+export const addNewPost = async (post: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>) => {
     const { body } = await req
         .post(baseRoutes.posts)
         .auth(...validAuthData)

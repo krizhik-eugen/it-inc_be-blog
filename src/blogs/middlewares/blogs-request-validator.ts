@@ -1,7 +1,7 @@
+import { ObjectId } from 'mongodb';
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../helpers';
-import { ObjectId } from 'mongodb';
-import { postsBodySchema, postsQuerySchema } from '../../posts/middlewares';
+import { postsBodySchema, postsQuerySchema } from '../../posts';
 
 const nameLength = 15;
 const descriptionLength = 500;
@@ -115,7 +115,7 @@ export const blogsQuerySchema: Schema = {
     },
 };
 
-delete postsBodySchema.blogId;
+delete postsBodySchema?.blogId;
 
 export const blogsValidators = {
     getBlogsRequest: requestValidator({

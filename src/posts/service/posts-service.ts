@@ -1,30 +1,54 @@
-import { TCreateUpdatePostRequest, TPostSearchParams } from '../types';
+import { PostViewModel, TCreateNewPostRequest, TDeletePostRequest, TUpdatePostRequest } from '../types';
 import { postsRepository } from '../repository';
-import { getDBSearchQueries, getSearchQueries } from '../../helpers';
 import { blogsRepository } from '../../blogs';
+import { ObjectId } from 'mongodb';
+import { PostDBModel } from '../model';
 
 export const postsService = {
-    async getPosts(req: TPostSearchParams) {
-        const searchQueries = getSearchQueries(req.query);
-        const dbSearchQueries = getDBSearchQueries(searchQueries);
-        const totalCount = await postsRepository.getPostsCount();
-        const foundPosts = await postsRepository.getPosts(dbSearchQueries);
-        return {
-            pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
-            page: searchQueries.pageNumber,
-            pageSize: searchQueries.pageSize,
-            totalCount,
-            items: foundPosts,
-        };
-    },
-
-    async createNewPost(req: TCreateUpdatePostRequest) {
-        const blog = await blogsRepository.getBlog(req.body.blogId);
+    async createNewPost(req: TCreateNewPostRequest){
+        const {title, shortDescription, content, blogId} = req.body;
+        const blog = await blogsRepository.findBlogById(new ObjectId(req.body.blogId));
         if (!blog) {
             return undefined;
         }
-        const newPost = { ...req.body, blogName: blog.name };
-        const createdPost = await postsRepository.addNewPost(newPost);
-        return createdPost;
+        const newPost: PostDBModel = { 
+            blogId,
+            title,
+            shortDescription,
+            content,
+            blogName: blog.name,
+            createdAt: new Date().toISOString(),
+         };
+        const newPostId = await postsRepository.addNewPost(newPost);
+        const createdPost = await postsRepository.findPostById(new ObjectId(newPostId));
+        if (!createdPost) {
+            return undefined;
+        }
+        const addedPost: PostViewModel = {
+            id: createdPost._id.toString(),
+            title: createdPost.title,
+            shortDescription: createdPost.shortDescription,
+            content: createdPost.content,
+            blogId: createdPost.blogId,
+            blogName: createdPost.blogName,
+            createdAt: createdPost.createdAt,
+        };
+        return addedPost;
+    },
+
+   async updatePost(req: TUpdatePostRequest) {
+        const isPostUpdated = await postsRepository.updatePost({
+            _id: new ObjectId(req.params.id),
+            title: req.body.title,
+            shortDescription: req.body.shortDescription,
+            content: req.body.content,
+            blogId: req.body.blogId,
+        });
+        return isPostUpdated;
+    },
+
+     async deletePost(req: TDeletePostRequest) {
+        const isPostDeleted = await postsRepository.deletePost(new ObjectId(req.params.id));
+        return isPostDeleted;
     },
 };

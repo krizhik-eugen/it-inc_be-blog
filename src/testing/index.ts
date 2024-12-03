@@ -1,5 +1,5 @@
 import { testingController } from './controller';
-import { testingRepository } from './repository';
+import { testingService } from './service';
 import { testingRouter } from './router';
 
-export { testingController, testingRepository, testingRouter };
+export { testingController, testingService, testingRouter };

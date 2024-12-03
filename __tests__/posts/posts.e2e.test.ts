@@ -1,6 +1,6 @@
 import { baseRoutes } from '../../src/configs';
 import { postsRepository } from '../../src/posts';
-import { TBlog } from '../../src/blogs';
+import { BlogViewModel } from '../../src/blogs';
 import {
     addNewBlog,
     addNewPost,
@@ -18,7 +18,7 @@ import {
 import { HTTP_STATUS_CODES } from '../../src/constants';
 
 describe('Posts Controller', () => {
-    let createdBlog: TBlog;
+    let createdBlog: BlogViewModel;
     const testPost = testPosts[0];
 
     beforeEach(async () => {

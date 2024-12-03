@@ -1,12 +1,14 @@
 import { postsController } from './controller';
 import { postsValidators, postsQuerySchema } from './middlewares';
-import { postsRepository } from './repository';
+import { PostDBModel, PostsDBSearchParams } from './model';
+import { postsRepository, postsQueryRepository } from './repository';
 import { postsRouter } from './router';
 import {
     PostViewModel,
     TGetAllPostsRequestQueries,
     PostCreateRequestModel
 } from './types';
+import { postsBodySchema } from './middlewares';
 
 export {
     postsController,
@@ -16,5 +18,9 @@ export {
     postsQuerySchema,
     PostViewModel,
     TGetAllPostsRequestQueries,
-    PostCreateRequestModel
+    PostCreateRequestModel,
+    PostsDBSearchParams, 
+    PostDBModel,
+    postsQueryRepository,
+    postsBodySchema
 };

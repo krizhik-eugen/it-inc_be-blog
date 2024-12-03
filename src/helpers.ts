@@ -4,11 +4,10 @@ import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from './constants';
 import {
     TMappedSearchQueryParams,
     TSearchQueryParams,
-} from './types';
+} from './common-types';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array({ onlyFirstError: true });
-
     if (errors.length) {
         res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
             errorsMessages: errors.map((error) => ({
@@ -18,7 +17,6 @@ const errorValidator = (req: Request, res: Response, next: NextFunction) => {
         });
         return;
     }
-
     next();
 };
 
@@ -36,19 +34,16 @@ export const requestValidator = ({
         ...paramSchema,
         ...querySchema,
     };
-
     const scopes: Parameters<typeof checkSchema>[1] = [];
     if (bodySchema) scopes.push('body');
     if (paramSchema) scopes.push('params');
     if (querySchema) scopes.push('query');
-
     return [checkSchema(schema, scopes), errorValidator];
 };
 
 export const getSearchQueries = <T>(queries: TSearchQueryParams<T>) => {
     const { sortBy, sortDirection, pageNumber, pageSize } = queries;
-
-    let mappedSortDirection;
+    let mappedSortDirection: 1 | -1;
     if (sortDirection === 'asc') {
         mappedSortDirection = 1;
     } else if (sortDirection === 'desc') {
@@ -56,9 +51,8 @@ export const getSearchQueries = <T>(queries: TSearchQueryParams<T>) => {
     } else {
         mappedSortDirection =  DEFAULT_SEARCH_PARAMS.sortDirection;
     }
-
     const searchQueries: TMappedSearchQueryParams<T> = {
-        sortBy: sortBy || DEFAULT_SEARCH_PARAMS.sortBy,
+        sortBy: sortBy || DEFAULT_SEARCH_PARAMS.sortBy as T,
         sortDirection: mappedSortDirection,
         pageNumber: Number(pageNumber) || DEFAULT_SEARCH_PARAMS.pageNumber,
         pageSize: Number(pageSize) || DEFAULT_SEARCH_PARAMS.pageSize,
