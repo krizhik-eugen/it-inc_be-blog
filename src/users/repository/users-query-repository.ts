@@ -1,8 +1,10 @@
+import { ObjectId } from 'mongodb';
 import { getDBSearchQueries, getSearchQueries } from '../../helpers';
 import { usersCollection, UserDBModel, UsersDBSearchParams } from '../model';
 import {
     AllUsersResponseModel,
     TGetAllUsersRequest,
+    TGetUserRequest,
     UserViewModel,
 } from '../types';
 
@@ -45,5 +47,11 @@ export const usersQueryRepository = {
             totalCount: totalCount,
             items: mappedFoundUsers,
         };
+    },
+
+    async getUser(id: UserViewModel['id']) {
+        return await usersCollection.findOne({
+            _id: new ObjectId(id),
+        });
     },
 };

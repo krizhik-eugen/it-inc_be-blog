@@ -42,6 +42,8 @@ export type TCreateNewUserRequest = Request<
     UserCreateRequestModel
 >;
 
+export type TGetUserRequest = Request<TIDParam>;
+
 export type TDeleteUserRequest = Request<TIDParam>;
 
 export type TCreateNewUserResponse = Response<

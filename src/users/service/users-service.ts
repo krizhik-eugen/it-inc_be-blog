@@ -5,7 +5,6 @@ import { usersRepository } from '../repository';
 export const usersService = {
     async createNewUser(req: TCreateNewUserRequest) {
         const { login, email } = req.body;
-
         const user = await usersRepository.findUserByLoginOrEmail({
             login,
             email,
@@ -20,7 +19,6 @@ export const usersService = {
                 ],
             };
         }
-
         //TODO: add password encryption
         const newUser = {
             login,
@@ -28,19 +26,7 @@ export const usersService = {
             password: '',
             createdAt: new Date().toISOString(),
         };
-        const newUserId = await usersRepository.addNewUser(newUser);
-        const addedUser = await usersRepository.findUserById(
-            new ObjectId(newUserId)
-        );
-        if (!addedUser) {
-            return undefined;
-        }
-        return {
-            id: addedUser._id.toString(),
-            login: addedUser.login,
-            email: addedUser.email,
-            createdAt: addedUser.createdAt,
-        };
+        return await usersRepository.addNewUser(newUser);
     },
 
     async deleteUser(id: string) {
