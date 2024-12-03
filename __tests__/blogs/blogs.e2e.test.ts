@@ -1,5 +1,5 @@
 import { baseRoutes } from '../../src/configs';
-import { blogsRepository, TBlog } from '../../src/blogs';
+import { blogsRepository, BlogViewModel } from '../../src/blogs';
 import {
     addNewBlog,
     addNewPost,
@@ -206,7 +206,7 @@ describe('Blogs Controller', () => {
                 (blogName) => {
                     expect(
                         response_2.body.items.some(
-                            (blog: TBlog) => blog.name === blogName
+                            (blog: BlogViewModel) => blog.name === blogName
                         )
                     ).toBeTruthy();
                 }
@@ -215,7 +215,7 @@ describe('Blogs Controller', () => {
     });
 
     describe('POST /blogs/:blogId/posts', () => {
-        let createdBlog: TBlog;
+        let createdBlog: BlogViewModel;
         const testPost = testPosts[0];
 
         beforeEach(async () => {
@@ -351,7 +351,7 @@ describe('Blogs Controller', () => {
     });
 
     describe('GET /blogs/:blogId/posts', () => {
-        let addedBlogId: TBlog['id'];
+        let addedBlogId: BlogViewModel['id'];
 
         beforeEach(async () => {
             await addNewBlog(testBlogs[0]);
