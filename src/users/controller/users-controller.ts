@@ -25,7 +25,7 @@ export const usersController = {
             res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
             return;
         }
-        const addedUser = await usersQueryRepository.getUser(result.toString());
+        const addedUser = await usersQueryRepository.getUser(result as string);
         if (!addedUser) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;

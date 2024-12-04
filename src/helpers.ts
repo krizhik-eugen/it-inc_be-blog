@@ -17,6 +17,16 @@ const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     next();
 };
 
+export const createResponseError = (message: string, field = '') =>
+    ({
+        errorsMessages: [
+            {
+                message,
+                field,
+            },
+        ],
+    }) as const;
+
 export const requestValidator = ({
     bodySchema,
     paramSchema,

@@ -1,5 +1,4 @@
 import {
-    PostViewModel,
     TCreateNewPostRequest,
     TDeletePostRequest,
     TUpdatePostRequest,
@@ -8,15 +7,16 @@ import { postsRepository } from '../repository';
 import { blogsRepository, TCreateNewBlogPostRequest } from '../../blogs';
 import { ObjectId } from 'mongodb';
 import { PostDBModel } from '../model';
+import { createResponseError } from '../../helpers';
 
 export const postsService = {
     async createNewPost(req: TCreateNewPostRequest) {
         const { title, shortDescription, content, blogId } = req.body;
-        const blog = await blogsRepository.findBlogById(
-            new ObjectId(req.body.blogId)
-        );
+        const blog = await blogsRepository.findBlogById(new ObjectId(blogId));
         if (!blog) {
-            return undefined;
+            return await Promise.resolve(
+                createResponseError('Blog not found', 'blogId')
+            );
         }
         const newPost: PostDBModel = {
             blogId,
@@ -26,23 +26,7 @@ export const postsService = {
             blogName: blog.name,
             createdAt: new Date().toISOString(),
         };
-        const newPostId = await postsRepository.addNewPost(newPost);
-        const createdPost = await postsRepository.findPostById(
-            new ObjectId(newPostId)
-        );
-        if (!createdPost) {
-            return undefined;
-        }
-        const addedPost: PostViewModel = {
-            id: createdPost._id.toString(),
-            title: createdPost.title,
-            shortDescription: createdPost.shortDescription,
-            content: createdPost.content,
-            blogId: createdPost.blogId,
-            blogName: createdPost.blogName,
-            createdAt: createdPost.createdAt,
-        };
-        return addedPost;
+        return await postsRepository.addNewPost(newPost);
     },
 
     async createNewPostForBlog(req: TCreateNewBlogPostRequest) {
@@ -50,7 +34,9 @@ export const postsService = {
             new ObjectId(req.params.id)
         );
         if (!blog) {
-            return undefined;
+            return await Promise.resolve(
+                createResponseError('Blog not found', 'id')
+            );
         }
         const newPost: PostDBModel = {
             title: req.body.title,
@@ -60,7 +46,6 @@ export const postsService = {
             blogName: blog.name,
             createdAt: new Date().toISOString(),
         };
-
         return await postsRepository.addNewPost(newPost);
     },
 

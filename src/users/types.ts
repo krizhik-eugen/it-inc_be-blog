@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { TIDParam, TSearchQueryParams } from '../common-types';
 import { UsersDBSearchParams } from './model';
+import { createResponseError } from '../helpers';
 
 export type UserViewModel = {
     id: string;
@@ -47,5 +48,5 @@ export type TGetUserRequest = Request<TIDParam>;
 export type TDeleteUserRequest = Request<TIDParam>;
 
 export type TCreateNewUserResponse = Response<
-    UserViewModel | { errorsMessages: { message: string; field: string }[] }
+    UserViewModel | ReturnType<typeof createResponseError>
 >;

@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { TCreateNewUserRequest, UserCreateRequestModel } from '../types';
 import { usersRepository } from '../repository';
+import { createResponseError } from '../../helpers';
 
 export const usersService = {
     async createNewUser(req: TCreateNewUserRequest) {
@@ -10,14 +11,11 @@ export const usersService = {
             email,
         });
         if (user) {
-            return {
-                errorsMessages: [
-                    {
-                        message: 'User with this login or email already exists',
-                        field: '',
-                    },
-                ],
-            };
+            return await Promise.resolve(
+                createResponseError(
+                    'User with this login or email already exists'
+                )
+            );
         }
         //TODO: add password encryption
         const newUser = {

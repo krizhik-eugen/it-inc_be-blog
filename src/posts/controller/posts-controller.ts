@@ -32,7 +32,12 @@ export const postsController = {
         req: TCreateNewPostRequest,
         res: TCreateNewPostResponse
     ) {
-        const createdPost = await postsService.createNewPost(req);
+        const result = await postsService.createNewPost(req);
+        if (typeof result !== 'string' && 'errorsMessages' in result) {
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
+            return;
+        }
+        const createdPost = await postsQueryRepository.getPost(result);
         if (!createdPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;

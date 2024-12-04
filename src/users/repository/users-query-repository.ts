@@ -4,7 +4,6 @@ import { usersCollection, UserDBModel, UsersDBSearchParams } from '../model';
 import {
     AllUsersResponseModel,
     TGetAllUsersRequest,
-    TGetUserRequest,
     UserViewModel,
 } from '../types';
 
@@ -23,14 +22,12 @@ export const usersQueryRepository = {
         const totalCount = await usersCollection.countDocuments({
             $or: [{ login }, { email }],
         });
-
         const foundUsers = await usersCollection
             .find({ $or: [{ login }, { email }] })
             .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit)
             .toArray();
-
         const mappedFoundUsers: UserViewModel[] = foundUsers
             ? foundUsers.map((user: Required<UserDBModel>) => ({
                   id: user._id.toString(),
@@ -39,7 +36,6 @@ export const usersQueryRepository = {
                   createdAt: user.createdAt,
               }))
             : [];
-
         return {
             pagesCount: 1,
             page: searchQueries.pageNumber,

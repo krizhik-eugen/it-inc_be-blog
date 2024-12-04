@@ -2,8 +2,13 @@ import { ObjectId } from 'mongodb';
 import { postsCollection, PostsDBSearchParams } from '../model';
 import { PostViewModel, TGetAllPostsRequest } from '../types';
 import { AllItemsViewModel } from '../../common-types';
-import { getDBSearchQueries, getSearchQueries } from '../../helpers';
+import {
+    createResponseError,
+    getDBSearchQueries,
+    getSearchQueries,
+} from '../../helpers';
 import { TGetAllBlogPostsRequest, blogsCollection } from '../../blogs';
+import { create } from 'domain';
 
 export const postsQueryRepository = {
     async getPosts(
@@ -59,13 +64,19 @@ export const postsQueryRepository = {
 
     async getBlogPosts(
         req: TGetAllBlogPostsRequest
-    ): Promise<AllItemsViewModel<PostViewModel> | undefined> {
+    ): Promise<
+        | AllItemsViewModel<PostViewModel>
+        | ReturnType<typeof createResponseError>
+    > {
         const blogId = req.params.id;
 
         const blog = await blogsCollection.findOne({
             _id: new ObjectId(blogId),
         });
-        if (!blog) return undefined;
+        if (!blog)
+            return await Promise.resolve(
+                createResponseError('Blog not found', 'id')
+            );
 
         const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
             req.query

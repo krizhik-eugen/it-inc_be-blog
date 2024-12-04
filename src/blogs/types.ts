@@ -10,6 +10,7 @@ import {
     TGetAllPostsRequestQueries,
     PostCreateRequestModel,
 } from '../posts';
+import { createResponseError } from '../helpers';
 
 export type BlogViewModel = {
     id: string;
@@ -67,7 +68,7 @@ export type TGetAllBlogPostsRequest = Request<
 >;
 
 export type TGetAllBlogPostsResponse = Response<
-    AllItemsViewModel<PostViewModel>
+    AllItemsViewModel<PostViewModel | ReturnType<typeof createResponseError>>
 >;
 
 export type TCreateNewBlogPostRequest = Request<
@@ -76,4 +77,6 @@ export type TCreateNewBlogPostRequest = Request<
     Omit<PostCreateRequestModel, 'blogId'>
 >;
 
-export type TCreateNewBlogPostResponse = Response<PostViewModel>;
+export type TCreateNewBlogPostResponse = Response<
+    PostViewModel | ReturnType<typeof createResponseError>
+>;

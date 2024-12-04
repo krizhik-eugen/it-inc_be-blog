@@ -5,6 +5,7 @@ import {
     TSearchQueryParams,
 } from '../common-types';
 import { PostsDBSearchParams } from './model/posts-model';
+import { createResponseError } from '../helpers';
 
 export type PostViewModel = {
     id: string;
@@ -42,7 +43,9 @@ export type TCreateNewPostRequest = Request<
     PostCreateRequestModel
 >;
 
-export type TCreateNewPostResponse = Response<PostViewModel>;
+export type TCreateNewPostResponse = Response<
+    PostViewModel | ReturnType<typeof createResponseError>
+>;
 
 export type TGetPostRequest = Request<TIDParam, object, object, object>;
 
