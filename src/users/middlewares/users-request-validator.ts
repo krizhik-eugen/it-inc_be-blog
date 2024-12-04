@@ -79,13 +79,13 @@ export const usersQuerySchema: Schema = {
         in: ['query'],
         optional: true,
         isString: true,
-        errorMessage: 'searchNameTerm must be a string',
+        errorMessage: 'searchLoginTerm must be a string',
     },
     searchEmailTerm: {
         in: ['query'],
         optional: true,
         isString: true,
-        errorMessage: 'searchNameTerm must be a string',
+        errorMessage: 'searchEmailTerm must be a string',
     },
     sortBy: {
         in: ['query'],

@@ -5,7 +5,7 @@ import { createResponseError } from '../../helpers';
 
 export const usersService = {
     async createNewUser(req: TCreateNewUserRequest) {
-        const { login, email } = req.body;
+        const { login, email, password } = req.body;
         const user = await usersRepository.findUserByLoginOrEmail({
             login,
             email,
@@ -21,7 +21,7 @@ export const usersService = {
         const newUser = {
             login,
             email,
-            password: '',
+            password,
             createdAt: new Date().toISOString(),
         };
         return await usersRepository.addNewUser(newUser);

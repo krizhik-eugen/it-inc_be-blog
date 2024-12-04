@@ -15,7 +15,10 @@ export const postsService = {
         const blog = await blogsRepository.findBlogById(new ObjectId(blogId));
         if (!blog) {
             return await Promise.resolve(
-                createResponseError('Blog not found', 'blogId')
+                createResponseError(
+                    'Incorrect Blog Id, no blogs found',
+                    'blogId'
+                )
             );
         }
         const newPost: PostDBModel = {
@@ -35,7 +38,7 @@ export const postsService = {
         );
         if (!blog) {
             return await Promise.resolve(
-                createResponseError('Blog not found', 'id')
+                createResponseError('Incorrect Blog Id, no blogs found', 'id')
             );
         }
         const newPost: PostDBModel = {

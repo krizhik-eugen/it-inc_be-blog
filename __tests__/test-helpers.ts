@@ -4,6 +4,7 @@ import { client, connectToDB, db } from '../src/db';
 import { BlogViewModel } from '../src/blogs';
 import { PostViewModel } from '../src/posts';
 import { baseRoutes } from '../src/configs';
+import { UserViewModel } from '../src/users';
 
 export const req = agent(app);
 
@@ -41,7 +42,7 @@ export const postsValidationErrorMessages = {
     },
     blogId: {
         format: 'Invalid BlogId',
-        value: 'Incorrect BlogId, no blogs associated',
+        value: 'Incorrect Blog Id, no blogs found',
     },
 };
 
@@ -154,7 +155,22 @@ export const testPosts: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>[] =
         },
     ];
 
-export const validObjectId = '67430b985302e02a9657421c';
+export const testUsers: ({ password: string } & Omit<
+    UserViewModel,
+    'id' | 'createdAt'
+>)[] = [
+    { email: 'email_1@email.com', login: 'login_1', password: 'password1' },
+    { email: 'email_2@email.com', login: 'login_2', password: 'password2' },
+    { email: 'email_3@email.com', login: 'login_3', password: 'password3' },
+    { email: 'email_4@email.com', login: 'login_4', password: 'password4' },
+    { email: 'email_5@email.com', login: 'login_5', password: 'password5' },
+    { email: 'email_6@email.com', login: 'login_6', password: 'password6' },
+    { email: 'email_7@email.com', login: 'login_7', password: 'password7' },
+    { email: 'email_8@email.com', login: 'login_8', password: 'password8' },
+    { email: 'email_9@email.com', login: 'login_9', password: 'password9' },
+];
+
+export const validObjectId = '57430b985302e02a9657421c';
 export const invalidObjectId = 'qwerty1234567890';
 
 export const invalidBlogsFields = {
@@ -212,5 +228,15 @@ export const addNewPost = async (
         .post(baseRoutes.posts)
         .auth(...validAuthData)
         .send(post);
+    return body;
+};
+
+export const addNewUser = async (
+    user: Omit<UserViewModel, 'id' | 'createdAt'> & { password: string }
+) => {
+    const { body } = await req
+        .post(baseRoutes.users)
+        .auth(...validAuthData)
+        .send(user);
     return body;
 };

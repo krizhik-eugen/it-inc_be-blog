@@ -443,18 +443,6 @@ describe('Posts Controller', () => {
             expect(response_1.body.errorsMessages[0].message).toEqual(
                 postsValidationErrorMessages.blogId.format
             );
-
-            newPost.blogId = validObjectId;
-
-            const response_2 = await req
-                .put(`${baseRoutes.posts}/${validObjectId}`)
-                .auth(...validAuthData)
-                .send(newPost)
-                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response_2.body.errorsMessages[0].field).toEqual('blogId');
-            expect(response_2.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.blogId.value
-            );
         });
     });
 

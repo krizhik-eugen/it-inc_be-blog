@@ -74,6 +74,7 @@ export const blogsController = {
         const addedPost = await postsQueryRepository.getPost(result);
         if (!addedPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(addedPost);
     },

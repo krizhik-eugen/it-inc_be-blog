@@ -25,7 +25,7 @@ export const usersRepository = {
         return result.deletedCount > 0;
     },
 
-    async setUsers(users: UserDBModel[]) {
+    async setUsers(users: Omit<UserDBModel, '_id' | 'createdAt'>[]) {
         if (users.length > 0) {
             const mappedUsers = users.map((user) => {
                 return {

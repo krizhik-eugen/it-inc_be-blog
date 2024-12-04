@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { Filter, ObjectId } from 'mongodb';
 import { getDBSearchQueries, getSearchQueries } from '../../helpers';
 import { usersCollection, UserDBModel, UsersDBSearchParams } from '../model';
 import {
@@ -9,21 +9,31 @@ import {
 
 export const usersQueryRepository = {
     async getUsers(req: TGetAllUsersRequest): Promise<AllUsersResponseModel> {
-        const {
-            searchLoginTerm: login,
-            searchEmailTerm: email,
-            ...restQueries
-        } = req.query;
+        const { searchLoginTerm, searchEmailTerm, ...restQueries } = req.query;
         const searchQueries =
             getSearchQueries<UsersDBSearchParams['sortBy']>(restQueries);
         const dbSearchQueries =
             getDBSearchQueries<UsersDBSearchParams['sortBy']>(searchQueries);
+        const findQuery: Filter<Pick<UserDBModel, 'login' | 'email'>> = {};
+        const searchConditions = [];
 
-        const totalCount = await usersCollection.countDocuments({
-            $or: [{ login }, { email }],
-        });
+        if (searchLoginTerm) {
+            searchConditions.push({
+                login: { $regex: searchLoginTerm, $options: 'i' },
+            });
+        }
+        if (searchEmailTerm) {
+            searchConditions.push({
+                email: { $regex: searchEmailTerm, $options: 'i' },
+            });
+        }
+
+        if (searchConditions.length > 0) {
+            findQuery.$or = searchConditions;
+        }
+        const totalCount = await usersCollection.countDocuments(findQuery);
         const foundUsers = await usersCollection
-            .find({ $or: [{ login }, { email }] })
+            .find(findQuery)
             .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit)
@@ -37,7 +47,7 @@ export const usersQueryRepository = {
               }))
             : [];
         return {
-            pagesCount: 1,
+            pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
             page: searchQueries.pageNumber,
             pageSize: searchQueries.pageSize,
             totalCount: totalCount,
