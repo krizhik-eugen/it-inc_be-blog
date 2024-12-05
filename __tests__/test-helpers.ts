@@ -46,6 +46,20 @@ export const postsValidationErrorMessages = {
     },
 };
 
+export const usersValidationErrorMessages = {
+    id: { format: 'ID is not a valid ObjectId' },
+    login: {
+        format: 'Login should contain only latin letters, numbers, - and _',
+        length: 'Login length should be min 3 and max 30 characters',
+    },
+    password: {
+        length: 'Password length should be min 6 and max 20 characters',
+    },
+    email: {
+        format: 'Email should be a valid email address, example: example@example.com',
+    },
+};
+
 export const testBlogs: Omit<
     BlogViewModel,
     'id' | 'createdAt' | 'isMembership'
@@ -208,6 +222,22 @@ export const invalidPostsFields = {
             Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. 
             Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magna aliqua. 
             Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.`,
+    },
+};
+
+export const invalidUsersFields = {
+    login: {
+        length: 'new_login_with_the_length_grater_than_30_symbols',
+        format: 'new_login_with_invalid_format',
+    },
+    password: {
+        length: 'new_password_with_the_length_grater_than_20_symbols',
+    },
+    email: {
+        format: 'new_email_with_invalid_format',
+    },
+    id: {
+        format: 'new_id_with_invalid_format',
     },
 };
 

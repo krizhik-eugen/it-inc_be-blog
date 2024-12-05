@@ -196,7 +196,6 @@ describe('Blogs Controller', () => {
             );
             expect(response_1.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response_1.body.totalCount).toEqual(12);
-
             const response_2 = await req.get(
                 `${baseRoutes.blogs}?searchNameTerm=blog1`
             );
@@ -218,7 +217,6 @@ describe('Blogs Controller', () => {
     describe('POST /blogs/:blogId/posts', () => {
         let createdBlog: BlogViewModel;
         const testPost = testPosts[0];
-
         beforeEach(async () => {
             await postsRepository.setPosts([]);
             createdBlog = await addNewBlog(testBlogs[0]);
@@ -264,13 +262,11 @@ describe('Blogs Controller', () => {
                 content: testPost.content,
                 shortDescription: testPost.shortDescription,
             };
-
             for (const key of Object.keys(
                 newPost
             ) as (keyof typeof newPost)[]) {
                 const invalidPost = { ...newPost };
                 delete invalidPost[key];
-
                 const response = await req
                     .post(`${baseRoutes.blogs}/${createdBlog.id}/posts`)
                     .auth(...validAuthData)
@@ -287,9 +283,7 @@ describe('Blogs Controller', () => {
                 content: testPost.content,
                 shortDescription: testPost.shortDescription,
             };
-
             newPost.title = invalidPostsFields.title.length;
-
             const response = await req
                 .post(`${baseRoutes.blogs}/${createdBlog.id}/posts`)
                 .auth(...validAuthData)
@@ -305,10 +299,8 @@ describe('Blogs Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.shortDescription =
                 invalidPostsFields.shortDescription.length;
-
             const response = await req
                 .post(`${baseRoutes.blogs}/${createdBlog.id}/posts`)
                 .auth(...validAuthData)
@@ -326,9 +318,7 @@ describe('Blogs Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.content = invalidPostsFields.content.length;
-
             const response = await req
                 .post(`${baseRoutes.blogs}/${createdBlog.id}/posts`)
                 .auth(...validAuthData)
@@ -346,7 +336,6 @@ describe('Blogs Controller', () => {
                 content: testPost.content,
                 shortDescription: testPost.shortDescription,
             };
-
             const response_1 = await req
                 .post(`${baseRoutes.blogs}/${invalidObjectId}/posts`)
                 .auth(...validAuthData)
@@ -356,7 +345,6 @@ describe('Blogs Controller', () => {
             expect(response_1.body.errorsMessages[0].message).toEqual(
                 postsValidationErrorMessages.id.format
             );
-
             const response_2 = await req
                 .post(`${baseRoutes.blogs}/${validObjectId}/posts`)
                 .auth(...validAuthData)
@@ -371,7 +359,6 @@ describe('Blogs Controller', () => {
 
     describe('GET /blogs/:blogId/posts', () => {
         let addedBlogId: BlogViewModel['id'];
-
         beforeEach(async () => {
             await addNewBlog(testBlogs[0]);
             addedBlogId = (await req.get(baseRoutes.blogs)).body.items[0].id;
@@ -547,9 +534,7 @@ describe('Blogs Controller', () => {
             const newBlog = {
                 ...testBlogs[0],
             };
-
             newBlog.name = invalidBlogsFields.name.length;
-
             const response = await req
                 .post(baseRoutes.blogs)
                 .auth(...validAuthData)
@@ -565,9 +550,7 @@ describe('Blogs Controller', () => {
             const newBlog = {
                 ...testBlogs[0],
             };
-
             newBlog.description = invalidBlogsFields.description.length;
-
             const response = await req
                 .post(baseRoutes.blogs)
                 .auth(...validAuthData)
@@ -585,9 +568,7 @@ describe('Blogs Controller', () => {
             const newBlog = {
                 ...testBlogs[0],
             };
-
             newBlog.websiteUrl = invalidBlogsFields.websiteUrl.format;
-
             const response_1 = await req
                 .post(baseRoutes.blogs)
                 .auth(...validAuthData)
@@ -599,9 +580,7 @@ describe('Blogs Controller', () => {
             expect(response_1.body.errorsMessages[0].message).toEqual(
                 blogsValidationErrorMessages.websiteUrl.format
             );
-
             newBlog.websiteUrl = invalidBlogsFields.websiteUrl.length;
-
             const response_2 = await req
                 .post(baseRoutes.blogs)
                 .auth(...validAuthData)
@@ -717,9 +696,7 @@ describe('Blogs Controller', () => {
             const newBlog = {
                 ...testBlogs[0],
             };
-
             newBlog.name = invalidBlogsFields.name.length;
-
             const response = await req
                 .put(`${baseRoutes.blogs}/${validObjectId}`)
                 .auth(...validAuthData)
@@ -735,9 +712,7 @@ describe('Blogs Controller', () => {
             const newBlog = {
                 ...testBlogs[0],
             };
-
             newBlog.description = invalidBlogsFields.description.length;
-
             const response = await req
                 .put(`${baseRoutes.blogs}/${validObjectId}`)
                 .auth(...validAuthData)
@@ -755,9 +730,7 @@ describe('Blogs Controller', () => {
             const newBlog = {
                 ...testBlogs[0],
             };
-
             newBlog.websiteUrl = invalidBlogsFields.websiteUrl.format;
-
             const response_1 = await req
                 .put(`${baseRoutes.blogs}/${validObjectId}`)
                 .auth(...validAuthData)
@@ -769,9 +742,7 @@ describe('Blogs Controller', () => {
             expect(response_1.body.errorsMessages[0].message).toEqual(
                 blogsValidationErrorMessages.websiteUrl.format
             );
-
             newBlog.websiteUrl = invalidBlogsFields.websiteUrl.length;
-
             const response_2 = await req
                 .put(`${baseRoutes.blogs}/${validObjectId}`)
                 .auth(...validAuthData)

@@ -4,8 +4,10 @@ import {
     DBHandlers,
     invalidAuthData,
     invalidObjectId,
+    invalidUsersFields,
     req,
     testUsers,
+    usersValidationErrorMessages,
     validAuthData,
     validObjectId,
 } from '../test-helpers';
@@ -337,7 +339,9 @@ describe('Users Controller', () => {
 
     describe('POST /users', () => {
         it('can not create a new user without authorization', async () => {
-            const response = await req.post(baseRoutes.users).send(testUsers[0]);
+            const response = await req
+                .post(baseRoutes.users)
+                .send(testUsers[0]);
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
@@ -359,153 +363,114 @@ describe('Users Controller', () => {
             expect(response.body.email).toEqual(testUsers[0].email);
         });
 
-        // it('returns an error if required fields are missing', async () => {
-        //     (Object.keys(testPost) as (keyof typeof testPost)[]).forEach(
-        //         async (key) => {
-        //             const newPost = { ...testPost };
-        //             delete newPost[key];
-        //             const response = await req
-        //                 .post(baseRoutes.users)
-        //                 .auth(...validAuthData)
-        //                 .send(newPost)
-        //                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-        //             expect(response.body.errorsMessages[0].field).toEqual(key);
-        //         }
-        //     );
-        // });
+        it('returns an error if required fields are missing', async () => {
+            for (const key of Object.keys(
+                testUsers[0]
+            ) as (keyof (typeof testUsers)[0])[]) {
+                const newUser = { ...testUsers[0] };
+                delete newUser[key];
+                const response = await req
+                    .post(baseRoutes.users)
+                    .auth(...validAuthData)
+                    .send(newUser)
+                    .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+                expect(response.body.errorsMessages[0].field).toEqual(key);
+            }
+        });
 
-        // it('returns an error if title field is not valid', async () => {
-        //     const newPost = {
-        //         ...testPost,
-        //     };
+        it('returns an error if login field is not valid', async () => {
+            const newUser = {
+                ...testUsers[0],
+            };
+            newUser.login = invalidUsersFields.login.length;
+            const response = await req
+                .post(baseRoutes.users)
+                .auth(...validAuthData)
+                .send(newUser)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('login');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                usersValidationErrorMessages.login.length
+            );
+        });
 
-        //     newPost.title = invalidPostsFields.title.length;
+        it('returns an error if password field is not valid', async () => {
+            const newUser = {
+                ...testUsers[0],
+            };
+            newUser.password = invalidUsersFields.password.length;
+            const response = await req
+                .post(baseRoutes.users)
+                .auth(...validAuthData)
+                .send(newUser)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('password');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                usersValidationErrorMessages.password.length
+            );
+        });
 
-        //     const response = await req
-        //         .post(baseRoutes.users)
-        //         .auth(...validAuthData)
-        //         .send(newPost)
-        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-        //     expect(response.body.errorsMessages[0].field).toEqual('title');
-        //     expect(response.body.errorsMessages[0].message).toEqual(
-        //         postsValidationErrorMessages.title.length
-        //     );
-        // });
-
-        // it('returns an error if shortDescription field is not valid', async () => {
-        //     const newPost = {
-        //         ...testPost,
-        //     };
-
-        //     newPost.shortDescription =
-        //         invalidPostsFields.shortDescription.length;
-
-        //     const response = await req
-        //         .post(baseRoutes.users)
-        //         .auth(...validAuthData)
-        //         .send(newPost)
-        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-        //     expect(response.body.errorsMessages[0].field).toEqual(
-        //         'shortDescription'
-        //     );
-        //     expect(response.body.errorsMessages[0].message).toEqual(
-        //         postsValidationErrorMessages.shortDescription.length
-        //     );
-        // });
-
-        // it('returns an error if content field is not valid', async () => {
-        //     const newPost = {
-        //         ...testPost,
-        //     };
-
-        //     newPost.content = invalidPostsFields.content.length;
-
-        //     const response = await req
-        //         .post(baseRoutes.users)
-        //         .auth(...validAuthData)
-        //         .send(newPost)
-        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-        //     expect(response.body.errorsMessages[0].field).toEqual('content');
-        //     expect(response.body.errorsMessages[0].message).toEqual(
-        //         postsValidationErrorMessages.content.length
-        //     );
-        // });
-
-        // it('returns an error if blogId field is not valid', async () => {
-        //     const newPost = {
-        //         ...testPost,
-        //     };
-
-        //     newPost.blogId = invalidObjectId;
-
-        //     const response_1 = await req
-        //         .post(baseRoutes.users)
-        //         .auth(...validAuthData)
-        //         .send(newPost)
-        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-        //     expect(response_1.body.errorsMessages[0].field).toEqual('blogId');
-        //     expect(response_1.body.errorsMessages[0].message).toEqual(
-        //         postsValidationErrorMessages.blogId.format
-        //     );
-
-        //     newPost.blogId = validObjectId;
-
-        //     const response_2 = await req
-        //         .post(baseRoutes.users)
-        //         .auth(...validAuthData)
-        //         .send(newPost)
-        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-        //     expect(response_2.body.errorsMessages[0].field).toEqual('blogId');
-        //     expect(response_2.body.errorsMessages[0].message).toEqual(
-        //         postsValidationErrorMessages.blogId.value
-        //     );
-        // });
+        it('returns an error if email field is not valid', async () => {
+            const newUser = {
+                ...testUsers[0],
+            };
+            newUser.email = invalidUsersFields.email.format;
+            const response = await req
+                .post(baseRoutes.users)
+                .auth(...validAuthData)
+                .send(newUser)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('email');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                usersValidationErrorMessages.email.format
+            );
+        });
     });
 
-    // describe('DELETE /users/:id', () => {
-    //     it('can not delete a post without authorization', async () => {
-    //         const createdPost = await addNewPost(testPost);
-    //         const response = await req.delete(
-    //             `${baseRoutes.users}/${createdPost.id}`
-    //         );
-    //         expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
-    //     });
+    describe('DELETE /users/:id', () => {
+        it('can not delete a user without authorization', async () => {
+            const createdUser = await addNewUser(testUsers[0]);
+            const response = await req.delete(
+                `${baseRoutes.users}/${createdUser.id}`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
 
-    //     it('can not delete a post if auth data is invalid', async () => {
-    //         const createdPost = await addNewPost(testPost);
-    //         const response = await req
-    //             .delete(`${baseRoutes.users}/${createdPost.id}`)
-    //             .auth(...invalidAuthData);
-    //         expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
-    //     });
+        it('can not delete a user if auth data is invalid', async () => {
+            const createdUser = await addNewUser(testUsers[0]);
+            const response = await req
+                .delete(`${baseRoutes.users}/${createdUser.id}`)
+                .auth(...invalidAuthData);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
 
-    //     it('deletes a post', async () => {
-    //         const createdPost = await addNewPost(testPost);
-    //         const response_1 = await req
-    //             .delete(`${baseRoutes.users}/${createdPost.id}`)
-    //             .auth(...validAuthData);
-    //         expect(response_1.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
-    //         const response_2 = await req.get(
-    //             `${baseRoutes.users}/${createdPost.id}`
-    //         );
-    //         expect(response_2.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
-    //     });
+        it('deletes a user', async () => {
+            const createdUser = await addNewUser(testUsers[0]);
+            const response_1 = await req
+                .delete(`${baseRoutes.users}/${createdUser.id}`)
+                .auth(...validAuthData);
+            expect(response_1.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+            const response_2 = await req.get(
+                `${baseRoutes.users}/${createdUser.id}`
+            );
+            expect(response_2.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
 
-    //     it("returns an error if post's id is not valid", async () => {
-    //         const response = await req
-    //             .delete(`${baseRoutes.users}/${invalidObjectId}`)
-    //             .auth(...validAuthData);
-    //         expect(response.body.errorsMessages[0].message).toEqual(
-    //             postsValidationErrorMessages.id.format
-    //         );
-    //         expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
-    //     });
+        it("returns an error if user's id is not valid", async () => {
+            const response = await req
+                .delete(`${baseRoutes.users}/${invalidObjectId}`)
+                .auth(...validAuthData);
+            expect(response.body.errorsMessages[0].message).toEqual(
+                usersValidationErrorMessages.id.format
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+        });
 
-    //     it('returns an error if post is not found', async () => {
-    //         const response = await req
-    //             .delete(`${baseRoutes.users}/${validObjectId}`)
-    //             .auth(...validAuthData);
-    //         expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
-    //     });
-    // });
+        it('returns an error if user is not found', async () => {
+            const response = await req
+                .delete(`${baseRoutes.users}/${validObjectId}`)
+                .auth(...validAuthData);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
+    });
 });

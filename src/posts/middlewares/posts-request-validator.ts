@@ -82,7 +82,8 @@ export const postsBodySchema: Schema = {
                 }
                 //TODO: why we do here the search (required in home tasks)
                 const blog = await blogsRepository.findBlogById(
-                    new ObjectId(value))
+                    new ObjectId(value)
+                );
                 if (!blog) {
                     throw 'Incorrect Blog Id, no blogs found';
                 }
