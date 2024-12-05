@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { ObjectId } from 'mongodb';
 import { TCreateNewUserRequest, UserCreateRequestModel } from '../types';
 import { usersRepository } from '../repository';
@@ -17,11 +18,11 @@ export const usersService = {
                 )
             );
         }
-        //TODO: add password encryption
+        const passwordHash = await bcrypt.hash(password, 10); 
         const newUser = {
             login,
             email,
-            password,
+            passwordHash,
             createdAt: new Date().toISOString(),
         };
         return await usersRepository.addNewUser(newUser);
@@ -33,14 +34,14 @@ export const usersService = {
     },
 
     async setUsers(users: UserCreateRequestModel[]) {
-        const mappedUsers = users.map((user) => {
+        const mappedUsers = await Promise.all(users.map(async (user) => {
             return {
                 login: user.login,
                 email: user.email,
-                password: user.password,
+                passwordHash: await bcrypt.hash(user.password, 10),
                 createdAt: new Date().toISOString(),
             };
-        });
+        }));
         await usersRepository.setUsers(mappedUsers);
     },
 };

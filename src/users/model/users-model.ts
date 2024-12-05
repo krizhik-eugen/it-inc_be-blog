@@ -5,7 +5,7 @@ export type UserDBModel = OptionalUnlessRequiredId<{
     login: string;
     email: string;
     createdAt: string;
-    password: string;
+    passwordHash: string;
 }>;
 
 export type UsersDBSearchParams = {
