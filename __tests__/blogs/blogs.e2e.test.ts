@@ -369,6 +369,14 @@ describe('Blogs Controller', () => {
             await setTestPosts(addedBlogId);
         });
 
+        it('returns an error if  blogId param is not found', async () => {
+            await postsRepository.setPosts([]);
+            const response = await req.get(
+                `${baseRoutes.blogs}/${validObjectId}/posts`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
+
         it('returns an empty array initially', async () => {
             await postsRepository.setPosts([]);
             const response = await req.get(
