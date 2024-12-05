@@ -68,7 +68,7 @@ export const blogsController = {
     ) {
         const result = await postsService.createNewPostForBlog(req);
         if (typeof result !== 'string' && 'errorsMessages' in result) {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json(result);
             return;
         }
         const addedPost = await postsQueryRepository.getPost(result);

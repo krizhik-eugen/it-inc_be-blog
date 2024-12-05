@@ -13,10 +13,10 @@ const paramSchema: Schema = {
     id: {
         in: ['params'],
         isString: true,
-        // custom: {
-        //     options: (value) => ObjectId.isValid(value),
-        //     errorMessage: 'ID is not a valid ObjectId',
-        // },
+        custom: {
+            options: (value) => ObjectId.isValid(value),
+            errorMessage: 'ID is not a valid ObjectId',
+        },
     },
 };
 

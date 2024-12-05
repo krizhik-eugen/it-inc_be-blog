@@ -16,7 +16,6 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { log } from 'console';
 
 describe('Posts Controller', () => {
     let createdBlog: BlogViewModel;
@@ -185,7 +184,6 @@ describe('Posts Controller', () => {
             ) as (keyof typeof testPost)[]) {
                 const newPost = { ...testPost };
                 delete newPost[key];
-
                 const response = await req
                     .post(baseRoutes.posts)
                     .auth(...validAuthData)
@@ -200,9 +198,7 @@ describe('Posts Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.title = invalidPostsFields.title.length;
-
             const response = await req
                 .post(baseRoutes.posts)
                 .auth(...validAuthData)
@@ -218,10 +214,8 @@ describe('Posts Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.shortDescription =
                 invalidPostsFields.shortDescription.length;
-
             const response = await req
                 .post(baseRoutes.posts)
                 .auth(...validAuthData)
@@ -239,9 +233,7 @@ describe('Posts Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.content = invalidPostsFields.content.length;
-
             const response = await req
                 .post(baseRoutes.posts)
                 .auth(...validAuthData)
@@ -257,9 +249,7 @@ describe('Posts Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.blogId = invalidObjectId;
-
             const response_1 = await req
                 .post(baseRoutes.posts)
                 .auth(...validAuthData)
@@ -269,9 +259,7 @@ describe('Posts Controller', () => {
             expect(response_1.body.errorsMessages[0].message).toEqual(
                 postsValidationErrorMessages.blogId.format
             );
-
             newPost.blogId = validObjectId;
-
             const response_2 = await req
                 .post(baseRoutes.posts)
                 .auth(...validAuthData)
@@ -377,9 +365,7 @@ describe('Posts Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.title = invalidPostsFields.title.length;
-
             const response = await req
                 .put(`${baseRoutes.posts}/${validObjectId}`)
                 .auth(...validAuthData)
@@ -395,7 +381,6 @@ describe('Posts Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.shortDescription =
                 invalidPostsFields.shortDescription.length;
 
@@ -416,9 +401,7 @@ describe('Posts Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.content = invalidPostsFields.content.length;
-
             const response = await req
                 .put(`${baseRoutes.posts}/${validObjectId}`)
                 .auth(...validAuthData)
@@ -434,9 +417,7 @@ describe('Posts Controller', () => {
             const newPost = {
                 ...testPost,
             };
-
             newPost.blogId = invalidObjectId;
-
             const response_1 = await req
                 .put(`${baseRoutes.posts}/${validObjectId}`)
                 .auth(...validAuthData)

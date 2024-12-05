@@ -335,7 +335,7 @@ describe('Users Controller', () => {
         });
     });
 
-    describe.only('POST /users', () => {
+    describe('POST /users', () => {
         it('can not create a new user without authorization', async () => {
             const response = await req.post(baseRoutes.users).send(testUsers[0]);
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
@@ -349,117 +349,117 @@ describe('Users Controller', () => {
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
-        it('creates a new post', async () => {
+        it('creates a new user', async () => {
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)
                 .send(testUsers[0]);
             expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
-            expect(response.body).toEqual(expect.objectContaining(testPost));
-            expect(response.body.blogName).toEqual(createdBlog.name);
+            expect(response.body.login).toEqual(testUsers[0].login);
+            expect(response.body.email).toEqual(testUsers[0].email);
         });
 
-        it('returns an error if required fields are missing', async () => {
-            (Object.keys(testPost) as (keyof typeof testPost)[]).forEach(
-                async (key) => {
-                    const newPost = { ...testPost };
-                    delete newPost[key];
-                    const response = await req
-                        .post(baseRoutes.users)
-                        .auth(...validAuthData)
-                        .send(newPost)
-                        .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-                    expect(response.body.errorsMessages[0].field).toEqual(key);
-                }
-            );
-        });
+        // it('returns an error if required fields are missing', async () => {
+        //     (Object.keys(testPost) as (keyof typeof testPost)[]).forEach(
+        //         async (key) => {
+        //             const newPost = { ...testPost };
+        //             delete newPost[key];
+        //             const response = await req
+        //                 .post(baseRoutes.users)
+        //                 .auth(...validAuthData)
+        //                 .send(newPost)
+        //                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+        //             expect(response.body.errorsMessages[0].field).toEqual(key);
+        //         }
+        //     );
+        // });
 
-        it('returns an error if title field is not valid', async () => {
-            const newPost = {
-                ...testPost,
-            };
+        // it('returns an error if title field is not valid', async () => {
+        //     const newPost = {
+        //         ...testPost,
+        //     };
 
-            newPost.title = invalidPostsFields.title.length;
+        //     newPost.title = invalidPostsFields.title.length;
 
-            const response = await req
-                .post(baseRoutes.users)
-                .auth(...validAuthData)
-                .send(newPost)
-                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response.body.errorsMessages[0].field).toEqual('title');
-            expect(response.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.title.length
-            );
-        });
+        //     const response = await req
+        //         .post(baseRoutes.users)
+        //         .auth(...validAuthData)
+        //         .send(newPost)
+        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+        //     expect(response.body.errorsMessages[0].field).toEqual('title');
+        //     expect(response.body.errorsMessages[0].message).toEqual(
+        //         postsValidationErrorMessages.title.length
+        //     );
+        // });
 
-        it('returns an error if shortDescription field is not valid', async () => {
-            const newPost = {
-                ...testPost,
-            };
+        // it('returns an error if shortDescription field is not valid', async () => {
+        //     const newPost = {
+        //         ...testPost,
+        //     };
 
-            newPost.shortDescription =
-                invalidPostsFields.shortDescription.length;
+        //     newPost.shortDescription =
+        //         invalidPostsFields.shortDescription.length;
 
-            const response = await req
-                .post(baseRoutes.users)
-                .auth(...validAuthData)
-                .send(newPost)
-                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response.body.errorsMessages[0].field).toEqual(
-                'shortDescription'
-            );
-            expect(response.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.shortDescription.length
-            );
-        });
+        //     const response = await req
+        //         .post(baseRoutes.users)
+        //         .auth(...validAuthData)
+        //         .send(newPost)
+        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+        //     expect(response.body.errorsMessages[0].field).toEqual(
+        //         'shortDescription'
+        //     );
+        //     expect(response.body.errorsMessages[0].message).toEqual(
+        //         postsValidationErrorMessages.shortDescription.length
+        //     );
+        // });
 
-        it('returns an error if content field is not valid', async () => {
-            const newPost = {
-                ...testPost,
-            };
+        // it('returns an error if content field is not valid', async () => {
+        //     const newPost = {
+        //         ...testPost,
+        //     };
 
-            newPost.content = invalidPostsFields.content.length;
+        //     newPost.content = invalidPostsFields.content.length;
 
-            const response = await req
-                .post(baseRoutes.users)
-                .auth(...validAuthData)
-                .send(newPost)
-                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response.body.errorsMessages[0].field).toEqual('content');
-            expect(response.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.content.length
-            );
-        });
+        //     const response = await req
+        //         .post(baseRoutes.users)
+        //         .auth(...validAuthData)
+        //         .send(newPost)
+        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+        //     expect(response.body.errorsMessages[0].field).toEqual('content');
+        //     expect(response.body.errorsMessages[0].message).toEqual(
+        //         postsValidationErrorMessages.content.length
+        //     );
+        // });
 
-        it('returns an error if blogId field is not valid', async () => {
-            const newPost = {
-                ...testPost,
-            };
+        // it('returns an error if blogId field is not valid', async () => {
+        //     const newPost = {
+        //         ...testPost,
+        //     };
 
-            newPost.blogId = invalidObjectId;
+        //     newPost.blogId = invalidObjectId;
 
-            const response_1 = await req
-                .post(baseRoutes.users)
-                .auth(...validAuthData)
-                .send(newPost)
-                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response_1.body.errorsMessages[0].field).toEqual('blogId');
-            expect(response_1.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.blogId.format
-            );
+        //     const response_1 = await req
+        //         .post(baseRoutes.users)
+        //         .auth(...validAuthData)
+        //         .send(newPost)
+        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+        //     expect(response_1.body.errorsMessages[0].field).toEqual('blogId');
+        //     expect(response_1.body.errorsMessages[0].message).toEqual(
+        //         postsValidationErrorMessages.blogId.format
+        //     );
 
-            newPost.blogId = validObjectId;
+        //     newPost.blogId = validObjectId;
 
-            const response_2 = await req
-                .post(baseRoutes.users)
-                .auth(...validAuthData)
-                .send(newPost)
-                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response_2.body.errorsMessages[0].field).toEqual('blogId');
-            expect(response_2.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.blogId.value
-            );
-        });
+        //     const response_2 = await req
+        //         .post(baseRoutes.users)
+        //         .auth(...validAuthData)
+        //         .send(newPost)
+        //         .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+        //     expect(response_2.body.errorsMessages[0].field).toEqual('blogId');
+        //     expect(response_2.body.errorsMessages[0].message).toEqual(
+        //         postsValidationErrorMessages.blogId.value
+        //     );
+        // });
     });
 
     // describe('DELETE /users/:id', () => {

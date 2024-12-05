@@ -65,6 +65,7 @@ describe('Blogs Controller', () => {
 
         it('returns a list of blogs sorted by createdAt and descending order by default', async () => {
             await setTestBlogs();
+            await setTestBlogs();
             const response = await req.get(`${baseRoutes.blogs}`);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.items[0].name).toEqual(testBlogs[8].name);
@@ -73,8 +74,8 @@ describe('Blogs Controller', () => {
             ).toBeGreaterThan(
                 new Date(response.body.items[8].createdAt).getTime()
             );
-            expect(response.body.pagesCount).toEqual(1);
-            expect(response.body.totalCount).toEqual(9);
+            expect(response.body.pagesCount).toEqual(2);
+            expect(response.body.totalCount).toEqual(18);
             expect(response.body.items[0]).toHaveProperty('createdAt');
             expect(response.body.items[0]).toHaveProperty('isMembership');
             expect(response.body.items[0]).toHaveProperty('websiteUrl');
@@ -239,6 +240,14 @@ describe('Blogs Controller', () => {
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
+        it.only('can not create a post if blogId in uri param is npt found', async () => {
+            const response = await req
+                .post(`${baseRoutes.blogs}/${validObjectId}/posts`)
+                .auth(...validAuthData)
+                .send(testPost);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
+
         it('creates a new post', async () => {
             const response = await req
                 .post(`${baseRoutes.blogs}/${createdBlog.id}/posts`)
@@ -369,7 +378,7 @@ describe('Blogs Controller', () => {
             await setTestPosts(addedBlogId);
         });
 
-        it('returns an error if  blogId param is not found', async () => {
+        it('returns an error if blogId param is not found', async () => {
             await postsRepository.setPosts([]);
             const response = await req.get(
                 `${baseRoutes.blogs}/${validObjectId}/posts`

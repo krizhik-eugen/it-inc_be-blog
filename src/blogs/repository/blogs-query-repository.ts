@@ -35,7 +35,7 @@ export const blogsQueryRepository = {
               }))
             : [];
         return {
-            pagesCount: 1,
+            pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
             page: searchQueries.pageNumber,
             pageSize: searchQueries.pageSize,
             totalCount,
