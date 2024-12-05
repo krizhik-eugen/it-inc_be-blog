@@ -8,7 +8,6 @@ import {
     getSearchQueries,
 } from '../../helpers';
 import { TGetAllBlogPostsRequest, blogsCollection } from '../../blogs';
-import { create } from 'domain';
 
 export const postsQueryRepository = {
     async getPosts(

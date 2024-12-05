@@ -255,18 +255,21 @@ describe('Blogs Controller', () => {
                 content: testPost.content,
                 shortDescription: testPost.shortDescription,
             };
-            (Object.keys(newPost) as (keyof typeof newPost)[]).forEach(
-                async (key) => {
-                    const invalidPost = { ...newPost };
-                    delete invalidPost[key];
-                    const response = await req
-                        .post(`${baseRoutes.blogs}/${createdBlog.id}/posts`)
-                        .auth(...validAuthData)
-                        .send(invalidPost)
-                        .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-                    expect(response.body.errorsMessages[0].field).toEqual(key);
-                }
-            );
+
+            for (const key of Object.keys(
+                newPost
+            ) as (keyof typeof newPost)[]) {
+                const invalidPost = { ...newPost };
+                delete invalidPost[key];
+
+                const response = await req
+                    .post(`${baseRoutes.blogs}/${createdBlog.id}/posts`)
+                    .auth(...validAuthData)
+                    .send(invalidPost)
+                    .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+
+                expect(response.body.errorsMessages[0].field).toEqual(key);
+            }
         });
 
         it('returns an error if title field is not valid', async () => {

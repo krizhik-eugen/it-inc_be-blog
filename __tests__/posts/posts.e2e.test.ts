@@ -16,16 +16,11 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
+import { log } from 'console';
 
 describe('Posts Controller', () => {
     let createdBlog: BlogViewModel;
     const testPost = testPosts[0];
-
-    beforeEach(async () => {
-        await postsRepository.setPosts([]);
-        createdBlog = await addNewBlog(testBlogs[0]);
-        testPost.blogId = createdBlog.id;
-    });
 
     beforeAll(async () => {
         await DBHandlers.connectToDB();
@@ -33,6 +28,12 @@ describe('Posts Controller', () => {
 
     afterAll(async () => {
         await DBHandlers.closeDB();
+    });
+
+    beforeEach(async () => {
+        await postsRepository.setPosts([]);
+        createdBlog = await addNewBlog(testBlogs[0]);
+        testPost.blogId = createdBlog.id;
     });
 
     const setTestPosts = async (blogId: string) => {
@@ -179,18 +180,20 @@ describe('Posts Controller', () => {
         });
 
         it('returns an error if required fields are missing', async () => {
-            (Object.keys(testPost) as (keyof typeof testPost)[]).forEach(
-                async (key) => {
-                    const newPost = { ...testPost };
-                    delete newPost[key];
-                    const response = await req
-                        .post(baseRoutes.posts)
-                        .auth(...validAuthData)
-                        .send(newPost)
-                        .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-                    expect(response.body.errorsMessages[0].field).toEqual(key);
-                }
-            );
+            for (const key of Object.keys(
+                testPost
+            ) as (keyof typeof testPost)[]) {
+                const newPost = { ...testPost };
+                delete newPost[key];
+
+                const response = await req
+                    .post(baseRoutes.posts)
+                    .auth(...validAuthData)
+                    .send(newPost)
+                    .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+
+                expect(response.body.errorsMessages[0].field).toEqual(key);
+            }
         });
 
         it('returns an error if title field is not valid', async () => {

@@ -13,16 +13,16 @@ import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository, UserViewModel } from '../../src/users';
 
 describe('Users Controller', () => {
-    beforeEach(async () => {
-        await usersRepository.setUsers([]);
-    });
-
     beforeAll(async () => {
         await DBHandlers.connectToDB();
     });
 
     afterAll(async () => {
         await DBHandlers.closeDB();
+    });
+
+    beforeEach(async () => {
+        await usersRepository.setUsers([]);
     });
 
     const setTestUsers = async () => {
@@ -208,7 +208,7 @@ describe('Users Controller', () => {
             expect(response.body.items[0].login).toEqual(testUsers[8].login);
         });
 
-        it.only('returns a list of users with the login matching the search term', async () => {
+        it('returns a list of users with the login matching the search term', async () => {
             await setTestUsers();
             await usersRepository.setUsers([
                 {
@@ -288,7 +288,51 @@ describe('Users Controller', () => {
             });
         });
 
-        //TODO: add search by both login and email
+        it('returns a list of users with the email and login matching the search term', async () => {
+            await setTestUsers();
+            await usersRepository.setUsers([
+                {
+                    login: 'login10',
+                    email: 'email10@email.com',
+                    password: 'password10',
+                },
+                {
+                    login: 'login11',
+                    email: 'email11@email.com',
+                    password: 'password11',
+                },
+                {
+                    login: 'login111',
+                    email: 'email111@email.com',
+                    password: 'password12',
+                },
+            ]);
+            const response_1 = await req
+                .get(
+                    `${baseRoutes.users}?searchEmailTerm=email&searchLoginTerm=login`
+                )
+                .auth(...validAuthData);
+            expect(response_1.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response_1.body.totalCount).toEqual(12);
+            const response_2 = await req
+                .get(
+                    `${baseRoutes.users}?searchEmailTerm=email11&searchLoginTerm=login1`
+                )
+                .auth(...validAuthData);
+            expect(response_2.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response_2.body.totalCount).toEqual(3);
+            [
+                'email10@email.com',
+                'email11@email.com',
+                'email111@email.com',
+            ].forEach((email) => {
+                expect(
+                    response_2.body.items.some(
+                        (user: UserViewModel) => user.email === email
+                    )
+                ).toBeTruthy();
+            });
+        });
     });
 
     // describe('POST /users', () => {

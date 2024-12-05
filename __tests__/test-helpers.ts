@@ -13,7 +13,7 @@ export const DBHandlers = {
         await connectToDB();
     },
     closeDB: async () => {
-        db.dropDatabase();
+        await db.dropDatabase();
         await client.close();
     },
 };
