@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../helpers';
 
-const loginMaxLength = 30;
+const loginMaxLength = 10;
 const loginMinLength = 3;
 const loginPattern = /^[a-zA-Z0-9_-]*$/;
 const passwordMinLength = 6;
