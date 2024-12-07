@@ -23,9 +23,7 @@ const paramSchema: Schema = {
 export const usersBodySchema: Schema = {
     login: {
         in: ['body'],
-        exists: {
-            errorMessage: 'Login is required',
-        },
+        optional: true,
         isString: true,
         trim: true,
         notEmpty: {
@@ -58,9 +56,7 @@ export const usersBodySchema: Schema = {
     },
     email: {
         in: ['body'],
-        exists: {
-            errorMessage: 'Email is required',
-        },
+        optional: true,
         isString: true,
         trim: true,
         notEmpty: {
