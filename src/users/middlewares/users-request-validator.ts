@@ -24,35 +24,24 @@ export const usersBodySchema: Schema = {
     login: {
         in: ['body'],
         optional: true,
-        isString: true,
-        trim: true,
-        isEmpty: {
-            negated: false,
-            options: { ignore_whitespace: true },
-        },
-        isLength: {
-            options: { min: loginMinLength, max: loginMaxLength },
-            errorMessage: `Login length should be min ${loginMinLength} and max ${loginMaxLength} characters`,
-        },
-        matches: {
-            options: loginPattern,
-            errorMessage:
-                'Login should contain only latin letters, numbers, - and _',
+        custom: {
+            options: (value): boolean => {
+                if (!value) return true; // Allow falsy values
+                if (typeof value !== 'string') return false;
+                const trimmedValue = value.trim();
+                const lengthValid = trimmedValue.length >= loginMinLength && trimmedValue.length <= loginMaxLength;
+                const patternValid = loginPattern.test(trimmedValue);
+                return lengthValid && patternValid;
+            },
+            errorMessage: `Login should be empty or contain only latin letters, numbers, - and _, with length between ${loginMinLength} and ${loginMaxLength} characters`,
         },
     },
     email: {
         in: ['body'],
         optional: true,
-        isString: true,
-        trim: true,
-        isEmpty: {
-            negated: false,
-            options: { ignore_whitespace: true },
-        },
-        matches: {
-            options: emailPattern,
-            errorMessage:
-                'Email should be a valid email address, example: example@example.com',
+        custom: {
+            options: (value) => !value || emailPattern.test(value),
+            errorMessage: 'Email should be empty or a valid email address, example: example@example.com',
         },
     },
     password: {
