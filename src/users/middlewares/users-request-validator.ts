@@ -26,9 +26,6 @@ export const usersBodySchema: Schema = {
         optional: true,
         isString: true,
         trim: true,
-        notEmpty: {
-            errorMessage: 'Login is required',
-        },
         isLength: {
             options: { min: loginMinLength, max: loginMaxLength },
             errorMessage: `Login length should be min ${loginMinLength} and max ${loginMaxLength} characters`,
@@ -37,6 +34,17 @@ export const usersBodySchema: Schema = {
             options: loginPattern,
             errorMessage:
                 'Login should contain only latin letters, numbers, - and _',
+        },
+    },
+    email: {
+        in: ['body'],
+        optional: true,
+        isString: true,
+        trim: true,
+        matches: {
+            options: emailPattern,
+            errorMessage:
+                'Email should be a valid email address, example: example@example.com',
         },
     },
     password: {
@@ -52,20 +60,6 @@ export const usersBodySchema: Schema = {
         isLength: {
             options: { min: passwordMinLength, max: passwordMaxLength },
             errorMessage: `Password length should be min ${passwordMinLength} and max ${passwordMaxLength} characters`,
-        },
-    },
-    email: {
-        in: ['body'],
-        optional: true,
-        isString: true,
-        trim: true,
-        notEmpty: {
-            errorMessage: 'Email is required',
-        },
-        matches: {
-            options: emailPattern,
-            errorMessage:
-                'Email should be a valid email address, example: example@example.com',
         },
     },
 };
