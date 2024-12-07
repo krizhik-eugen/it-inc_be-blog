@@ -61,7 +61,9 @@ export const usersQueryRepository = {
         });
     },
 
-    async getUserByLoginOrEmail(loginOrEmail: UserViewModel['login'] | UserViewModel['email']) {
+    async getUserByLoginOrEmail(
+        loginOrEmail: UserViewModel['login'] | UserViewModel['email']
+    ) {
         return await usersCollection.findOne({
             $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
         });

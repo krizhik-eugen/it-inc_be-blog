@@ -238,7 +238,7 @@ describe('Blogs Controller', () => {
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
-        it.only('can not create a post if blogId in uri param is npt found', async () => {
+        it('can not create a post if blogId in uri param is npt found', async () => {
             const response = await req
                 .post(`${baseRoutes.blogs}/${validObjectId}/posts`)
                 .auth(...validAuthData)
@@ -349,8 +349,7 @@ describe('Blogs Controller', () => {
                 .post(`${baseRoutes.blogs}/${validObjectId}/posts`)
                 .auth(...validAuthData)
                 .send(newPost)
-                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response_2.body.errorsMessages[0].field).toEqual('id');
+                .expect(HTTP_STATUS_CODES.NOT_FOUND);
             expect(response_2.body.errorsMessages[0].message).toEqual(
                 postsValidationErrorMessages.blogId.value
             );

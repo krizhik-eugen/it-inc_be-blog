@@ -1,12 +1,7 @@
 import { Router } from 'express';
-import { usersController } from '../controller';
-import { authValidator } from '../../app-middlewares';
-import { usersValidators } from '../middlewares';
+import { authController } from '../controller';
+import { authValidators } from '../middlewares';
 
 export const authRouter = Router();
 
-authRouter.post(
-    '/',
-    ...usersValidators.createNewUserRequest,
-    usersController.createNewUser
-);
+authRouter.post('/login', ...authValidators.loginRequest, authController.login);

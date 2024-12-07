@@ -1,27 +1,26 @@
-import { usersRepository } from '../repository';
+import bcrypt from 'bcrypt';
 import { createResponseError } from '../../helpers';
+import { usersRepository } from '../../users';
+import { TAuthLoginRequest } from '../types';
 
 export const authService = {
-    async login(re) {
-        const { login, email, password } = req.body;
-        const user = await usersRepository.findUserByLoginOrEmail({
-            login,
-            email,
-        });
-        if (user) {
+    async login(req: TAuthLoginRequest) {
+        const { loginOrEmail, password } = req.body;
+        const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail);
+        if (!user) {
             return await Promise.resolve(
-                createResponseError(
-                    'User with this login or email already exists'
-                )
+                createResponseError('Incorrect login or password')
             );
         }
-        //TODO: add password encryption
-        const newUser = {
-            login,
-            email,
+        const isCredentialsValid = await bcrypt.compare(
             password,
-            createdAt: new Date().toISOString(),
-        };
-        return await usersRepository.addNewUser(newUser);
+            user.passwordHash
+        );
+        if (!isCredentialsValid) {
+            return await Promise.resolve(
+                createResponseError('Incorrect login or password')
+            );
+        }
+        return isCredentialsValid;
     },
 };

@@ -34,8 +34,6 @@ describe('Users Controller', () => {
     };
 
     describe('GET /users', () => {
-        beforeEach(async () => {});
-
         it('can not get a list of users without authorization', async () => {
             const response = await req.get(baseRoutes.users);
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
@@ -216,17 +214,17 @@ describe('Users Controller', () => {
                 {
                     login: 'login10',
                     email: 'email10@email.com',
-                    password: 'password10',
+                    passwordHash: 'password10',
                 },
                 {
                     login: 'login11',
                     email: 'email11@email.com',
-                    password: 'password11',
+                    passwordHash: 'password11',
                 },
                 {
                     login: 'login12',
                     email: 'email12@email.com',
-                    password: 'password12',
+                    passwordHash: 'password12',
                 },
             ]);
             const response_1 = await req
@@ -254,17 +252,17 @@ describe('Users Controller', () => {
                 {
                     login: 'login10',
                     email: 'email10@email.com',
-                    password: 'password10',
+                    passwordHash: 'password10',
                 },
                 {
                     login: 'login11',
                     email: 'email11@email.com',
-                    password: 'password11',
+                    passwordHash: 'password11',
                 },
                 {
                     login: 'login12',
                     email: 'email12@email.com',
-                    password: 'password12',
+                    passwordHash: 'password12',
                 },
             ]);
             const response_1 = await req
@@ -296,17 +294,17 @@ describe('Users Controller', () => {
                 {
                     login: 'login10',
                     email: 'email10@email.com',
-                    password: 'password10',
+                    passwordHash: 'password10',
                 },
                 {
                     login: 'login11',
                     email: 'email11@email.com',
-                    password: 'password11',
+                    passwordHash: 'password11',
                 },
                 {
                     login: 'login111',
                     email: 'email111@email.com',
-                    password: 'password12',
+                    passwordHash: 'password12',
                 },
             ]);
             const response_1 = await req
@@ -396,7 +394,9 @@ describe('Users Controller', () => {
 
         it('returns an error if password field is not valid', async () => {
             const newUser = {
-                ...testUsers[0],
+                login: testUsers[0].login,
+                email: testUsers[0].email,
+                password: testUsers[0].password,
             };
             newUser.password = invalidUsersFields.password.length;
             const response = await req

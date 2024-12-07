@@ -4,6 +4,7 @@ import { testingRouter } from './testing';
 import { postsRouter } from './posts';
 import { blogsRouter } from './blogs';
 import { usersRouter } from './users';
+import { authRouter } from './auth/router/auth-router';
 // import cors from 'cors';
 
 export const app = express();
@@ -15,3 +16,4 @@ app.use(baseRoutes.testing, testingRouter);
 app.use(baseRoutes.posts, postsRouter);
 app.use(baseRoutes.blogs, blogsRouter);
 app.use(baseRoutes.users, usersRouter);
+app.use(baseRoutes.auth, authRouter);
