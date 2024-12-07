@@ -23,25 +23,22 @@ const paramSchema: Schema = {
 export const usersBodySchema: Schema = {
     login: {
         in: ['body'],
-        optional: true,
-        custom: {
-            options: (value): boolean => {
-                if (!value) return true; // Allow falsy values
-                if (typeof value !== 'string') return false;
-                const trimmedValue = value.trim();
-                const lengthValid = trimmedValue.length >= loginMinLength && trimmedValue.length <= loginMaxLength;
-                const patternValid = loginPattern.test(trimmedValue);
-                return lengthValid && patternValid;
-            },
-            errorMessage: `Login should be empty or contain only latin letters, numbers, - and _, with length between ${loginMinLength} and ${loginMaxLength} characters`,
+        exists: {
+            errorMessage: 'Login is required',
         },
-    },
-    email: {
-        in: ['body'],
-        optional: true,
-        custom: {
-            options: (value) => !value || emailPattern.test(value),
-            errorMessage: 'Email should be empty or a valid email address, example: example@example.com',
+        isString: true,
+        trim: true,
+        notEmpty: {
+            errorMessage: 'Login is required',
+        },
+        isLength: {
+            options: { min: loginMinLength, max: loginMaxLength },
+            errorMessage: `Login length should be min ${loginMinLength} and max ${loginMaxLength} characters`,
+        },
+        matches: {
+            options: loginPattern,
+            errorMessage:
+                'Login should contain only latin letters, numbers, - and _',
         },
     },
     password: {
@@ -57,6 +54,22 @@ export const usersBodySchema: Schema = {
         isLength: {
             options: { min: passwordMinLength, max: passwordMaxLength },
             errorMessage: `Password length should be min ${passwordMinLength} and max ${passwordMaxLength} characters`,
+        },
+    },
+    email: {
+        in: ['body'],
+        exists: {
+            errorMessage: 'Email is required',
+        },
+        isString: true,
+        trim: true,
+        notEmpty: {
+            errorMessage: 'Email is required',
+        },
+        matches: {
+            options: emailPattern,
+            errorMessage:
+                'Email should be a valid email address, example: example@example.com',
         },
     },
 };
