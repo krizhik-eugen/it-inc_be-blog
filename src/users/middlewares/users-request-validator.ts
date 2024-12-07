@@ -26,6 +26,10 @@ export const usersBodySchema: Schema = {
         optional: true,
         isString: true,
         trim: true,
+        isEmpty: {
+            negated: false,
+            options: { ignore_whitespace: true },
+        },
         isLength: {
             options: { min: loginMinLength, max: loginMaxLength },
             errorMessage: `Login length should be min ${loginMinLength} and max ${loginMaxLength} characters`,
@@ -41,6 +45,10 @@ export const usersBodySchema: Schema = {
         optional: true,
         isString: true,
         trim: true,
+        isEmpty: {
+            negated: false,
+            options: { ignore_whitespace: true },
+        },
         matches: {
             options: emailPattern,
             errorMessage:
