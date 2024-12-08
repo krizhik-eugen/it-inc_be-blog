@@ -5,6 +5,7 @@ import {
     addNewPost,
     blogsValidationErrorMessages,
     DBHandlers,
+    idValidationErrorMessages,
     invalidAuthData,
     invalidBlogsFields,
     invalidObjectId,
@@ -343,7 +344,7 @@ describe('Blogs Controller', () => {
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
             expect(response_1.body.errorsMessages[0].field).toEqual('id');
             expect(response_1.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.id.format
+                idValidationErrorMessages
             );
             const response_2 = await req
                 .post(`${baseRoutes.blogs}/${validObjectId}/posts`)
@@ -610,7 +611,7 @@ describe('Blogs Controller', () => {
                 `${baseRoutes.blogs}/${createdBlog.id.slice(1, 7)}`
             );
             expect(response.body.errorsMessages[0].message).toEqual(
-                blogsValidationErrorMessages.id.format
+                idValidationErrorMessages
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });
@@ -686,7 +687,7 @@ describe('Blogs Controller', () => {
                 .auth(...validAuthData)
                 .send(updatedBlog);
             expect(response.body.errorsMessages[0].message).toEqual(
-                blogsValidationErrorMessages.id.format
+                idValidationErrorMessages
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });
@@ -790,7 +791,7 @@ describe('Blogs Controller', () => {
                 .delete(`${baseRoutes.blogs}/${invalidObjectId}`)
                 .auth(...validAuthData);
             expect(response.body.errorsMessages[0].message).toEqual(
-                blogsValidationErrorMessages.id.format
+                idValidationErrorMessages
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });

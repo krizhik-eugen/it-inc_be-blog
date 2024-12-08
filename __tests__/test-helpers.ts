@@ -2,9 +2,12 @@ import { app } from '../src/app';
 import { agent } from 'supertest';
 import { client, connectToDB, db } from '../src/db';
 import { BlogViewModel } from '../src/blogs';
-import { PostViewModel } from '../src/posts';
+import { PostCreateRequestModel, PostViewModel } from '../src/posts';
 import { baseRoutes } from '../src/configs';
 import { UserViewModel } from '../src/users';
+import { CommentCreateRequestModel, CommentViewModel } from '../src/comments';
+import { UserCreateRequestModel } from '../src/users/types';
+import { BlogCreateRequestModel } from '../src/blogs/types';
 
 export const req = agent(app);
 
@@ -20,9 +23,11 @@ export const DBHandlers = {
 
 export const validAuthData = ['admin', 'qwerty', { type: 'basic' }] as const;
 export const invalidAuthData = ['admin', 'abcdef', { type: 'basic' }] as const;
+export const idValidationErrorMessages = 'ID is not a valid ObjectId';
+
+export const textWithLengthMoreThan300 = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante. Integer bibendum purus nec massa fermentum, et ultricies sapien ullamcorper. Sed nec eros sit amet elit consequat malesuada a ut nisi. Phasellus nec ligula nec sapien aliquet varius.`;
 
 export const blogsValidationErrorMessages = {
-    id: { format: 'ID is not a valid ObjectId' },
     name: { length: 'Name length should be max 15 characters' },
     description: { length: 'Description length should be max 500 characters' },
     websiteUrl: {
@@ -32,7 +37,6 @@ export const blogsValidationErrorMessages = {
 };
 
 export const postsValidationErrorMessages = {
-    id: { format: 'ID is not a valid ObjectId' },
     title: { length: 'Title length should be max 30 characters' },
     shortDescription: {
         length: 'ShortDescription length should be max 100 characters',
@@ -47,7 +51,6 @@ export const postsValidationErrorMessages = {
 };
 
 export const usersValidationErrorMessages = {
-    id: { format: 'ID is not a valid ObjectId' },
     login: {
         format: 'Login should contain only latin letters, numbers, - and _',
         length: 'Login length should be min 3 and max 10 characters',
@@ -60,10 +63,7 @@ export const usersValidationErrorMessages = {
     },
 };
 
-export const testBlogs: Omit<
-    BlogViewModel,
-    'id' | 'createdAt' | 'isMembership'
->[] = [
+export const testBlogs: BlogCreateRequestModel[] = [
     {
         name: 'Test Blog 1',
         description: 'Test description 1',
@@ -111,68 +111,64 @@ export const testBlogs: Omit<
     },
 ];
 
-export const testPosts: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>[] =
-    [
-        {
-            title: 'Test Post 1',
-            content: 'Test content 1',
-            blogId: '',
-            shortDescription: 'test shortDescription 1',
-        },
-        {
-            title: 'Test Post 2',
-            content: 'Test content 2',
-            blogId: '',
-            shortDescription: 'test shortDescription 2',
-        },
-        {
-            title: 'Test Post 3',
-            content: 'Test content 3',
-            blogId: '',
-            shortDescription: 'test shortDescription 3',
-        },
-        {
-            title: 'Test Post 4',
-            content: 'Test content 4',
-            blogId: '',
-            shortDescription: 'test shortDescription 4',
-        },
-        {
-            title: 'Test Post 5',
-            content: 'Test content 5',
-            blogId: '',
-            shortDescription: 'test shortDescription 5',
-        },
-        {
-            title: 'Test Post 6',
-            content: 'Test content 6',
-            blogId: '',
-            shortDescription: 'test shortDescription 6',
-        },
-        {
-            title: 'Test Post 7',
-            content: 'Test content 7',
-            blogId: '',
-            shortDescription: 'test shortDescription 7',
-        },
-        {
-            title: 'Test Post 8',
-            content: 'Test content 8',
-            blogId: '',
-            shortDescription: 'test shortDescription 8',
-        },
-        {
-            title: 'Test Post 9',
-            content: 'Test content 9',
-            blogId: '',
-            shortDescription: 'test shortDescription 9',
-        },
-    ];
+export const testPosts: PostCreateRequestModel[] = [
+    {
+        title: 'Test Post 1',
+        content: 'Test content 1',
+        blogId: '',
+        shortDescription: 'test shortDescription 1',
+    },
+    {
+        title: 'Test Post 2',
+        content: 'Test content 2',
+        blogId: '',
+        shortDescription: 'test shortDescription 2',
+    },
+    {
+        title: 'Test Post 3',
+        content: 'Test content 3',
+        blogId: '',
+        shortDescription: 'test shortDescription 3',
+    },
+    {
+        title: 'Test Post 4',
+        content: 'Test content 4',
+        blogId: '',
+        shortDescription: 'test shortDescription 4',
+    },
+    {
+        title: 'Test Post 5',
+        content: 'Test content 5',
+        blogId: '',
+        shortDescription: 'test shortDescription 5',
+    },
+    {
+        title: 'Test Post 6',
+        content: 'Test content 6',
+        blogId: '',
+        shortDescription: 'test shortDescription 6',
+    },
+    {
+        title: 'Test Post 7',
+        content: 'Test content 7',
+        blogId: '',
+        shortDescription: 'test shortDescription 7',
+    },
+    {
+        title: 'Test Post 8',
+        content: 'Test content 8',
+        blogId: '',
+        shortDescription: 'test shortDescription 8',
+    },
+    {
+        title: 'Test Post 9',
+        content: 'Test content 9',
+        blogId: '',
+        shortDescription: 'test shortDescription 9',
+    },
+];
 
-export const testUsers: ({ password: string } & Omit<
-    UserViewModel,
-    'id' | 'createdAt'
->)[] = [
+export const testUsers: UserCreateRequestModel[] = [
     { email: 'email_1@email.com', login: 'login_1', password: 'password1' },
     { email: 'email_2@email.com', login: 'login_2', password: 'password2' },
     { email: 'email_3@email.com', login: 'login_3', password: 'password3' },
@@ -182,6 +178,10 @@ export const testUsers: ({ password: string } & Omit<
     { email: 'email_7@email.com', login: 'login_7', password: 'password7' },
     { email: 'email_8@email.com', login: 'login_8', password: 'password8' },
     { email: 'email_9@email.com', login: 'login_9', password: 'password9' },
+];
+
+export const testComments: CommentCreateRequestModel[] = [
+    { content: 'Test content 1' },
 ];
 
 export const validObjectId = '57430b985302e02a9657421c';

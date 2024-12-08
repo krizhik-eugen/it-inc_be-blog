@@ -33,7 +33,10 @@ export const postsController = {
         res.status(HTTP_STATUS_CODES.OK).json(foundPost);
     },
 
-    async getPostComments (req: TGetAllPostCommentsRequest, res: TGetAllPostCommentsResponse) {
+    async getPostComments(
+        req: TGetAllPostCommentsRequest,
+        res: TGetAllPostCommentsResponse
+    ) {
         const result = await commentsQueryRepository.getPostComments(req);
         if ('errorsMessages' in result) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
@@ -58,7 +61,10 @@ export const postsController = {
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
     },
-    async createNewCommentForPost(req: TCreateNewPostCommentRequest, res: TCreateNewPostCommentResponse) {
+    async createNewCommentForPost(
+        req: TCreateNewPostCommentRequest,
+        res: TCreateNewPostCommentResponse
+    ) {
         const result = await commentsService.createNewCommentForPost(req);
         if (typeof result !== 'string' && 'errorsMessages' in result) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);

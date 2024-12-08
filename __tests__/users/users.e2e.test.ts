@@ -2,6 +2,7 @@ import { baseRoutes } from '../../src/configs';
 import {
     addNewUser,
     DBHandlers,
+    idValidationErrorMessages,
     invalidAuthData,
     invalidObjectId,
     invalidUsersFields,
@@ -457,7 +458,7 @@ describe('Users Controller', () => {
                 .delete(`${baseRoutes.users}/${invalidObjectId}`)
                 .auth(...validAuthData);
             expect(response.body.errorsMessages[0].message).toEqual(
-                usersValidationErrorMessages.id.format
+                idValidationErrorMessages
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });

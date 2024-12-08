@@ -5,6 +5,7 @@ import {
     addNewBlog,
     addNewPost,
     DBHandlers,
+    idValidationErrorMessages,
     invalidAuthData,
     invalidObjectId,
     invalidPostsFields,
@@ -257,7 +258,7 @@ describe('Posts Controller', () => {
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
             expect(response_1.body.errorsMessages[0].field).toEqual('blogId');
             expect(response_1.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.blogId.format
+                idValidationErrorMessages
             );
             newPost.blogId = validObjectId;
             const response_2 = await req
@@ -288,7 +289,7 @@ describe('Posts Controller', () => {
                 `${baseRoutes.posts}/${createdPost.id.slice(1, 7)}`
             );
             expect(response.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.id.format
+                idValidationErrorMessages
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });
@@ -356,7 +357,7 @@ describe('Posts Controller', () => {
                 .auth(...validAuthData)
                 .send(updatedPost);
             expect(response.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.id.format
+                idValidationErrorMessages
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });
@@ -425,7 +426,7 @@ describe('Posts Controller', () => {
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
             expect(response_1.body.errorsMessages[0].field).toEqual('blogId');
             expect(response_1.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.blogId.format
+                idValidationErrorMessages
             );
         });
     });
@@ -464,7 +465,7 @@ describe('Posts Controller', () => {
                 .delete(`${baseRoutes.posts}/${invalidObjectId}`)
                 .auth(...validAuthData);
             expect(response.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.id.format
+                idValidationErrorMessages
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });
