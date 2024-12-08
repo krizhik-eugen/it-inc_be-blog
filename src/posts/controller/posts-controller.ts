@@ -1,9 +1,13 @@
 import { Response } from 'express';
 import { HTTP_STATUS_CODES } from '../../constants';
 import {
+    TCreateNewPostCommentRequest,
+    TCreateNewPostCommentResponse,
     TCreateNewPostRequest,
     TCreateNewPostResponse,
     TDeletePostRequest,
+    TGetAllPostCommentsRequest,
+    TGetAllPostCommentsResponse,
     TGetAllPostsRequest,
     TGetAllPostsResponse,
     TGetPostRequest,
@@ -12,6 +16,7 @@ import {
 } from '../types';
 import { postsService } from '../service';
 import { postsQueryRepository } from '../repository';
+import { commentsQueryRepository, commentsService } from '../../comments';
 
 export const postsController = {
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {
@@ -26,6 +31,15 @@ export const postsController = {
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).json(foundPost);
+    },
+
+    async getPostComments (req: TGetAllPostCommentsRequest, res: TGetAllPostCommentsResponse) {
+        const result = await commentsQueryRepository.getPostComments(req);
+        if ('errorsMessages' in result) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            return;
+        }
+        res.status(HTTP_STATUS_CODES.OK).json(result);
     },
 
     async createNewPost(
@@ -43,6 +57,19 @@ export const postsController = {
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
+    },
+    async createNewCommentForPost(req: TCreateNewPostCommentRequest, res: TCreateNewPostCommentResponse) {
+        const result = await commentsService.createNewCommentForPost(req);
+        if (typeof result !== 'string' && 'errorsMessages' in result) {
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
+            return;
+        }
+        const createdComment = await commentsQueryRepository.getComment(result);
+        if (!createdComment) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            return;
+        }
+        res.status(HTTP_STATUS_CODES.CREATED).json(createdComment);
     },
 
     async updatePost(req: TUpdatePostRequest, res: Response) {

@@ -68,15 +68,14 @@ export const postsQueryRepository = {
         | ReturnType<typeof createResponseError>
     > {
         const blogId = req.params.id;
-
         const blog = await blogsCollection.findOne({
             _id: new ObjectId(blogId),
         });
-        if (!blog)
+        if (!blog) {
             return await Promise.resolve(
                 createResponseError('Blog not found', 'id')
             );
-
+        }
         const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
             req.query
         );

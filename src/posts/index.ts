@@ -1,14 +1,19 @@
 import { postsController } from './controller';
-import { postsValidators, postsQuerySchema } from './middlewares';
-import { PostDBModel, PostsDBSearchParams } from './model';
+import {
+    postsValidators,
+    postsQuerySchema,
+    postsBodySchema,
+} from './middlewares';
+import { PostDBModel, postsCollection, PostsDBSearchParams } from './model';
 import { postsRepository, postsQueryRepository } from './repository';
 import { postsRouter } from './router';
 import {
     PostViewModel,
     TGetAllPostsRequestQueries,
     PostCreateRequestModel,
+    TGetAllPostCommentsRequest,
+    TCreateNewPostCommentRequest,
 } from './types';
-import { postsBodySchema } from './middlewares';
 import { postsService } from './service';
 
 export {
@@ -25,4 +30,7 @@ export {
     postsQueryRepository,
     postsBodySchema,
     postsService,
+    TGetAllPostCommentsRequest,
+    postsCollection,
+    TCreateNewPostCommentRequest,
 };

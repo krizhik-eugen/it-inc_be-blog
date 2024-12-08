@@ -71,7 +71,7 @@ describe('Auth Controller', () => {
         });
     });
 
-    describe.only('GET /me', () => {
+    describe('GET /me', () => {
         let accessToken = '';
         beforeAll(async () => {
             const loginCredentials = {

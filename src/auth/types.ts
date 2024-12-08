@@ -5,7 +5,7 @@ export type AuthLoginRequestModel = {
     password: string;
 };
 
-export type MeResponseModel = {
+export type MeViewModel = {
     userId: string;
     login: string;
     email: string;
@@ -13,4 +13,4 @@ export type MeResponseModel = {
 
 export type TAuthLoginRequest = Request<object, object, AuthLoginRequestModel>;
 
-export type TMeResponse = Response<MeResponseModel>;
+export type TMeResponse = Response<MeViewModel>;

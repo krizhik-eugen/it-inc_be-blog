@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../helpers';
 import { postsBodySchema, postsQuerySchema } from '../../posts';
@@ -12,9 +11,7 @@ const websiteUrlPattern =
 const paramSchema: Schema = {
     id: {
         in: ['params'],
-        isString: true,
-        custom: {
-            options: (value) => ObjectId.isValid(value),
+        isMongoId: {
             errorMessage: 'ID is not a valid ObjectId',
         },
     },

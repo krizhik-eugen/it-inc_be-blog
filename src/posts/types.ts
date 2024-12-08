@@ -6,6 +6,11 @@ import {
 } from '../common-types';
 import { PostsDBSearchParams } from './model/posts-model';
 import { createResponseError } from '../helpers';
+import {
+    CommentCreateRequestModel,
+    CommentsDBSearchParams,
+    CommentViewModel,
+} from '../comments';
 
 export type PostViewModel = {
     id: string;
@@ -58,3 +63,28 @@ export type TUpdatePostRequest = Request<
 >;
 
 export type TDeletePostRequest = Request<TIDParam>;
+
+export type TGetAllPostCommentsRequestQueries = TSearchQueryParams<
+    CommentsDBSearchParams['sortBy']
+>;
+
+export type TGetAllPostCommentsRequest = Request<
+    TIDParam,
+    object,
+    object,
+    TGetAllPostCommentsRequestQueries
+>;
+
+export type TGetAllPostCommentsResponse = Response<
+    AllItemsViewModel<CommentViewModel>
+>;
+
+export type TCreateNewPostCommentRequest = Request<
+    TIDParam,
+    object,
+    CommentCreateRequestModel
+>;
+
+export type TCreateNewPostCommentResponse = Response<
+    CommentViewModel | ReturnType<typeof createResponseError>
+>;

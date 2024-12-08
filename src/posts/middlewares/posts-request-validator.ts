@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../helpers';
 import { blogsRepository } from '../../blogs';
+import { commentsBodySchema, commentsQuerySchema } from '../../comments';
 
 const titleLength = 30;
 const shortDescriptionLength = 100;
@@ -10,9 +11,7 @@ const contentLength = 1000;
 const paramSchema: Schema = {
     id: {
         in: ['params'],
-        isString: true,
-        custom: {
-            options: (value) => ObjectId.isValid(value),
+        isMongoId: {
             errorMessage: 'ID is not a valid ObjectId',
         },
     },
@@ -74,12 +73,11 @@ export const postsBodySchema: Schema = {
         notEmpty: {
             errorMessage: 'BlogId is required',
         },
+        isMongoId: {
+            errorMessage: 'Invalid BlogId',
+        },
         custom: {
             options: async (value: string) => {
-                const isValid = ObjectId.isValid(value);
-                if (!isValid) {
-                    throw 'Invalid BlogId';
-                }
                 //TODO: why we do here the search (required in home tasks)
                 const blog = await blogsRepository.findBlogById(
                     new ObjectId(value)
@@ -134,7 +132,15 @@ export const postsQuerySchema: Schema = {
 export const postsValidators = {
     getPostRequest: requestValidator({ paramSchema }),
     getPostsRequest: requestValidator({ querySchema: postsQuerySchema }),
+    getPostCommentsRequest: requestValidator({
+        paramSchema,
+        querySchema: commentsQuerySchema,
+    }),
     createNewPostRequest: requestValidator({ bodySchema: postsBodySchema }),
+    createNewCommentForPostRequest: requestValidator({
+        bodySchema: commentsBodySchema,
+        paramSchema,
+    }),
     updatePostRequest: requestValidator({
         bodySchema: postsBodySchema,
         paramSchema,
