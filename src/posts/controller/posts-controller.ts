@@ -61,7 +61,7 @@ export const postsController = {
     async createNewCommentForPost(req: TCreateNewPostCommentRequest, res: TCreateNewPostCommentResponse) {
         const result = await commentsService.createNewCommentForPost(req);
         if (typeof result !== 'string' && 'errorsMessages' in result) {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
         const createdComment = await commentsQueryRepository.getComment(result);

@@ -22,6 +22,17 @@ export const commentsController = {
     },
 
     async updateComment(req: TUpdateCommentRequest, res: Response) {
+        const foundComment = await commentsQueryRepository.getComment(
+            req.params.id
+        );
+        if (!foundComment) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            return;
+        }
+        if (req.userId !== foundComment.commentatorInfo.userId) {
+            res.sendStatus(HTTP_STATUS_CODES.FORBIDDEN);
+            return;
+        }
         const isCommentUpdated = await commentsService.updateComment(req);
         res.sendStatus(
             isCommentUpdated
