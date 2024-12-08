@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { blogsController } from '../controller';
-import { authValidator } from '../../app-middlewares';
+import { adminAuthValidator } from '../../app-middlewares';
 import { blogsValidators } from '../middlewares';
 
 export const blogsRouter = Router();
@@ -25,28 +25,28 @@ blogsRouter.get(
 
 blogsRouter.post(
     '/',
-    ...authValidator,
+    ...adminAuthValidator,
     ...blogsValidators.createNewBlogRequest,
     blogsController.createNewBlog
 );
 
 blogsRouter.post(
     '/:id/posts',
-    ...authValidator,
+    ...adminAuthValidator,
     ...blogsValidators.createNewPostForBlogRequest,
     blogsController.createNewPostForBlog
 );
 
 blogsRouter.put(
     '/:id',
-    ...authValidator,
+    ...adminAuthValidator,
     ...blogsValidators.updateBlogRequest,
     blogsController.updateBlog
 );
 
 blogsRouter.delete(
     '/:id',
-    ...authValidator,
+    ...adminAuthValidator,
     ...blogsValidators.deleteBlogRequest,
     blogsController.deleteBlog
 );

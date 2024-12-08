@@ -16,7 +16,6 @@ export const usersQueryRepository = {
             getDBSearchQueries<UsersDBSearchParams['sortBy']>(searchQueries);
         const findQuery: Filter<Pick<UserDBModel, 'login' | 'email'>> = {};
         const searchConditions = [];
-
         if (searchLoginTerm) {
             searchConditions.push({
                 login: { $regex: searchLoginTerm, $options: 'i' },
@@ -27,7 +26,6 @@ export const usersQueryRepository = {
                 email: { $regex: searchEmailTerm, $options: 'i' },
             });
         }
-
         if (searchConditions.length > 0) {
             findQuery.$or = searchConditions;
         }
@@ -56,16 +54,15 @@ export const usersQueryRepository = {
     },
 
     async getUser(id: UserViewModel['id']) {
-        return await usersCollection.findOne({
+        const user = await usersCollection.findOne({
             _id: new ObjectId(id),
         });
-    },
-
-    async getUserByLoginOrEmail(
-        loginOrEmail: UserViewModel['login'] | UserViewModel['email']
-    ) {
-        return await usersCollection.findOne({
-            $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-        });
+        if (!user) return undefined;
+        return {
+            id: user._id.toString(),
+            login: user.login,
+            email: user.email,
+            createdAt: user.createdAt,
+        };
     },
 };

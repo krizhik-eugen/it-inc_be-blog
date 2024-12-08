@@ -1,7 +1,7 @@
 import { checkSchema, Schema } from 'express-validator';
 import { errorAuthValidator } from './auth-validator-helpers';
 
-export const authSchema: Schema = {
+export const adminAuthSchema: Schema = {
     Authorization: {
         in: ['headers'],
         custom: {
@@ -21,4 +21,7 @@ export const authSchema: Schema = {
     },
 };
 
-export const authValidator = [checkSchema(authSchema), errorAuthValidator];
+export const adminAuthValidator = [
+    checkSchema(adminAuthSchema),
+    errorAuthValidator,
+];

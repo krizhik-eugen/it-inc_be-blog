@@ -1,27 +1,27 @@
 import { Router } from 'express';
 import { usersController } from '../controller';
-import { authValidator } from '../../app-middlewares';
+import { adminAuthValidator } from '../../app-middlewares';
 import { usersValidators } from '../middlewares';
 
 export const usersRouter = Router();
 
 usersRouter.get(
     '/',
-    ...authValidator,
+    ...adminAuthValidator,
     ...usersValidators.getUsersRequest,
     usersController.getAllUsers
 );
 
 usersRouter.post(
     '/',
-    ...authValidator,
+    ...adminAuthValidator,
     ...usersValidators.createNewUserRequest,
     usersController.createNewUser
 );
 
 usersRouter.delete(
     '/:id',
-    ...authValidator,
+    ...adminAuthValidator,
     ...usersValidators.deleteUserRequest,
     usersController.deleteUser
 );

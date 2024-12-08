@@ -50,7 +50,7 @@ export const usersValidationErrorMessages = {
     id: { format: 'ID is not a valid ObjectId' },
     login: {
         format: 'Login should contain only latin letters, numbers, - and _',
-        length: 'Login length should be min 3 and max 30 characters',
+        length: 'Login length should be min 3 and max 10 characters',
     },
     password: {
         length: 'Password length should be min 6 and max 20 characters',

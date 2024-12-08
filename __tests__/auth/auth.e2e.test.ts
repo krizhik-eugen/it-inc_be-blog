@@ -66,7 +66,46 @@ describe('Auth Controller', () => {
             const response = await req
                 .post(`${baseRoutes.auth}/login`)
                 .send(loginCredentials);
-            expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.accessToken).toBeDefined();
+        });
+    });
+
+    describe.only('GET /me', () => {
+        let accessToken = '';
+        beforeAll(async () => {
+            const loginCredentials = {
+                loginOrEmail: testUsers[0].login,
+                password: testUsers[0].password,
+            };
+            accessToken = (
+                await req
+                    .post(`${baseRoutes.auth}/login`)
+                    .send(loginCredentials)
+            ).body.accessToken;
+        });
+
+        it('returns an error if no authentication provided', async () => {
+            const response = await req.get(`${baseRoutes.auth}/me`);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('returns an error if token is not valid', async () => {
+            const inValidToken = accessToken + '123';
+            const response = await req
+                .get(`${baseRoutes.auth}/me`)
+                .auth(inValidToken, { type: 'bearer' });
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('get user details successfully', async () => {
+            const response = await req
+                .get(`${baseRoutes.auth}/me`)
+                .auth(accessToken, { type: 'bearer' });
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.userId).toBeDefined();
+            expect(response.body.email).toBe(testUsers[0].email);
+            expect(response.body.login).toBe(testUsers[0].login);
         });
     });
 });

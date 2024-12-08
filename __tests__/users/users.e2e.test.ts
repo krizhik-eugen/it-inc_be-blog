@@ -363,13 +363,13 @@ describe('Users Controller', () => {
 
         it('returns an error if required fields are missing', async () => {
             const newUser = { ...testUsers[0] };
-                newUser.password = ''
-                const response = await req
-                    .post(baseRoutes.users)
-                    .auth(...validAuthData)
-                    .send(newUser)
-                    .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-                expect(response.body.errorsMessages[0].field).toEqual('password');
+            newUser.password = '';
+            const response = await req
+                .post(baseRoutes.users)
+                .auth(...validAuthData)
+                .send(newUser)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('password');
         });
 
         it('returns an error if login field is not valid', async () => {

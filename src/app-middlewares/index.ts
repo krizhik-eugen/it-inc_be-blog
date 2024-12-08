@@ -1,3 +1,4 @@
-import { authValidator } from './auth-middleware/auth-validator';
+import { adminAuthValidator } from './auth-middlewares/admin-auth-validator';
+import { userAuthValidator } from './auth-middlewares/user-auth-validator';
 
-export { authValidator };
+export { adminAuthValidator, userAuthValidator };

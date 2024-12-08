@@ -4,4 +4,5 @@ export const baseRoutes = {
     posts: '/posts',
     users: '/users',
     auth: '/auth',
+    comments: '/comments',
 } as const;

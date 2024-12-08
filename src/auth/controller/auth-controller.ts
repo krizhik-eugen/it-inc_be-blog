@@ -1,7 +1,8 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { HTTP_STATUS_CODES } from '../../constants';
-import { TAuthLoginRequest } from '../types';
+import { TMeResponse, TAuthLoginRequest } from '../types';
 import { authService } from '../service';
+import { usersQueryRepository } from '../../users';
 
 export const authController = {
     async login(req: TAuthLoginRequest, res: Response) {
@@ -10,6 +11,16 @@ export const authController = {
             res.status(HTTP_STATUS_CODES.UNAUTHORIZED).send(result);
             return;
         }
-        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
+        res.status(HTTP_STATUS_CODES.OK).send(result);
+    },
+
+    async me(req: Request, res: TMeResponse) {
+        const userId = req.userId!;
+        const user = await usersQueryRepository.getUser(userId);
+        res.status(HTTP_STATUS_CODES.OK).send({
+            userId: user!.id,
+            login: user!.login,
+            email: user!.email,
+        });
     },
 };

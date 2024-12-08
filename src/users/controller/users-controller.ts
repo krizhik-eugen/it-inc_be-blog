@@ -21,21 +21,16 @@ export const usersController = {
         res: TCreateNewUserResponse
     ) {
         const result = await usersService.createNewUser(req);
-        if (typeof result !== 'string' && result?.errorsMessages) {
+        if (typeof result !== 'string' && 'errorsMessages' in result) {
             res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
             return;
         }
-        const addedUser = await usersQueryRepository.getUser(result as string);
+        const addedUser = await usersQueryRepository.getUser(result);
         if (!addedUser) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        res.status(HTTP_STATUS_CODES.CREATED).json({
-            id: addedUser._id.toString(),
-            login: addedUser.login,
-            email: addedUser.email,
-            createdAt: addedUser.createdAt,
-        });
+        res.status(HTTP_STATUS_CODES.CREATED).json(addedUser);
     },
 
     async deleteUser(req: TDeleteUserRequest, res: Response) {
