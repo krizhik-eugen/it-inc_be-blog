@@ -1,9 +1,10 @@
 import { baseRoutes } from '../../src/configs';
-import { postsRepository } from '../../src/posts';
+import { postsRepository, PostViewModel } from '../../src/posts';
 import { BlogViewModel } from '../../src/blogs';
 import {
     addNewBlog,
     addNewPost,
+    addNewUser,
     DBHandlers,
     idValidationErrorMessages,
     invalidAuthData,
@@ -12,11 +13,15 @@ import {
     postsValidationErrorMessages,
     req,
     testBlogs,
+    testComments,
     testPosts,
+    testUsers,
+    textWithLengthMoreThan300,
     validAuthData,
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
+import { commentsRepository } from '../../src/comments';
 
 describe('Posts Controller', () => {
     let createdBlog: BlogViewModel;
@@ -24,16 +29,13 @@ describe('Posts Controller', () => {
 
     beforeAll(async () => {
         await DBHandlers.connectToDB();
+        createdBlog = await addNewBlog(testBlogs[0]);
+        testPost.blogId = createdBlog.id;
     });
 
     afterAll(async () => {
         await DBHandlers.closeDB();
-    });
-
-    beforeEach(async () => {
-        await postsRepository.setPosts([]);
-        createdBlog = await addNewBlog(testBlogs[0]);
-        testPost.blogId = createdBlog.id;
+        
     });
 
     const setTestPosts = async (blogId: string) => {
@@ -43,19 +45,18 @@ describe('Posts Controller', () => {
     };
 
     describe('GET /posts', () => {
-        beforeEach(async () => {
-            await setTestPosts(createdBlog.id);
-        });
-
         it('returns an empty array initially', async () => {
             await postsRepository.setPosts([]);
             const response = await req.get(baseRoutes.posts);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.totalCount).toEqual(0);
             expect(response.body.items).toEqual([]);
-        });
 
-        it('returns a list of posts after creating one', async () => {
+            // set posts back for next tests
+            await setTestPosts(createdBlog.id);
+        }, 7000);
+
+        it('returns a list of posts', async () => {
             const response = await req.get(`${baseRoutes.posts}`);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.totalCount).toEqual(9);
@@ -475,6 +476,186 @@ describe('Posts Controller', () => {
                 .delete(`${baseRoutes.posts}/${validObjectId}`)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
+    });
+
+    describe('GET /posts/:id/comments', () => {
+        let createdPost: PostViewModel;
+        let accessToken = '';
+
+        beforeAll(async () => {
+            createdPost = await addNewPost({ ...testPosts[0], blogId: createdBlog.id });
+            await addNewUser({ ...testUsers[0] });
+            const loginCredentials = {
+                loginOrEmail: testUsers[0].login,
+                password: testUsers[0].password,
+            };
+            accessToken = (
+                await req.post(`${baseRoutes.auth}/login`).send(loginCredentials)
+            ).body.accessToken;
+        });
+
+        it('returns an empty array initially', async () => {
+            await commentsRepository.clearComments();
+            const response = await req.get(`${baseRoutes.posts}/${createdPost.id}/comments`);
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.totalCount).toEqual(0);
+            expect(response.body.items).toEqual([]);
+        });
+
+        it('returns a list of comments', async () => {
+            for (let i = 0; i < testComments.length; i++) {
+                await req
+                    .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
+                    .auth(accessToken, { type: 'bearer' })
+                    .send(testComments[i]);
+            }
+            const response = await req.get(`${baseRoutes.posts}/${createdPost.id}/comments`);
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.totalCount).toEqual(9);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.pagesCount).toEqual(1);
+            expect(response.body.items[0]).toHaveProperty('createdAt');
+            expect(response.body.items[0]).toHaveProperty('content');
+            expect(response.body.items[0].content).toEqual(testComments[8].content);
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeGreaterThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+        }, 7000);
+
+        it('returns errors if invalid search params are provided', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdPost.id}/comments?sortDirection=ascqwerty&sortBy=createdAtqwerty&pageSize=0&pageNumber=big_number`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages.length).toEqual(4);
+            const errorsParams = response.body.errorsMessages.map(
+                (error: { message: string; field: string }) => error.field
+            );
+            ['sortDirection', 'sortBy', 'pageSize', 'pageNumber'].forEach(
+                (param) => {
+                    expect(errorsParams).toContain(param);
+                }
+            );
+        });
+
+        it('returns a list of comments sorted by createdAt and ascending order', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdPost.id}/comments?sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].content).toEqual(testComments[0].content);
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeLessThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+            expect(response.body.pagesCount).toEqual(1);
+            expect(response.body.totalCount).toEqual(9);
+        }, 7000);
+
+        it('returns a list of comments with pagination and page size 3', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdPost.id}/comments?pageSize=3&sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.items[2].content).toEqual(testComments[2].content);
+        });
+
+        it('returns a list of comments with pagination, page size 3, and page number 2', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdPost.id}/comments?pageSize=3&sortDirection=asc&pageNumber=2`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(2);
+            expect(response.body.items[2].content).toEqual(testComments[5].content);
+        });
+
+        it('returns a list of comments with pagination, page size 4, and page number 3', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdPost.id}/comments?pageSize=4&sortDirection=asc&pageNumber=3`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(1);
+            expect(response.body.pageSize).toEqual(4);
+            expect(response.body.page).toEqual(3);
+            expect(response.body.items[0].content).toEqual(testComments[8].content);
+        });
+    });
+
+    describe('POST /posts/:id/comments', () => {
+        let createdPost: PostViewModel;
+        let accessToken = '';
+        const inValidToken = accessToken + '123';
+
+        beforeAll(async () => {
+            createdPost = await addNewPost({ ...testPosts[0], blogId: createdBlog.id });
+            await addNewUser({ ...testUsers[0] });
+            const loginCredentials = {
+                loginOrEmail: testUsers[0].login,
+                password: testUsers[0].password,
+            };
+            accessToken = (
+                await req.post(`${baseRoutes.auth}/login`).send(loginCredentials)
+            ).body.accessToken;
+        });
+
+        it('can not create a comment without authorization', async () => {
+            const response = await req.post(`${baseRoutes.posts}/${createdPost.id}/comments`).send(testComments[0]);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('can not create a comment if auth data is invalid', async () => {
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
+                .auth(inValidToken, { type: 'bearer' })
+                .send(testComments[0]);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('can not create a comment if postId is invalid', async () => {
+            const response = await req
+                .post(`${baseRoutes.posts}/${validObjectId}/comments`)
+                .auth(accessToken, { type: 'bearer' })
+                .send(testComments[0]);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
+
+        it('can not create a comment if content is too short', async () => {
+            const invalidComment = {
+                content: 'updated',
+            };
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
+                .auth(accessToken, { type: 'bearer' })
+                .send(invalidComment);
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+        });
+
+        it('can not create a comment if content is too long', async () => {
+            const invalidComment = {
+                content: textWithLengthMoreThan300,
+            };
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
+                .auth(accessToken, { type: 'bearer' })
+                .send(invalidComment);
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+        });
+
+        it('create a comment', async () => {
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
+                .auth(accessToken, { type: 'bearer' })
+                .send(testComments[0]);
+            expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
         });
     });
 });

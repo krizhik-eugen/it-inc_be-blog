@@ -23,7 +23,7 @@ export const DBHandlers = {
 
 export const validAuthData = ['admin', 'qwerty', { type: 'basic' }] as const;
 export const invalidAuthData = ['admin', 'abcdef', { type: 'basic' }] as const;
-export const idValidationErrorMessages = 'ID is not a valid ObjectId';
+export const idValidationErrorMessages = 'Invalid Id';
 
 export const textWithLengthMoreThan300 = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante. Integer bibendum purus nec massa fermentum, et ultricies sapien ullamcorper. Sed nec eros sit amet elit consequat malesuada a ut nisi. Phasellus nec ligula nec sapien aliquet varius.`;
 
@@ -45,7 +45,7 @@ export const postsValidationErrorMessages = {
         length: 'Content length should be max 1000 characters',
     },
     blogId: {
-        format: 'Invalid BlogId',
+        format: 'Invalid Id',
         value: 'Incorrect Blog Id, no blogs found',
     },
 };
@@ -181,7 +181,15 @@ export const testUsers: UserCreateRequestModel[] = [
 ];
 
 export const testComments: CommentCreateRequestModel[] = [
-    { content: 'Test content 1' },
+    { content: 'test comment 1 with proper length' },
+    { content: 'test comment 2 with proper length' },
+    { content: 'test comment 3 with proper length' },
+    { content: 'test comment 4 with proper length' },
+    { content: 'test comment 5 with proper length' },
+    { content: 'test comment 6 with proper length' },
+    { content: 'test comment 7 with proper length' },
+    { content: 'test comment 8 with proper length' },
+    { content: 'test comment 9 with proper length' },
 ];
 
 export const validObjectId = '57430b985302e02a9657421c';

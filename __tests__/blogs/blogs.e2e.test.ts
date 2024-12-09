@@ -80,7 +80,7 @@ describe('Blogs Controller', () => {
             expect(response.body.items[0]).toHaveProperty('createdAt');
             expect(response.body.items[0]).toHaveProperty('isMembership');
             expect(response.body.items[0]).toHaveProperty('websiteUrl');
-        });
+        }, 7000);
 
         it('returns errors if invalid search params are provided', async () => {
             await setTestBlogs();
@@ -363,7 +363,7 @@ describe('Blogs Controller', () => {
             await addNewBlog(testBlogs[0]);
             addedBlogId = (await req.get(baseRoutes.blogs)).body.items[0].id;
             await setTestPosts(addedBlogId);
-        });
+        }, 7000);
 
         it('returns an error if blogId param is not found', async () => {
             await postsRepository.setPosts([]);

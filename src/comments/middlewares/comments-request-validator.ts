@@ -8,7 +8,7 @@ const paramSchema: Schema = {
     id: {
         in: ['params'],
         isMongoId: {
-            errorMessage: 'ID is not a valid ObjectId',
+            errorMessage: 'Invalid Id',
         },
     },
 };

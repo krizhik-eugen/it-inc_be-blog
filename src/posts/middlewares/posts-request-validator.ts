@@ -12,7 +12,7 @@ const paramSchema: Schema = {
     id: {
         in: ['params'],
         isMongoId: {
-            errorMessage: 'ID is not a valid ObjectId',
+            errorMessage: 'Invalid Id',
         },
     },
 };
@@ -74,7 +74,7 @@ export const postsBodySchema: Schema = {
             errorMessage: 'BlogId is required',
         },
         isMongoId: {
-            errorMessage: 'Invalid BlogId',
+            errorMessage: 'Invalid Id',
         },
         custom: {
             options: async (value: string) => {

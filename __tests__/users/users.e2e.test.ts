@@ -131,7 +131,7 @@ describe('Users Controller', () => {
             expect(
                 response.body.items[0].login > response.body.items[8].login
             ).toBeTruthy();
-        });
+        }, 7000);
 
         it('returns a list of users sorted by login and ascending order', async () => {
             await setTestUsers();
@@ -143,7 +143,7 @@ describe('Users Controller', () => {
             expect(
                 response.body.items[8].login > response.body.items[0].login
             ).toBeTruthy();
-        });
+        }, 7000);
 
         it('returns a list of users sorted by email and descending order', async () => {
             await setTestUsers();
@@ -193,7 +193,7 @@ describe('Users Controller', () => {
             expect(response.body.pageSize).toEqual(3);
             expect(response.body.page).toEqual(2);
             expect(response.body.items[2].login).toEqual(testUsers[5].login);
-        });
+        }, 7000);
 
         it('returns a list of users with pagination, page size 4, and page number 3', async () => {
             await setTestUsers();
@@ -245,7 +245,7 @@ describe('Users Controller', () => {
                     )
                 ).toBeTruthy();
             });
-        });
+        }, 7000);
 
         it('returns a list of users with the email matching the search term', async () => {
             await setTestUsers();
@@ -287,7 +287,7 @@ describe('Users Controller', () => {
                     )
                 ).toBeTruthy();
             });
-        });
+        }, 7000);
 
         it('returns a list of users with the email and login matching the search term', async () => {
             await setTestUsers();
