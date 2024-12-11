@@ -1,21 +1,19 @@
 import { ObjectId } from 'mongodb';
 import { postsCollection, PostsDBSearchParams } from '../model';
-import { PostViewModel, TGetAllPostsRequest } from '../types';
-import { AllItemsViewModel } from '../../common-types';
+import { PostViewModel } from '../types';
 import {
-    createResponseError,
-    getDBSearchQueries,
-    getSearchQueries,
-} from '../../helpers';
-import { TGetAllBlogPostsRequest, blogsCollection } from '../../blogs';
+    AllItemsViewModel,
+    TMappedSearchQueryParams,
+} from '../../common-types';
+import { createResponseError, getDBSearchQueries } from '../../helpers';
+import { blogsCollection } from '../../blogs';
 
 export const postsQueryRepository = {
-    async getPosts(
-        req: TGetAllPostsRequest
-    ): Promise<AllItemsViewModel<PostViewModel>> {
-        const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
-            req.query
-        );
+    async getPosts({
+        searchQueries,
+    }: {
+        searchQueries: TMappedSearchQueryParams<PostsDBSearchParams['sortBy']>;
+    }): Promise<AllItemsViewModel<PostViewModel>> {
         const dbSearchQueries =
             getDBSearchQueries<PostsDBSearchParams['sortBy']>(searchQueries);
         const totalCount = await postsCollection.countDocuments({});
@@ -45,7 +43,7 @@ export const postsQueryRepository = {
         };
     },
 
-    async getPost(id: PostViewModel['id']) {
+    async getPost(id: string) {
         const foundPost = await postsCollection.findOne({
             _id: new ObjectId(id),
         });
@@ -61,13 +59,16 @@ export const postsQueryRepository = {
         };
     },
 
-    async getBlogPosts(
-        req: TGetAllBlogPostsRequest
-    ): Promise<
+    async getBlogPosts({
+        searchQueries,
+        blogId,
+    }: {
+        searchQueries: TMappedSearchQueryParams<PostsDBSearchParams['sortBy']>;
+        blogId: string;
+    }): Promise<
         | AllItemsViewModel<PostViewModel>
         | ReturnType<typeof createResponseError>
     > {
-        const blogId = req.params.id;
         const blog = await blogsCollection.findOne({
             _id: new ObjectId(blogId),
         });
@@ -76,9 +77,6 @@ export const postsQueryRepository = {
                 createResponseError('Blog not found', 'id')
             );
         }
-        const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
-            req.query
-        );
         const dbSearchQueries =
             getDBSearchQueries<PostsDBSearchParams['sortBy']>(searchQueries);
         const totalCount = await postsCollection.countDocuments({ blogId });

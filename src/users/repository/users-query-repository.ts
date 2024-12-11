@@ -1,17 +1,19 @@
 import { Filter, ObjectId } from 'mongodb';
-import { getDBSearchQueries, getSearchQueries } from '../../helpers';
+import { getDBSearchQueries } from '../../helpers';
 import { usersCollection, UserDBModel, UsersDBSearchParams } from '../model';
-import {
-    AllUsersResponseModel,
-    TGetAllUsersRequest,
-    UserViewModel,
-} from '../types';
+import { AllUsersResponseModel, UserViewModel } from '../types';
+import { TMappedSearchQueryParams } from '../../common-types';
 
 export const usersQueryRepository = {
-    async getUsers(req: TGetAllUsersRequest): Promise<AllUsersResponseModel> {
-        const { searchLoginTerm, searchEmailTerm, ...restQueries } = req.query;
-        const searchQueries =
-            getSearchQueries<UsersDBSearchParams['sortBy']>(restQueries);
+    async getUsers({
+        searchQueries,
+        searchLoginTerm,
+        searchEmailTerm,
+    }: {
+        searchQueries: TMappedSearchQueryParams<UsersDBSearchParams['sortBy']>;
+        searchLoginTerm?: string;
+        searchEmailTerm?: string;
+    }): Promise<AllUsersResponseModel> {
         const dbSearchQueries =
             getDBSearchQueries<UsersDBSearchParams['sortBy']>(searchQueries);
         const findQuery: Filter<Pick<UserDBModel, 'login' | 'email'>> = {};
@@ -53,7 +55,7 @@ export const usersQueryRepository = {
         };
     },
 
-    async getUser(id: UserViewModel['id']) {
+    async getUser(id: string) {
         const user = await usersCollection.findOne({
             _id: new ObjectId(id),
         });

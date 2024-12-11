@@ -1,16 +1,15 @@
 import { ObjectId } from 'mongodb';
 import { commentsCollection, CommentsDBSearchParams } from '../model';
 import { CommentViewModel } from '../types';
-import { TGetAllPostCommentsRequest, postsCollection } from '../../posts';
-import { AllItemsViewModel } from '../../common-types';
+import { postsCollection } from '../../posts';
 import {
-    createResponseError,
-    getDBSearchQueries,
-    getSearchQueries,
-} from '../../helpers';
+    AllItemsViewModel,
+    TMappedSearchQueryParams,
+} from '../../common-types';
+import { createResponseError, getDBSearchQueries } from '../../helpers';
 
 export const commentsQueryRepository = {
-    async getComment(id: CommentViewModel['id']) {
+    async getComment(id: string) {
         const foundComment = await commentsCollection.findOne({
             _id: new ObjectId(id),
         });
@@ -26,13 +25,18 @@ export const commentsQueryRepository = {
         };
     },
 
-    async getPostComments(
-        req: TGetAllPostCommentsRequest
-    ): Promise<
+    async getPostComments({
+        searchQueries,
+        postId,
+    }: {
+        searchQueries: TMappedSearchQueryParams<
+            CommentsDBSearchParams['sortBy']
+        >;
+        postId: string;
+    }): Promise<
         | AllItemsViewModel<CommentViewModel>
         | ReturnType<typeof createResponseError>
     > {
-        const postId = req.params.id;
         const post = await postsCollection.findOne({
             _id: new ObjectId(postId),
         });
@@ -41,9 +45,6 @@ export const commentsQueryRepository = {
                 createResponseError('post not found', 'id')
             );
         }
-        const searchQueries = getSearchQueries<
-            CommentsDBSearchParams['sortBy']
-        >(req.query);
         const dbSearchQueries =
             getDBSearchQueries<CommentsDBSearchParams['sortBy']>(searchQueries);
         const totalCount = await commentsCollection.countDocuments({ postId });

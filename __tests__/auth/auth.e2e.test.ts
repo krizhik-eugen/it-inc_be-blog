@@ -10,7 +10,7 @@ describe('Auth Controller', () => {
     });
 
     afterAll(async () => {
-        await usersRepository.setUsers([]);
+        await usersRepository.clearUsers();
         await DBHandlers.closeDB();
     });
 

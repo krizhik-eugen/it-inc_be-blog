@@ -6,7 +6,8 @@ import { usersQueryRepository } from '../../users';
 
 export const authController = {
     async login(req: TAuthLoginRequest, res: Response) {
-        const result = await authService.login(req);
+        const { loginOrEmail, password } = req.body;
+        const result = await authService.login({ loginOrEmail, password });
         if (typeof result !== 'boolean' && 'errorsMessages' in result) {
             res.status(HTTP_STATUS_CODES.UNAUTHORIZED).send(result);
             return;

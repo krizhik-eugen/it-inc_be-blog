@@ -6,6 +6,6 @@ export const testingService = {
     async deleteAllData() {
         await blogsRepository.setBlogs([]);
         await postsRepository.setPosts([]);
-        await usersRepository.setUsers([]);
+        await usersRepository.clearUsers();
     },
 };

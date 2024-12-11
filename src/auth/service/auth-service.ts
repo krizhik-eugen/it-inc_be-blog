@@ -1,14 +1,12 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { Request } from 'express';
 import { createResponseError } from '../../helpers';
 import { usersRepository } from '../../users';
-import { TAuthLoginRequest } from '../types';
 import { jwtSecret } from '../../configs/app-config';
+import { AuthLoginRequestModel } from '../types';
 
 export const authService = {
-    async login(req: TAuthLoginRequest) {
-        const { loginOrEmail, password } = req.body;
+    async login({ loginOrEmail, password }: AuthLoginRequestModel) {
         const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail);
         if (!user) {
             return await Promise.resolve(

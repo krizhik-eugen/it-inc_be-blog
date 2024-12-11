@@ -1,24 +1,28 @@
 import { ObjectId } from 'mongodb';
 import { blogsCollection, BlogDBModel, BlogsDBSearchParams } from '../model';
-import { BlogViewModel, TGetAllBlogsRequest } from '../types';
-import { AllItemsViewModel } from '../../common-types';
-import { getDBSearchQueries, getSearchQueries } from '../../helpers';
+import { BlogViewModel } from '../types';
+import {
+    AllItemsViewModel,
+    TMappedSearchQueryParams,
+} from '../../common-types';
+import { getDBSearchQueries } from '../../helpers';
 
 export const blogsQueryRepository = {
-    async getBlogs(
-        req: TGetAllBlogsRequest
-    ): Promise<AllItemsViewModel<BlogViewModel>> {
-        const { searchNameTerm, ...restQueries } = req.query;
-        const searchQueries =
-            getSearchQueries<BlogsDBSearchParams['sortBy']>(restQueries);
+    async getBlogs({
+        searchQueries,
+        term,
+    }: {
+        searchQueries: TMappedSearchQueryParams<BlogsDBSearchParams['sortBy']>;
+        term?: string;
+    }): Promise<AllItemsViewModel<BlogViewModel>> {
         const dbSearchQueries =
             getDBSearchQueries<BlogsDBSearchParams['sortBy']>(searchQueries);
         const totalCount = await blogsCollection.countDocuments({
-            name: { $regex: searchNameTerm ?? '', $options: 'i' },
+            name: { $regex: term ?? '', $options: 'i' },
         });
         const foundBlogs = await blogsCollection
             .find({
-                name: { $regex: searchNameTerm ?? '', $options: 'i' },
+                name: { $regex: term ?? '', $options: 'i' },
             })
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
@@ -43,7 +47,7 @@ export const blogsQueryRepository = {
         };
     },
 
-    async getBlog(id: BlogViewModel['id']): Promise<BlogViewModel | undefined> {
+    async getBlog(id: string): Promise<BlogViewModel | undefined> {
         const foundBlog = await blogsCollection.findOne({
             _id: new ObjectId(id),
         });

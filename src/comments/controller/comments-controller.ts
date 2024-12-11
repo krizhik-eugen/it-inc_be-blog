@@ -22,9 +22,9 @@ export const commentsController = {
     },
 
     async updateComment(req: TUpdateCommentRequest, res: Response) {
-        const foundComment = await commentsQueryRepository.getComment(
-            req.params.id
-        );
+        const id = req.params.id;
+        const { content } = req.body;
+        const foundComment = await commentsQueryRepository.getComment(id);
         if (!foundComment) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
@@ -33,7 +33,10 @@ export const commentsController = {
             res.sendStatus(HTTP_STATUS_CODES.FORBIDDEN);
             return;
         }
-        const isCommentUpdated = await commentsService.updateComment(req);
+        const isCommentUpdated = await commentsService.updateComment({
+            content,
+            id,
+        });
         res.sendStatus(
             isCommentUpdated
                 ? HTTP_STATUS_CODES.NO_CONTENT
@@ -53,7 +56,9 @@ export const commentsController = {
             res.sendStatus(HTTP_STATUS_CODES.FORBIDDEN);
             return;
         }
-        const isCommentDeleted = await commentsService.deleteComment(req);
+        const isCommentDeleted = await commentsService.deleteComment(
+            req.params.id
+        );
         res.sendStatus(
             isCommentDeleted
                 ? HTTP_STATUS_CODES.NO_CONTENT

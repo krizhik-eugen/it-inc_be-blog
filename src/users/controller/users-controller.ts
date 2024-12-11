@@ -9,10 +9,20 @@ import {
     TGetAllUsersResponse,
 } from '../types';
 import { usersService } from '../service';
+import { UsersDBSearchParams } from '../model';
+import { getSearchQueries } from '../../helpers';
 
 export const usersController = {
     async getAllUsers(req: TGetAllUsersRequest, res: TGetAllUsersResponse) {
-        const usersResponse = await usersQueryRepository.getUsers(req);
+        const { searchLoginTerm, searchEmailTerm, ...restQueries } = req.query;
+        const searchQueries =
+            getSearchQueries<UsersDBSearchParams['sortBy']>(restQueries);
+
+        const usersResponse = await usersQueryRepository.getUsers({
+            searchQueries,
+            searchLoginTerm,
+            searchEmailTerm,
+        });
         res.status(HTTP_STATUS_CODES.OK).json(usersResponse);
     },
 
@@ -20,7 +30,12 @@ export const usersController = {
         req: TCreateNewUserRequest,
         res: TCreateNewUserResponse
     ) {
-        const result = await usersService.createNewUser(req);
+        const { login, email, password } = req.body;
+        const result = await usersService.createNewUser({
+            login,
+            email,
+            password,
+        });
         if (typeof result !== 'string' && 'errorsMessages' in result) {
             res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
             return;

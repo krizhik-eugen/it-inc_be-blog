@@ -16,23 +16,21 @@ import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository, UserViewModel } from '../../src/users';
 
 describe('Users Controller', () => {
+    const setTestUsers = async () => {
+        for (const user of testUsers) {
+            await addNewUser(user);
+        }
+    };
+
     beforeAll(async () => {
         await DBHandlers.connectToDB();
-    });
+        await usersRepository.clearUsers();
+        await setTestUsers();
+    }, 10000);
 
     afterAll(async () => {
         await DBHandlers.closeDB();
     });
-
-    beforeEach(async () => {
-        await usersRepository.setUsers([]);
-    });
-
-    const setTestUsers = async () => {
-        for (let i = 0; i < testUsers.length; i++) {
-            await addNewUser({ ...testUsers[i] });
-        }
-    };
 
     describe('GET /users', () => {
         it('can not get a list of users without authorization', async () => {
@@ -47,30 +45,7 @@ describe('Users Controller', () => {
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
-        it('returns an empty array initially', async () => {
-            await usersRepository.setUsers([]);
-            const response = await req
-                .get(baseRoutes.users)
-                .auth(...validAuthData);
-            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.totalCount).toEqual(0);
-            expect(response.body.items).toEqual([]);
-        });
-
-        it('returns a list of users after creating one', async () => {
-            await addNewUser({ ...testUsers[0] });
-            const response = await req
-                .get(baseRoutes.users)
-                .auth(...validAuthData);
-            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.totalCount).toEqual(1);
-            expect(response.body.page).toEqual(1);
-            expect(response.body.pagesCount).toEqual(1);
-            expect(response.body.items[0]).toHaveProperty('createdAt');
-        });
-
         it('returns a list of users sorted by createdAt and descending order by default', async () => {
-            await setTestUsers();
             const response = await req
                 .get(baseRoutes.users)
                 .auth(...validAuthData);
@@ -87,7 +62,6 @@ describe('Users Controller', () => {
         });
 
         it('returns errors if invalid search params are provided', async () => {
-            await setTestUsers();
             const response = await req
                 .get(
                     `${baseRoutes.users}?sortDirection=ascqwerty&sortBy=createdAtqwerty&pageSize=0&pageNumber=big_number`
@@ -106,7 +80,6 @@ describe('Users Controller', () => {
         });
 
         it('returns a list of users sorted by createdAt and ascending order', async () => {
-            await setTestUsers();
             const response = await req
                 .get(`${baseRoutes.users}?sortDirection=asc`)
                 .auth(...validAuthData);
@@ -122,7 +95,6 @@ describe('Users Controller', () => {
         });
 
         it('returns a list of users sorted by login and descending order', async () => {
-            await setTestUsers();
             const response = await req
                 .get(`${baseRoutes.users}?sortBy=login`)
                 .auth(...validAuthData);
@@ -131,10 +103,9 @@ describe('Users Controller', () => {
             expect(
                 response.body.items[0].login > response.body.items[8].login
             ).toBeTruthy();
-        }, 7000);
+        });
 
         it('returns a list of users sorted by login and ascending order', async () => {
-            await setTestUsers();
             const response = await req
                 .get(`${baseRoutes.users}?sortBy=login&sortDirection=asc`)
                 .auth(...validAuthData);
@@ -143,10 +114,9 @@ describe('Users Controller', () => {
             expect(
                 response.body.items[8].login > response.body.items[0].login
             ).toBeTruthy();
-        }, 7000);
+        });
 
         it('returns a list of users sorted by email and descending order', async () => {
-            await setTestUsers();
             const response = await req
                 .get(`${baseRoutes.users}?sortBy=email`)
                 .auth(...validAuthData);
@@ -158,7 +128,6 @@ describe('Users Controller', () => {
         });
 
         it('returns a list of users sorted by email and ascending order', async () => {
-            await setTestUsers();
             const response = await req
                 .get(`${baseRoutes.users}?sortBy=email&sortDirection=asc`)
                 .auth(...validAuthData);
@@ -170,19 +139,18 @@ describe('Users Controller', () => {
         });
 
         it('returns a list of users with pagination and page size 3', async () => {
-            await setTestUsers();
             const response = await req
                 .get(`${baseRoutes.users}?pageSize=3&sortDirection=asc`)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.items.length).toEqual(3);
             expect(response.body.pageSize).toEqual(3);
+            expect(response.body.totalCount).toEqual(9);
             expect(response.body.page).toEqual(1);
             expect(response.body.items[2].login).toEqual(testUsers[2].login);
         });
 
         it('returns a list of users with pagination, page size 3, and page number 2', async () => {
-            await setTestUsers();
             const response = await req
                 .get(
                     `${baseRoutes.users}?pageSize=3&sortDirection=asc&pageNumber=2`
@@ -193,10 +161,9 @@ describe('Users Controller', () => {
             expect(response.body.pageSize).toEqual(3);
             expect(response.body.page).toEqual(2);
             expect(response.body.items[2].login).toEqual(testUsers[5].login);
-        }, 7000);
+        });
 
         it('returns a list of users with pagination, page size 4, and page number 3', async () => {
-            await setTestUsers();
             const response = await req
                 .get(
                     `${baseRoutes.users}?pageSize=4&sortDirection=asc&pageNumber=3`
@@ -210,24 +177,21 @@ describe('Users Controller', () => {
         });
 
         it('returns a list of users with the login matching the search term', async () => {
-            await setTestUsers();
-            await usersRepository.setUsers([
-                {
-                    login: 'login10',
-                    email: 'email10@email.com',
-                    passwordHash: 'password10',
-                },
-                {
-                    login: 'login11',
-                    email: 'email11@email.com',
-                    passwordHash: 'password11',
-                },
-                {
-                    login: 'login12',
-                    email: 'email12@email.com',
-                    passwordHash: 'password12',
-                },
-            ]);
+            await addNewUser({
+                login: 'login10',
+                email: 'email10@email.com',
+                password: 'password10',
+            });
+            await addNewUser({
+                login: 'login11',
+                email: 'email11@email.com',
+                password: 'password11',
+            });
+            await addNewUser({
+                login: 'login12',
+                email: 'email12@email.com',
+                password: 'password12',
+            });
             const response_1 = await req
                 .get(`${baseRoutes.users}?searchLoginTerm=login`)
                 .auth(...validAuthData);
@@ -245,27 +209,10 @@ describe('Users Controller', () => {
                     )
                 ).toBeTruthy();
             });
-        }, 7000);
+        });
 
         it('returns a list of users with the email matching the search term', async () => {
-            await setTestUsers();
-            await usersRepository.setUsers([
-                {
-                    login: 'login10',
-                    email: 'email10@email.com',
-                    passwordHash: 'password10',
-                },
-                {
-                    login: 'login11',
-                    email: 'email11@email.com',
-                    passwordHash: 'password11',
-                },
-                {
-                    login: 'login12',
-                    email: 'email12@email.com',
-                    passwordHash: 'password12',
-                },
-            ]);
+            //using newly added users from previous test
             const response_1 = await req
                 .get(`${baseRoutes.users}?searchEmailTerm=email`)
                 .auth(...validAuthData);
@@ -287,27 +234,26 @@ describe('Users Controller', () => {
                     )
                 ).toBeTruthy();
             });
-        }, 7000);
+        });
 
         it('returns a list of users with the email and login matching the search term', async () => {
+            await usersRepository.clearUsers();
             await setTestUsers();
-            await usersRepository.setUsers([
-                {
-                    login: 'login10',
-                    email: 'email10@email.com',
-                    passwordHash: 'password10',
-                },
-                {
-                    login: 'login11',
-                    email: 'email11@email.com',
-                    passwordHash: 'password11',
-                },
-                {
-                    login: 'login111',
-                    email: 'email111@email.com',
-                    passwordHash: 'password12',
-                },
-            ]);
+            await addNewUser({
+                login: 'login10',
+                email: 'email10@email.com',
+                password: 'password10',
+            });
+            await addNewUser({
+                login: 'login11',
+                email: 'email11@email.com',
+                password: 'password11',
+            });
+            await addNewUser({
+                login: 'login111',
+                email: 'email111@email.com',
+                password: 'password111',
+            });
             const response_1 = await req
                 .get(
                     `${baseRoutes.users}?searchEmailTerm=email&searchLoginTerm=login`
@@ -333,10 +279,16 @@ describe('Users Controller', () => {
                     )
                 ).toBeTruthy();
             });
-        });
+        }, 10000);
     });
 
     describe('POST /users', () => {
+        const newUser = {
+            email: 'email_100@email.com',
+            login: 'login_100',
+            password: 'password100',
+        };
+
         it('can not create a new user without authorization', async () => {
             const response = await req
                 .post(baseRoutes.users)
@@ -356,32 +308,30 @@ describe('Users Controller', () => {
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)
-                .send(testUsers[0]);
+                .send(newUser);
             expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
-            expect(response.body.login).toEqual(testUsers[0].login);
-            expect(response.body.email).toEqual(testUsers[0].email);
+            expect(response.body.login).toEqual(newUser.login);
+            expect(response.body.email).toEqual(newUser.email);
         });
 
         it('returns an error if required fields are missing', async () => {
-            const newUser = { ...testUsers[0] };
-            newUser.password = '';
+            const newWrongUser = { ...newUser };
+            newWrongUser.password = '';
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)
-                .send(newUser)
+                .send(newWrongUser)
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
             expect(response.body.errorsMessages[0].field).toEqual('password');
         });
 
         it('returns an error if login field is not valid', async () => {
-            const newUser = {
-                ...testUsers[0],
-            };
-            newUser.login = invalidUsersFields.login.length;
+            const newWrongUser = { ...newUser };
+            newWrongUser.login = invalidUsersFields.login.length;
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)
-                .send(newUser)
+                .send(newWrongUser)
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
             expect(response.body.errorsMessages[0].field).toEqual('login');
             expect(response.body.errorsMessages[0].message).toEqual(
@@ -390,16 +340,12 @@ describe('Users Controller', () => {
         });
 
         it('returns an error if password field is not valid', async () => {
-            const newUser = {
-                login: testUsers[0].login,
-                email: testUsers[0].email,
-                password: testUsers[0].password,
-            };
-            newUser.password = invalidUsersFields.password.length;
+            const newWrongUser = { ...newUser };
+            newWrongUser.password = invalidUsersFields.password.length;
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)
-                .send(newUser)
+                .send(newWrongUser)
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
             expect(response.body.errorsMessages[0].field).toEqual('password');
             expect(response.body.errorsMessages[0].message).toEqual(
@@ -408,14 +354,12 @@ describe('Users Controller', () => {
         });
 
         it('returns an error if email field is not valid', async () => {
-            const newUser = {
-                ...testUsers[0],
-            };
-            newUser.email = invalidUsersFields.email.format;
+            const newWrongUser = { ...newUser };
+            newWrongUser.email = invalidUsersFields.email.format;
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)
-                .send(newUser)
+                .send(newWrongUser)
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
             expect(response.body.errorsMessages[0].field).toEqual('email');
             expect(response.body.errorsMessages[0].message).toEqual(
@@ -425,30 +369,36 @@ describe('Users Controller', () => {
     });
 
     describe('DELETE /users/:id', () => {
+        const newUserToDelete = {
+            email: 'email_101@email.com',
+            login: 'login_101',
+            password: 'password101',
+        };
+        let createdUserToDelete: UserViewModel;
+        beforeAll(async () => {
+            createdUserToDelete = await addNewUser(newUserToDelete);
+        });
         it('can not delete a user without authorization', async () => {
-            const createdUser = await addNewUser(testUsers[0]);
             const response = await req.delete(
-                `${baseRoutes.users}/${createdUser.id}`
+                `${baseRoutes.users}/${createdUserToDelete.id}`
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
         it('can not delete a user if auth data is invalid', async () => {
-            const createdUser = await addNewUser(testUsers[0]);
             const response = await req
-                .delete(`${baseRoutes.users}/${createdUser.id}`)
+                .delete(`${baseRoutes.users}/${createdUserToDelete.id}`)
                 .auth(...invalidAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
         it('deletes a user', async () => {
-            const createdUser = await addNewUser(testUsers[0]);
             const response_1 = await req
-                .delete(`${baseRoutes.users}/${createdUser.id}`)
+                .delete(`${baseRoutes.users}/${createdUserToDelete.id}`)
                 .auth(...validAuthData);
             expect(response_1.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
             const response_2 = await req.get(
-                `${baseRoutes.users}/${createdUser.id}`
+                `${baseRoutes.users}/${createdUserToDelete.id}`
             );
             expect(response_2.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });

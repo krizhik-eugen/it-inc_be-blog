@@ -21,17 +21,7 @@ export const usersRepository = {
         return result.deletedCount > 0;
     },
 
-    async setUsers(users: Omit<UserDBModel, '_id' | 'createdAt'>[]) {
-        if (users.length > 0) {
-            const mappedUsers = users.map((user) => {
-                return {
-                    ...user,
-                    createdAt: new Date().toISOString(),
-                };
-            });
-            await usersCollection.insertMany(mappedUsers);
-            return;
-        }
+    async clearUsers() {
         await usersCollection.deleteMany({});
     },
 };

@@ -35,7 +35,6 @@ describe('Posts Controller', () => {
 
     afterAll(async () => {
         await DBHandlers.closeDB();
-        
     });
 
     const setTestPosts = async (blogId: string) => {
@@ -484,20 +483,27 @@ describe('Posts Controller', () => {
         let accessToken = '';
 
         beforeAll(async () => {
-            createdPost = await addNewPost({ ...testPosts[0], blogId: createdBlog.id });
+            createdPost = await addNewPost({
+                ...testPosts[0],
+                blogId: createdBlog.id,
+            });
             await addNewUser({ ...testUsers[0] });
             const loginCredentials = {
                 loginOrEmail: testUsers[0].login,
                 password: testUsers[0].password,
             };
             accessToken = (
-                await req.post(`${baseRoutes.auth}/login`).send(loginCredentials)
+                await req
+                    .post(`${baseRoutes.auth}/login`)
+                    .send(loginCredentials)
             ).body.accessToken;
         });
 
         it('returns an empty array initially', async () => {
             await commentsRepository.clearComments();
-            const response = await req.get(`${baseRoutes.posts}/${createdPost.id}/comments`);
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdPost.id}/comments`
+            );
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.totalCount).toEqual(0);
             expect(response.body.items).toEqual([]);
@@ -510,14 +516,18 @@ describe('Posts Controller', () => {
                     .auth(accessToken, { type: 'bearer' })
                     .send(testComments[i]);
             }
-            const response = await req.get(`${baseRoutes.posts}/${createdPost.id}/comments`);
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdPost.id}/comments`
+            );
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.totalCount).toEqual(9);
             expect(response.body.page).toEqual(1);
             expect(response.body.pagesCount).toEqual(1);
             expect(response.body.items[0]).toHaveProperty('createdAt');
             expect(response.body.items[0]).toHaveProperty('content');
-            expect(response.body.items[0].content).toEqual(testComments[8].content);
+            expect(response.body.items[0].content).toEqual(
+                testComments[8].content
+            );
             expect(
                 new Date(response.body.items[0].createdAt).getTime()
             ).toBeGreaterThan(
@@ -546,7 +556,9 @@ describe('Posts Controller', () => {
                 `${baseRoutes.posts}/${createdPost.id}/comments?sortDirection=asc`
             );
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items[0].content).toEqual(testComments[0].content);
+            expect(response.body.items[0].content).toEqual(
+                testComments[0].content
+            );
             expect(
                 new Date(response.body.items[0].createdAt).getTime()
             ).toBeLessThan(
@@ -564,7 +576,9 @@ describe('Posts Controller', () => {
             expect(response.body.items.length).toEqual(3);
             expect(response.body.pageSize).toEqual(3);
             expect(response.body.page).toEqual(1);
-            expect(response.body.items[2].content).toEqual(testComments[2].content);
+            expect(response.body.items[2].content).toEqual(
+                testComments[2].content
+            );
         });
 
         it('returns a list of comments with pagination, page size 3, and page number 2', async () => {
@@ -575,7 +589,9 @@ describe('Posts Controller', () => {
             expect(response.body.items.length).toEqual(3);
             expect(response.body.pageSize).toEqual(3);
             expect(response.body.page).toEqual(2);
-            expect(response.body.items[2].content).toEqual(testComments[5].content);
+            expect(response.body.items[2].content).toEqual(
+                testComments[5].content
+            );
         });
 
         it('returns a list of comments with pagination, page size 4, and page number 3', async () => {
@@ -586,7 +602,9 @@ describe('Posts Controller', () => {
             expect(response.body.items.length).toEqual(1);
             expect(response.body.pageSize).toEqual(4);
             expect(response.body.page).toEqual(3);
-            expect(response.body.items[0].content).toEqual(testComments[8].content);
+            expect(response.body.items[0].content).toEqual(
+                testComments[8].content
+            );
         });
     });
 
@@ -596,19 +614,26 @@ describe('Posts Controller', () => {
         const inValidToken = accessToken + '123';
 
         beforeAll(async () => {
-            createdPost = await addNewPost({ ...testPosts[0], blogId: createdBlog.id });
+            createdPost = await addNewPost({
+                ...testPosts[0],
+                blogId: createdBlog.id,
+            });
             await addNewUser({ ...testUsers[0] });
             const loginCredentials = {
                 loginOrEmail: testUsers[0].login,
                 password: testUsers[0].password,
             };
             accessToken = (
-                await req.post(`${baseRoutes.auth}/login`).send(loginCredentials)
+                await req
+                    .post(`${baseRoutes.auth}/login`)
+                    .send(loginCredentials)
             ).body.accessToken;
         });
 
         it('can not create a comment without authorization', async () => {
-            const response = await req.post(`${baseRoutes.posts}/${createdPost.id}/comments`).send(testComments[0]);
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
+                .send(testComments[0]);
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 

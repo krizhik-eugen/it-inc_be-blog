@@ -1,15 +1,14 @@
 import { ObjectId } from 'mongodb';
 import { blogsRepository } from '../repository';
-import {
-    TCreateNewBlogRequest,
-    TDeleteBlogRequest,
-    TUpdateBlogRequest,
-} from '../types';
+import { BlogCreateRequestModel, BlogViewModel } from '../types';
 import { BlogDBModel } from '../model';
 
 export const blogsService = {
-    async createNewBlog(req: TCreateNewBlogRequest) {
-        const { name, description, websiteUrl } = req.body;
+    async createNewBlog({
+        name,
+        description,
+        websiteUrl,
+    }: BlogCreateRequestModel) {
         const newBlog: BlogDBModel = {
             name,
             description,
@@ -20,20 +19,24 @@ export const blogsService = {
         return await blogsRepository.addNewBlog(newBlog);
     },
 
-    async updateBlog(req: TUpdateBlogRequest) {
-        const { name, description, websiteUrl } = req.body;
+    async updateBlog({
+        name,
+        description,
+        websiteUrl,
+        id,
+    }: Partial<BlogViewModel>) {
         const isBlogUpdated = await blogsRepository.updateBlog({
             name,
             description,
             websiteUrl,
-            _id: new ObjectId(req.params.id),
+            _id: new ObjectId(id),
         });
         return isBlogUpdated;
     },
 
-    async deleteBlog(req: TDeleteBlogRequest) {
+    async deleteBlog(id: string) {
         const isBlogDeleted = await blogsRepository.deleteBlog(
-            new ObjectId(req.params.id)
+            new ObjectId(id)
         );
         return isBlogDeleted;
     },

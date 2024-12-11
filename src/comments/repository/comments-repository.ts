@@ -20,8 +20,7 @@ export const commentsRepository = {
         return result.deletedCount > 0;
     },
 
-    async clearComments(
-    ) {
+    async clearComments() {
         await commentsCollection.deleteMany({});
     },
 };
