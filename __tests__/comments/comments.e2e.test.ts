@@ -1,16 +1,18 @@
 import { baseRoutes } from '../../src/configs';
-import { postsRepository, PostViewModel } from '../../src/posts';
+import { PostCreateRequestModel, PostViewModel } from '../../src/posts';
 import { BlogViewModel } from '../../src/blogs';
 import {
     addNewBlog,
     addNewPost,
     addNewUser,
     DBHandlers,
+    getTestBlog,
+    getTestComment,
+    getTestPost,
+    getTestUser,
+    getUserAuthData,
     idValidationErrorMessages,
     req,
-    testBlogs,
-    testPosts,
-    testUsers,
     textWithLengthGraterThan300,
     validObjectId,
 } from '../test-helpers';
@@ -18,9 +20,9 @@ import { HTTP_STATUS_CODES } from '../../src/constants';
 import { CommentViewModel } from '../../src/comments';
 
 describe('Comments Controller', () => {
-    let createdBlog: BlogViewModel;
-    const testPost = testPosts[0];
-    const testComment = { content: 'test comment 1 with proper length' };
+    let createdTestBlog: BlogViewModel;
+    let testPost: PostCreateRequestModel;
+    const testComment = getTestComment(1);
     let createdPost: PostViewModel;
     let accessToken_1 = '';
     let accessToken_2 = '';
@@ -31,41 +33,41 @@ describe('Comments Controller', () => {
     const inValidToken = accessToken_1 + '123';
 
     beforeAll(async () => {
+        // init data for tests: create Blog, Post, Users
         await DBHandlers.connectToDB();
-        await postsRepository.clearPosts();
-        createdBlog = await addNewBlog(testBlogs[0]);
-        testPost.blogId = createdBlog.id;
+        createdTestBlog = await addNewBlog(getTestBlog(1));
+        testPost = getTestPost(1, createdTestBlog.id);
         createdPost = await addNewPost(testPost);
-        addedUserId_1 = (await addNewUser({ ...testUsers[0] })).id;
-        addedUserId_2 = (await addNewUser({ ...testUsers[1] })).id;
+        addedUserId_1 = (await addNewUser(getTestUser(1))).id;
+        addedUserId_2 = (await addNewUser(getTestUser(2))).id;
         const loginCredentials_1 = {
-            loginOrEmail: testUsers[0].login,
-            password: testUsers[0].password,
+            loginOrEmail: getTestUser(1).login,
+            password: getTestUser(1).password,
         };
         const loginCredentials_2 = {
-            loginOrEmail: testUsers[1].login,
-            password: testUsers[1].password,
+            loginOrEmail: getTestUser(2).login,
+            password: getTestUser(2).password,
         };
         accessToken_1 = (
             await req.post(`${baseRoutes.auth}/login`).send(loginCredentials_1)
         ).body.accessToken;
+
         accessToken_2 = (
             await req.post(`${baseRoutes.auth}/login`).send(loginCredentials_2)
         ).body.accessToken;
-
         addedComment_1 = (
             await req
                 .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
-                .auth(accessToken_1, { type: 'bearer' })
+                .auth(...getUserAuthData(accessToken_1))
                 .send(testComment)
         ).body;
         addedComment_2 = (
             await req
                 .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
-                .auth(accessToken_2, { type: 'bearer' })
+                .auth(...getUserAuthData(accessToken_2))
                 .send(testComment)
         ).body;
-    }, 7000);
+    });
 
     afterAll(async () => {
         await DBHandlers.closeDB();
@@ -129,7 +131,7 @@ describe('Comments Controller', () => {
             };
             const response = await req
                 .put(`${baseRoutes.comments}/${addedComment_1.id}`)
-                .auth(inValidToken, { type: 'bearer' })
+                .auth(...getUserAuthData(inValidToken))
                 .send(updatedComment);
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
@@ -140,7 +142,7 @@ describe('Comments Controller', () => {
             };
             const response = await req
                 .put(`${baseRoutes.comments}/${addedComment_1.id}`)
-                .auth(accessToken_2, { type: 'bearer' })
+                .auth(...getUserAuthData(accessToken_2))
                 .send(updatedComment);
             expect(response.status).toBe(HTTP_STATUS_CODES.FORBIDDEN);
         });
@@ -151,7 +153,7 @@ describe('Comments Controller', () => {
             };
             const response = await req
                 .put(`${baseRoutes.comments}/${validObjectId}`)
-                .auth(accessToken_1, { type: 'bearer' })
+                .auth(...getUserAuthData(accessToken_1))
                 .send(updatedComment);
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });
@@ -162,7 +164,7 @@ describe('Comments Controller', () => {
             };
             const response = await req
                 .put(`${baseRoutes.comments}/${addedComment_1.id}`)
-                .auth(accessToken_1, { type: 'bearer' })
+                .auth(...getUserAuthData(accessToken_1))
                 .send(updatedComment);
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });
@@ -173,7 +175,7 @@ describe('Comments Controller', () => {
             };
             const response = await req
                 .put(`${baseRoutes.comments}/${addedComment_1.id}`)
-                .auth(accessToken_1, { type: 'bearer' })
+                .auth(...getUserAuthData(accessToken_1))
                 .send(updatedComment);
             expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
         });
@@ -184,7 +186,7 @@ describe('Comments Controller', () => {
             };
             const response = await req
                 .put(`${baseRoutes.comments}/${addedComment_1.id}`)
-                .auth(accessToken_1, { type: 'bearer' })
+                .auth(...getUserAuthData(accessToken_1))
                 .send(updatedComment);
             expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
         });
@@ -201,28 +203,28 @@ describe('Comments Controller', () => {
         it('can not delete a comment if auth data is invalid', async () => {
             const response = await req
                 .delete(`${baseRoutes.comments}/${addedComment_1.id}`)
-                .auth(inValidToken, { type: 'bearer' });
+                .auth(...getUserAuthData(inValidToken));
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
         it('can not delete a comment if user is not author', async () => {
             const response = await req
                 .delete(`${baseRoutes.comments}/${addedComment_1.id}`)
-                .auth(accessToken_2, { type: 'bearer' });
+                .auth(...getUserAuthData(accessToken_2));
             expect(response.status).toBe(HTTP_STATUS_CODES.FORBIDDEN);
         });
 
         it('return an error if comment not found', async () => {
             const response = await req
                 .delete(`${baseRoutes.comments}/${validObjectId}`)
-                .auth(accessToken_2, { type: 'bearer' });
+                .auth(...getUserAuthData(accessToken_2));
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });
 
         it('delete a comment', async () => {
             const response = await req
                 .delete(`${baseRoutes.comments}/${addedComment_1.id}`)
-                .auth(accessToken_1, { type: 'bearer' });
+                .auth(...getUserAuthData(accessToken_1));
             expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
         });
     });

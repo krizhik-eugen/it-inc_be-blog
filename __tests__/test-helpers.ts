@@ -2,10 +2,9 @@ import { app } from '../src/app';
 import { agent } from 'supertest';
 import { client, connectToDB, db } from '../src/db';
 import { BlogViewModel } from '../src/blogs';
-import { PostCreateRequestModel, PostViewModel } from '../src/posts';
+import { PostViewModel } from '../src/posts';
 import { baseRoutes } from '../src/configs';
 import { UserViewModel } from '../src/users';
-import { CommentCreateRequestModel } from '../src/comments';
 
 export const req = agent(app);
 
@@ -21,6 +20,8 @@ export const DBHandlers = {
 
 export const validAuthData = ['admin', 'qwerty', { type: 'basic' }] as const;
 export const invalidAuthData = ['admin', 'abcdef', { type: 'basic' }] as const;
+export const getUserAuthData = (token: string) =>
+    [token, { type: 'bearer' }] as const;
 export const idValidationErrorMessages = 'Invalid Id';
 export const validObjectId = '57430b985302e02a9657421c';
 export const invalidObjectId = 'qwerty1234567890';
@@ -84,63 +85,6 @@ export const usersValidationErrorMessages = {
     },
 };
 
-export const testPosts: PostCreateRequestModel[] = [
-    {
-        title: 'Test Post 1',
-        content: 'Test content 1',
-        blogId: '',
-        shortDescription: 'test shortDescription 1',
-    },
-    {
-        title: 'Test Post 2',
-        content: 'Test content 2',
-        blogId: '',
-        shortDescription: 'test shortDescription 2',
-    },
-    {
-        title: 'Test Post 3',
-        content: 'Test content 3',
-        blogId: '',
-        shortDescription: 'test shortDescription 3',
-    },
-    {
-        title: 'Test Post 4',
-        content: 'Test content 4',
-        blogId: '',
-        shortDescription: 'test shortDescription 4',
-    },
-    {
-        title: 'Test Post 5',
-        content: 'Test content 5',
-        blogId: '',
-        shortDescription: 'test shortDescription 5',
-    },
-    {
-        title: 'Test Post 6',
-        content: 'Test content 6',
-        blogId: '',
-        shortDescription: 'test shortDescription 6',
-    },
-    {
-        title: 'Test Post 7',
-        content: 'Test content 7',
-        blogId: '',
-        shortDescription: 'test shortDescription 7',
-    },
-    {
-        title: 'Test Post 8',
-        content: 'Test content 8',
-        blogId: '',
-        shortDescription: 'test shortDescription 8',
-    },
-    {
-        title: 'Test Post 9',
-        content: 'Test content 9',
-        blogId: '',
-        shortDescription: 'test shortDescription 9',
-    },
-];
-
 export const getTestBlog = (blogNumber: number) => ({
     name: `Test Blog ${blogNumber}`,
     description: `Test description ${blogNumber}`,
@@ -160,17 +104,9 @@ export const getTestUser = (userNumber: number) => ({
     password: `password${userNumber}`,
 });
 
-export const testComments: CommentCreateRequestModel[] = [
-    { content: 'test comment 1 with proper length' },
-    { content: 'test comment 2 with proper length' },
-    { content: 'test comment 3 with proper length' },
-    { content: 'test comment 4 with proper length' },
-    { content: 'test comment 5 with proper length' },
-    { content: 'test comment 6 with proper length' },
-    { content: 'test comment 7 with proper length' },
-    { content: 'test comment 8 with proper length' },
-    { content: 'test comment 9 with proper length' },
-];
+export const getTestComment = (commentNumber: number) => ({
+    content: `test comment ${commentNumber} with proper length`,
+});
 
 export const addNewBlog = async (
     blog: Omit<BlogViewModel, 'id' | 'createdAt' | 'isMembership'>
