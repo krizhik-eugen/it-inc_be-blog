@@ -11,7 +11,7 @@ import {
     testBlogs,
     testPosts,
     testUsers,
-    textWithLengthMoreThan300,
+    textWithLengthGraterThan300,
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
@@ -169,7 +169,7 @@ describe('Comments Controller', () => {
 
         it('can not update a comment if content is too long', async () => {
             const updatedComment = {
-                content: textWithLengthMoreThan300,
+                content: textWithLengthGraterThan300,
             };
             const response = await req
                 .put(`${baseRoutes.comments}/${addedComment_1.id}`)

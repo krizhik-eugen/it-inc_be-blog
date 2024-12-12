@@ -5,19 +5,22 @@ import {
     idValidationErrorMessages,
     invalidAuthData,
     invalidObjectId,
-    invalidUsersFields,
     req,
-    testUsers,
+    getTestUser,
     usersValidationErrorMessages,
     validAuthData,
     validObjectId,
+    textWithLengthGraterThan30,
+    textWithLengthGraterThan20,
+    invalidEmailFormat,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository, UserViewModel } from '../../src/users';
 
 describe('Users Controller', () => {
     const setTestUsers = async () => {
-        for (const user of testUsers) {
+        for (let i = 1; i < 10; i++) {
+            const user = getTestUser(i);
             await addNewUser(user);
         }
     };
@@ -50,7 +53,7 @@ describe('Users Controller', () => {
                 .get(baseRoutes.users)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items[0].login).toEqual(testUsers[8].login);
+            expect(response.body.items[0].login).toEqual(getTestUser(9).login);
             expect(
                 new Date(response.body.items[0].createdAt).getTime()
             ).toBeGreaterThan(
@@ -84,7 +87,7 @@ describe('Users Controller', () => {
                 .get(`${baseRoutes.users}?sortDirection=asc`)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items[0].login).toEqual(testUsers[0].login);
+            expect(response.body.items[0].login).toEqual(getTestUser(1).login);
             expect(
                 new Date(response.body.items[0].createdAt).getTime()
             ).toBeLessThan(
@@ -99,7 +102,7 @@ describe('Users Controller', () => {
                 .get(`${baseRoutes.users}?sortBy=login`)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items[0].login).toEqual(testUsers[8].login);
+            expect(response.body.items[0].login).toEqual(getTestUser(9).login);
             expect(
                 response.body.items[0].login > response.body.items[8].login
             ).toBeTruthy();
@@ -110,7 +113,7 @@ describe('Users Controller', () => {
                 .get(`${baseRoutes.users}?sortBy=login&sortDirection=asc`)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items[0].login).toEqual(testUsers[0].login);
+            expect(response.body.items[0].login).toEqual(getTestUser(1).login);
             expect(
                 response.body.items[8].login > response.body.items[0].login
             ).toBeTruthy();
@@ -121,7 +124,7 @@ describe('Users Controller', () => {
                 .get(`${baseRoutes.users}?sortBy=email`)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items[0].email).toEqual(testUsers[8].email);
+            expect(response.body.items[0].email).toEqual(getTestUser(9).email);
             expect(
                 response.body.items[0].email > response.body.items[8].email
             ).toBeTruthy();
@@ -132,7 +135,7 @@ describe('Users Controller', () => {
                 .get(`${baseRoutes.users}?sortBy=email&sortDirection=asc`)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items[0].email).toEqual(testUsers[0].email);
+            expect(response.body.items[0].email).toEqual(getTestUser(1).email);
             expect(
                 response.body.items[8].email > response.body.items[0].email
             ).toBeTruthy();
@@ -147,7 +150,7 @@ describe('Users Controller', () => {
             expect(response.body.pageSize).toEqual(3);
             expect(response.body.totalCount).toEqual(9);
             expect(response.body.page).toEqual(1);
-            expect(response.body.items[2].login).toEqual(testUsers[2].login);
+            expect(response.body.items[2].login).toEqual(getTestUser(3).login);
         });
 
         it('returns a list of users with pagination, page size 3, and page number 2', async () => {
@@ -160,7 +163,7 @@ describe('Users Controller', () => {
             expect(response.body.items.length).toEqual(3);
             expect(response.body.pageSize).toEqual(3);
             expect(response.body.page).toEqual(2);
-            expect(response.body.items[2].login).toEqual(testUsers[5].login);
+            expect(response.body.items[2].login).toEqual(getTestUser(6).login);
         });
 
         it('returns a list of users with pagination, page size 4, and page number 3', async () => {
@@ -173,7 +176,7 @@ describe('Users Controller', () => {
             expect(response.body.items.length).toEqual(1);
             expect(response.body.pageSize).toEqual(4);
             expect(response.body.page).toEqual(3);
-            expect(response.body.items[0].login).toEqual(testUsers[8].login);
+            expect(response.body.items[0].login).toEqual(getTestUser(9).login);
         });
 
         it('returns a list of users with the login matching the search term', async () => {
@@ -292,7 +295,7 @@ describe('Users Controller', () => {
         it('can not create a new user without authorization', async () => {
             const response = await req
                 .post(baseRoutes.users)
-                .send(testUsers[0]);
+                .send(getTestUser(1));
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
@@ -300,7 +303,7 @@ describe('Users Controller', () => {
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...invalidAuthData)
-                .send(testUsers[0]);
+                .send(getTestUser(1));
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
@@ -327,7 +330,7 @@ describe('Users Controller', () => {
 
         it('returns an error if login field is not valid', async () => {
             const newWrongUser = { ...newUser };
-            newWrongUser.login = invalidUsersFields.login.length;
+            newWrongUser.login = textWithLengthGraterThan30;
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)
@@ -341,7 +344,7 @@ describe('Users Controller', () => {
 
         it('returns an error if password field is not valid', async () => {
             const newWrongUser = { ...newUser };
-            newWrongUser.password = invalidUsersFields.password.length;
+            newWrongUser.password = textWithLengthGraterThan20;
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)
@@ -355,7 +358,7 @@ describe('Users Controller', () => {
 
         it('returns an error if email field is not valid', async () => {
             const newWrongUser = { ...newUser };
-            newWrongUser.email = invalidUsersFields.email.format;
+            newWrongUser.email = invalidEmailFormat;
             const response = await req
                 .post(baseRoutes.users)
                 .auth(...validAuthData)

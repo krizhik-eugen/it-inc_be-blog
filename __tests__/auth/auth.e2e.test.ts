@@ -1,12 +1,18 @@
 import { baseRoutes } from '../../src/configs';
-import { addNewUser, DBHandlers, req, testUsers } from '../test-helpers';
+import { addNewUser, DBHandlers, req, getTestUser } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository } from '../../src/users';
 
 describe('Auth Controller', () => {
+    const testUser = getTestUser(1);
+    const loginCredentials = {
+        loginOrEmail: testUser.login,
+        password: testUser.password,
+    };
+
     beforeAll(async () => {
         await DBHandlers.connectToDB();
-        await addNewUser({ ...testUsers[0] });
+        await addNewUser(testUser);
     });
 
     afterAll(async () => {
@@ -15,11 +21,6 @@ describe('Auth Controller', () => {
     });
 
     describe('POST /login', () => {
-        const loginCredentials = {
-            loginOrEmail: testUsers[0].login,
-            password: testUsers[0].password,
-        };
-
         it('returns an error if required fields are missing', async () => {
             for (const key of Object.keys(
                 loginCredentials
@@ -75,8 +76,8 @@ describe('Auth Controller', () => {
         let accessToken = '';
         beforeAll(async () => {
             const loginCredentials = {
-                loginOrEmail: testUsers[0].login,
-                password: testUsers[0].password,
+                loginOrEmail: testUser.login,
+                password: testUser.password,
             };
             accessToken = (
                 await req
@@ -104,8 +105,8 @@ describe('Auth Controller', () => {
                 .auth(accessToken, { type: 'bearer' });
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.userId).toBeDefined();
-            expect(response.body.email).toBe(testUsers[0].email);
-            expect(response.body.login).toBe(testUsers[0].login);
+            expect(response.body.email).toBe(testUser.email);
+            expect(response.body.login).toBe(testUser.login);
         });
     });
 });

@@ -30,20 +30,7 @@ export const blogsRepository = {
         return result.deletedCount > 0;
     },
 
-    async setBlogs(
-        blogs: Omit<BlogDBModel, 'id' | 'createdAt' | 'isMembership'>[]
-    ) {
-        if (blogs.length > 0) {
-            const mappedBlogs = blogs.map((blog) => {
-                return {
-                    ...blog,
-                    createdAt: new Date().toISOString(),
-                    isMembership: false,
-                };
-            });
-            await blogsCollection.insertMany(mappedBlogs);
-            return;
-        }
+    async clearBlogs() {
         await blogsCollection.deleteMany({});
     },
 };

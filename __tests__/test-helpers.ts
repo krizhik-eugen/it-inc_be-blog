@@ -5,9 +5,7 @@ import { BlogViewModel } from '../src/blogs';
 import { PostCreateRequestModel, PostViewModel } from '../src/posts';
 import { baseRoutes } from '../src/configs';
 import { UserViewModel } from '../src/users';
-import { CommentCreateRequestModel, CommentViewModel } from '../src/comments';
-import { UserCreateRequestModel } from '../src/users/types';
-import { BlogCreateRequestModel } from '../src/blogs/types';
+import { CommentCreateRequestModel } from '../src/comments';
 
 export const req = agent(app);
 
@@ -24,8 +22,17 @@ export const DBHandlers = {
 export const validAuthData = ['admin', 'qwerty', { type: 'basic' }] as const;
 export const invalidAuthData = ['admin', 'abcdef', { type: 'basic' }] as const;
 export const idValidationErrorMessages = 'Invalid Id';
+export const validObjectId = '57430b985302e02a9657421c';
+export const invalidObjectId = 'qwerty1234567890';
 
-export const textWithLengthMoreThan300 = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante. Integer bibendum purus nec massa fermentum, et ultricies sapien ullamcorper. Sed nec eros sit amet elit consequat malesuada a ut nisi. Phasellus nec ligula nec sapien aliquet varius.`;
+export const textWithLengthGraterThan500 = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante. Integer bibendum purus nec massa fermentum, et ultricies sapien ullamcorper. Sed nec eros sit amet    elit consequat malesuada a ut nisi. Phasellus nec ligula nec sapien aliquet varius. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante. Integer bibendum purus nec massa fermentum, et ultricies sapien ullamcorper. Sed nec eros sit amet`
+export const textWithLengthGraterThan300 = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante. Integer bibendum purus nec massa fermentum, et ultricies sapien ullamcorper. Sed nec eros sit amet elit consequat malesuada a ut nisi. Phasellus nec ligula nec sapien aliquet varius.`;
+export const textWithLengthGraterThan30 = `Lorem ipsum dolor sit amet, con.`;
+export const textWithLengthGraterThan20 = `Lorem ipsum dolor sit.`;
+export const textWithLengthGraterThan15 = `Lorem ipsum dol.`;
+export const invalidEmailFormat = 'invalid_email_format@.d';
+export const invalidURLFormat = 'invalid_email_format@.d';
+export const emailWithLengthGraterThan100 = `loremipsumdolorsitametconsecteturadipiscingelitvivamuslaciniaodiovitaevestibulumvestibulumcrasvenena@.com`;
 
 export const blogsValidationErrorMessages = {
     name: { length: 'Name length should be max 15 characters' },
@@ -62,54 +69,6 @@ export const usersValidationErrorMessages = {
         format: 'Email should be a valid email address, example: example@example.com',
     },
 };
-
-export const testBlogs: BlogCreateRequestModel[] = [
-    {
-        name: 'Test Blog 1',
-        description: 'Test description 1',
-        websiteUrl: 'https://test1.com',
-    },
-    {
-        name: 'Test Blog 2',
-        description: 'Test description 2',
-        websiteUrl: 'https://test2.com',
-    },
-    {
-        name: 'Test Blog 3',
-        description: 'Test description 3',
-        websiteUrl: 'https://test3.com',
-    },
-    {
-        name: 'Test Blog 4',
-        description: 'Test description 4',
-        websiteUrl: 'https://test4.com',
-    },
-    {
-        name: 'Test Blog 5',
-        description: 'Test description 5',
-        websiteUrl: 'https://test5.com',
-    },
-    {
-        name: 'Test Blog 6',
-        description: 'Test description 6',
-        websiteUrl: 'https://test6.com',
-    },
-    {
-        name: 'Test Blog 7',
-        description: 'Test description 7',
-        websiteUrl: 'https://test7.com',
-    },
-    {
-        name: 'Test Blog 8',
-        description: 'Test description 8',
-        websiteUrl: 'https://test8.com',
-    },
-    {
-        name: 'Test Blog 9',
-        description: 'Test description 9',
-        websiteUrl: 'https://test9.com',
-    },
-];
 
 export const testPosts: PostCreateRequestModel[] = [
     {
@@ -168,17 +127,24 @@ export const testPosts: PostCreateRequestModel[] = [
     },
 ];
 
-export const testUsers: UserCreateRequestModel[] = [
-    { email: 'email_1@email.com', login: 'login_1', password: 'password1' },
-    { email: 'email_2@email.com', login: 'login_2', password: 'password2' },
-    { email: 'email_3@email.com', login: 'login_3', password: 'password3' },
-    { email: 'email_4@email.com', login: 'login_4', password: 'password4' },
-    { email: 'email_5@email.com', login: 'login_5', password: 'password5' },
-    { email: 'email_6@email.com', login: 'login_6', password: 'password6' },
-    { email: 'email_7@email.com', login: 'login_7', password: 'password7' },
-    { email: 'email_8@email.com', login: 'login_8', password: 'password8' },
-    { email: 'email_9@email.com', login: 'login_9', password: 'password9' },
-];
+export const getTestBlog = (blogNumber: number) => ({
+    name: `Test Blog ${blogNumber}`,
+    description: `Test description ${blogNumber}`,
+    websiteUrl: `https://test${blogNumber}.com`,
+})
+
+export const getTestPost = (postNumber: number, blogId: string) => ({
+    title: `Test Post ${postNumber}`,
+    content: `Test content ${postNumber}`,
+    blogId,
+    shortDescription: `test shortDescription ${postNumber}`,
+})
+
+export const getTestUser = (userNumber: number) => ({
+    email: `email_${userNumber}@email.com`,
+    login: `login_${userNumber}`,
+    password: `password${userNumber}`,
+})
 
 export const testComments: CommentCreateRequestModel[] = [
     { content: 'test comment 1 with proper length' },
@@ -191,25 +157,6 @@ export const testComments: CommentCreateRequestModel[] = [
     { content: 'test comment 8 with proper length' },
     { content: 'test comment 9 with proper length' },
 ];
-
-export const validObjectId = '57430b985302e02a9657421c';
-export const invalidObjectId = 'qwerty1234567890';
-
-export const invalidBlogsFields = {
-    name: { length: 'new name with the length grater than 15 symbols' },
-    description: {
-        length: `new description with the length grater than 500 symbols, 
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-            uis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
-    },
-    websiteUrl: {
-        length: 'new_website_url_with_the_length_grater_than_100_symbols_for_testing_and_checking_validation_result@test.tt',
-        format: 'new_website_url_with_invalid_format@.test',
-    },
-};
 
 export const invalidPostsFields = {
     title: { length: 'new title with the length grater than 30 symbols' },
@@ -234,10 +181,7 @@ export const invalidPostsFields = {
 };
 
 export const invalidUsersFields = {
-    login: {
-        length: 'new_login_with_the_length_grater_than_30_symbols',
-        format: 'new_login_with_invalid_format',
-    },
+
     password: {
         length: 'new_password_with_the_length_grater_than_20_symbols',
     },

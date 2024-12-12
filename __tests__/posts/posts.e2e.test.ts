@@ -16,7 +16,7 @@ import {
     testComments,
     testPosts,
     testUsers,
-    textWithLengthMoreThan300,
+    textWithLengthGraterThan300,
     validAuthData,
     validObjectId,
 } from '../test-helpers';
@@ -666,7 +666,7 @@ describe('Posts Controller', () => {
 
         it('can not create a comment if content is too long', async () => {
             const invalidComment = {
-                content: textWithLengthMoreThan300,
+                content: textWithLengthGraterThan300,
             };
             const response = await req
                 .post(`${baseRoutes.posts}/${createdPost.id}/comments`)
