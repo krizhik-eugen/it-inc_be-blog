@@ -45,7 +45,7 @@ describe('Posts Controller', () => {
 
     describe('GET /posts', () => {
         it('returns an empty array initially', async () => {
-            await postsRepository.setPosts([]);
+            await postsRepository.clearPosts();
             const response = await req.get(baseRoutes.posts);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.totalCount).toEqual(0);

@@ -5,7 +5,7 @@ import { usersRepository } from '../../users';
 export const testingService = {
     async deleteAllData() {
         await blogsRepository.clearBlogs();
-        await postsRepository.setPosts([]);
+        await postsRepository.clearPosts();
         await usersRepository.clearUsers();
     },
 };

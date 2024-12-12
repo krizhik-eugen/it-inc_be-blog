@@ -32,7 +32,7 @@ describe('Comments Controller', () => {
 
     beforeAll(async () => {
         await DBHandlers.connectToDB();
-        await postsRepository.setPosts([]);
+        await postsRepository.clearPosts();
         createdBlog = await addNewBlog(testBlogs[0]);
         testPost.blogId = createdBlog.id;
         createdPost = await addNewPost(testPost);

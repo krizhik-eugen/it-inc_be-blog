@@ -32,31 +32,7 @@ export const postsRepository = {
         return result.deletedCount > 0;
     },
 
-    async setPosts(
-        posts: Omit<PostDBModel, 'createdAt' | 'blogName' | 'id'>[]
-    ) {
-        if (posts.length > 0) {
-            const mappedPosts = await posts.reduce<Promise<PostDBModel[]>>(
-                async (accPromise, post) => {
-                    const acc = await accPromise; // Wait for accumulated results
-                    const blog = await blogsRepository.findBlogById(
-                        new ObjectId(post.blogId)
-                    );
-                    if (!blog) {
-                        return acc; // Skip adding if blog is undefined
-                    }
-                    acc.push({
-                        ...post,
-                        blogName: blog.name,
-                        createdAt: new Date().toISOString(),
-                    });
-                    return acc;
-                },
-                Promise.resolve([])
-            );
-            await postsCollection.insertMany(mappedPosts);
-            return;
-        }
+    async clearPosts() {
         await postsCollection.deleteMany({});
     },
 };
