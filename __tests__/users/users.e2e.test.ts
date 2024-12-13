@@ -15,7 +15,7 @@ import {
     invalidEmailFormat,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { usersRepository, UserViewModel } from '../../src/users';
+import { usersRepository, UserViewModel } from '../../src/domain/users';
 
 describe('Users Controller', () => {
     const setTestUsers = async () => {

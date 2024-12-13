@@ -1,6 +1,6 @@
 import { baseRoutes } from '../../src/app/configs';
-import { PostCreateRequestModel, PostViewModel } from '../../src/posts';
-import { BlogViewModel } from '../../src/blogs';
+import { PostCreateRequestModel, PostViewModel } from '../../src/domain/posts';
+import { BlogViewModel } from '../../src/domain/blogs';
 import {
     addNewBlog,
     addNewPost,
@@ -24,7 +24,7 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { commentsRepository } from '../../src/comments';
+import { commentsRepository } from '../../src/domain/comments';
 import { routersPaths } from '../../src/app/configs';
 
 describe('Posts Controller', () => {

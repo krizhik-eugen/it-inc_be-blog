@@ -1,7 +1,7 @@
 import { baseRoutes } from '../../src/app/configs';
 import { addNewUser, DBHandlers, req, getTestUser } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { usersRepository } from '../../src/users';
+import { usersRepository } from '../../src/domain/users';
 import { routersPaths } from '../../src/app/configs';
 
 describe('Auth Controller', () => {

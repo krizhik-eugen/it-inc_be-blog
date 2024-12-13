@@ -1,5 +1,5 @@
 import { baseRoutes } from '../../src/app/configs';
-import { blogsRepository, BlogViewModel } from '../../src/blogs';
+import { blogsRepository, BlogViewModel } from '../../src/domain/blogs';
 import {
     addNewBlog,
     addNewPost,
@@ -23,7 +23,10 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { PostCreateRequestModel, postsRepository } from '../../src/posts';
+import {
+    PostCreateRequestModel,
+    postsRepository,
+} from '../../src/domain/posts';
 import { ObjectId } from 'mongodb';
 
 describe('Blogs Controller', () => {

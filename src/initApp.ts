@@ -1,11 +1,11 @@
 import express from 'express';
 import { baseRoutes } from './app/configs';
-import { testingRouter } from './testing';
-import { postsRouter } from './posts';
-import { blogsRouter } from './blogs';
-import { usersRouter } from './users';
-import { authRouter } from './auth/router/auth-router';
-import { commentsRouter } from './comments/router';
+import { testingRouter } from './domain/testing';
+import { postsRouter } from './domain/posts';
+import { blogsRouter } from './domain/blogs';
+import { usersRouter } from './domain/users';
+import { authRouter } from './domain/auth';
+import { commentsRouter } from './domain/comments';
 // import cors from 'cors';
 
 export const app = express();
