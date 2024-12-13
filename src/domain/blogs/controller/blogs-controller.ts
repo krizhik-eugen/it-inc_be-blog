@@ -54,15 +54,15 @@ export const blogsController = {
         const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
             req.query
         );
-        const result = await postsQueryRepository.getBlogPosts({
+        const posts = await postsQueryRepository.getBlogPosts({
             searchQueries,
             blogId: id,
         });
-        if ('errorsMessages' in result) {
+        if (!posts) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        res.status(HTTP_STATUS_CODES.OK).json(result);
+        res.status(HTTP_STATUS_CODES.OK).json(posts);
     },
 
     async createNewBlog(
@@ -93,17 +93,17 @@ export const blogsController = {
     ) {
         const { title, shortDescription, content } = req.body;
         const id = req.params.id;
-        const result = await postsService.createNewPostForBlog({
+        const createdPostId = await postsService.createNewPostForBlog({
             title,
             shortDescription,
             content,
             id,
         });
-        if (typeof result !== 'string' && 'errorsMessages' in result) {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).json(result);
+        if (!createdPostId) {
+            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        const addedPost = await postsQueryRepository.getPost(result);
+        const addedPost = await postsQueryRepository.getPost(createdPostId);
         if (!addedPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;

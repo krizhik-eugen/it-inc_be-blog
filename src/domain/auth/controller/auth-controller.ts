@@ -7,12 +7,12 @@ import { usersQueryRepository } from '../../../domain/users';
 export const authController = {
     async login(req: TAuthLoginRequest, res: Response) {
         const { loginOrEmail, password } = req.body;
-        const result = await authService.login({ loginOrEmail, password });
-        if (typeof result !== 'boolean' && 'errorsMessages' in result) {
-            res.status(HTTP_STATUS_CODES.UNAUTHORIZED).send(result);
+        const accessToken = await authService.login({ loginOrEmail, password });
+        if (!accessToken) {
+            res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
             return;
         }
-        res.status(HTTP_STATUS_CODES.OK).send(result);
+        res.status(HTTP_STATUS_CODES.OK).send(accessToken);
     },
 
     async me(req: Request, res: TMeResponse) {

@@ -34,12 +34,12 @@ export const postsController = {
     },
 
     async getPost(req: TGetPostRequest, res: TGetPostResponse) {
-        const foundPost = await postsQueryRepository.getPost(req.params.id);
-        if (!foundPost) {
+        const post = await postsQueryRepository.getPost(req.params.id);
+        if (!post) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        res.status(HTTP_STATUS_CODES.OK).json(foundPost);
+        res.status(HTTP_STATUS_CODES.OK).json(post);
     },
 
     async getPostComments(
@@ -50,15 +50,15 @@ export const postsController = {
             CommentsDBSearchParams['sortBy']
         >(req.query);
         const id = req.params.id;
-        const result = await commentsQueryRepository.getPostComments({
+        const postComments = await commentsQueryRepository.getPostComments({
             searchQueries,
             postId: id,
         });
-        if ('errorsMessages' in result) {
+        if (!postComments) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        res.status(HTTP_STATUS_CODES.OK).json(result);
+        res.status(HTTP_STATUS_CODES.OK).json(postComments);
     },
 
     async createNewPost(
@@ -66,17 +66,17 @@ export const postsController = {
         res: TCreateNewPostResponse
     ) {
         const { title, shortDescription, content, blogId } = req.body;
-        const result = await postsService.createNewPost({
+        const post = await postsService.createNewPost({
             title,
             shortDescription,
             content,
             blogId,
         });
-        if (typeof result !== 'string' && 'errorsMessages' in result) {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
+        if (!post) {
+            res.sendStatus(HTTP_STATUS_CODES.BAD_REQUEST);
             return;
         }
-        const createdPost = await postsQueryRepository.getPost(result);
+        const createdPost = await postsQueryRepository.getPost(post);
         if (!createdPost) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
@@ -90,16 +90,17 @@ export const postsController = {
     ) {
         const { content } = req.body;
         const id = req.params.id;
-        const result = await commentsService.createNewCommentForPost({
+        const commentId = await commentsService.createNewCommentForPost({
             content,
             id,
             userId: req.userId!,
         });
-        if (typeof result !== 'string' && 'errorsMessages' in result) {
+        if (!commentId) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        const createdComment = await commentsQueryRepository.getComment(result);
+        const createdComment =
+            await commentsQueryRepository.getComment(commentId);
         if (!createdComment) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;

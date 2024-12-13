@@ -1,14 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { postsCollection, PostsDBSearchParams } from '../model';
-import { PostViewModel } from '../types';
-import {
-    AllItemsViewModel,
-    TMappedSearchQueryParams,
-} from '../../../shared/types';
-import {
-    createResponseError,
-    getDBSearchQueries,
-} from '../../../shared/helpers';
+import { TMappedSearchQueryParams } from '../../../shared/types';
+import { getDBSearchQueries } from '../../../shared/helpers';
 import { blogsCollection } from '../../../domain/blogs';
 
 export const postsQueryRepository = {
@@ -16,7 +9,7 @@ export const postsQueryRepository = {
         searchQueries,
     }: {
         searchQueries: TMappedSearchQueryParams<PostsDBSearchParams['sortBy']>;
-    }): Promise<AllItemsViewModel<PostViewModel>> {
+    }) {
         const dbSearchQueries =
             getDBSearchQueries<PostsDBSearchParams['sortBy']>(searchQueries);
         const totalCount = await postsCollection.countDocuments({});
@@ -68,17 +61,12 @@ export const postsQueryRepository = {
     }: {
         searchQueries: TMappedSearchQueryParams<PostsDBSearchParams['sortBy']>;
         blogId: string;
-    }): Promise<
-        | AllItemsViewModel<PostViewModel>
-        | ReturnType<typeof createResponseError>
-    > {
+    }) {
         const blog = await blogsCollection.findOne({
             _id: new ObjectId(blogId),
         });
         if (!blog) {
-            return await Promise.resolve(
-                createResponseError('Blog not found', 'id')
-            );
+            return;
         }
         const dbSearchQueries =
             getDBSearchQueries<PostsDBSearchParams['sortBy']>(searchQueries);

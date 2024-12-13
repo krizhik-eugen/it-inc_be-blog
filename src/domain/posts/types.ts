@@ -5,7 +5,6 @@ import {
     TSearchQueryParams,
 } from '../../shared/types';
 import { PostsDBSearchParams } from './model/posts-model';
-import { createResponseError } from '../../shared/helpers';
 import {
     CommentCreateRequestModel,
     CommentsDBSearchParams,
@@ -48,9 +47,7 @@ export type TCreateNewPostRequest = Request<
     PostCreateRequestModel
 >;
 
-export type TCreateNewPostResponse = Response<
-    PostViewModel | ReturnType<typeof createResponseError>
->;
+export type TCreateNewPostResponse = Response<PostViewModel>;
 
 export type TGetPostRequest = Request<TIDParam, object, object, object>;
 
@@ -85,6 +82,4 @@ export type TCreateNewPostCommentRequest = Request<
     CommentCreateRequestModel
 >;
 
-export type TCreateNewPostCommentResponse = Response<
-    CommentViewModel | ReturnType<typeof createResponseError>
->;
+export type TCreateNewPostCommentResponse = Response<CommentViewModel>;

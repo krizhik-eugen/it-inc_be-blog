@@ -1,9 +1,7 @@
 import { CommentCreateRequestModel } from '../types';
-
 import { ObjectId } from 'mongodb';
 import { commentsRepository } from '../repository/comments-repository';
 import { postsRepository } from '../../../domain/posts';
-import { createResponseError } from '../../../shared/helpers';
 import { CommentDBModel } from '../model';
 import { usersRepository } from '../../../domain/users';
 
@@ -16,9 +14,7 @@ export const commentsService = {
         const postId = id;
         const post = await postsRepository.findPostById(new ObjectId(postId));
         if (!post) {
-            return await Promise.resolve(
-                createResponseError('Incorrect Blog Id, no blogs found', 'id')
-            );
+            return;
         }
         const user = await usersRepository.findUserById(new ObjectId(userId));
         const newComment: CommentDBModel = {

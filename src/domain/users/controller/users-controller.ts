@@ -17,13 +17,12 @@ export const usersController = {
         const { searchLoginTerm, searchEmailTerm, ...restQueries } = req.query;
         const searchQueries =
             getSearchQueries<UsersDBSearchParams['sortBy']>(restQueries);
-
-        const usersResponse = await usersQueryRepository.getUsers({
+        const users = await usersQueryRepository.getUsers({
             searchQueries,
             searchLoginTerm,
             searchEmailTerm,
         });
-        res.status(HTTP_STATUS_CODES.OK).json(usersResponse);
+        res.status(HTTP_STATUS_CODES.OK).json(users);
     },
 
     async createNewUser(
@@ -40,12 +39,12 @@ export const usersController = {
             res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
             return;
         }
-        const addedUser = await usersQueryRepository.getUser(result);
-        if (!addedUser) {
+        const user = await usersQueryRepository.getUser(result);
+        if (!user) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        res.status(HTTP_STATUS_CODES.CREATED).json(addedUser);
+        res.status(HTTP_STATUS_CODES.CREATED).json(user);
     },
 
     async deleteUser(req: TDeleteUserRequest, res: Response) {

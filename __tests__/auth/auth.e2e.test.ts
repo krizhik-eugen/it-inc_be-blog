@@ -41,13 +41,10 @@ describe('Auth Controller', () => {
                 ...loginCredentials,
             };
             loginUser.loginOrEmail = 'invalidLoginOrEmail';
-            const response = await req
+            await req
                 .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                 .send(loginUser)
                 .expect(HTTP_STATUS_CODES.UNAUTHORIZED);
-            expect(response.body.errorsMessages[0].message).toEqual(
-                'Incorrect login or password'
-            );
         });
 
         it('returns an error if password field is not valid', async () => {
@@ -55,13 +52,10 @@ describe('Auth Controller', () => {
                 ...loginCredentials,
             };
             loginUser.password = 'wrongPassword';
-            const response = await req
+            await req
                 .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                 .send(loginUser)
                 .expect(HTTP_STATUS_CODES.UNAUTHORIZED);
-            expect(response.body.errorsMessages[0].message).toEqual(
-                'Incorrect login or password'
-            );
         });
 
         it('login successfully', async () => {

@@ -13,7 +13,7 @@ export const usersQueryRepository = {
         searchQueries: TMappedSearchQueryParams<UsersDBSearchParams['sortBy']>;
         searchLoginTerm?: string;
         searchEmailTerm?: string;
-    }): Promise<AllUsersResponseModel> {
+    }) {
         const dbSearchQueries =
             getDBSearchQueries<UsersDBSearchParams['sortBy']>(searchQueries);
         const findQuery: Filter<Pick<UserDBModel, 'login' | 'email'>> = {};

@@ -11,25 +11,23 @@ import { commentsQueryRepository } from '../repository';
 
 export const commentsController = {
     async getComment(req: TGetCommentRequest, res: TGetCommentResponse) {
-        const foundComment = await commentsQueryRepository.getComment(
-            req.params.id
-        );
-        if (!foundComment) {
+        const comment = await commentsQueryRepository.getComment(req.params.id);
+        if (!comment) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        res.status(HTTP_STATUS_CODES.OK).json(foundComment);
+        res.status(HTTP_STATUS_CODES.OK).json(comment);
     },
 
     async updateComment(req: TUpdateCommentRequest, res: Response) {
         const id = req.params.id;
         const { content } = req.body;
-        const foundComment = await commentsQueryRepository.getComment(id);
-        if (!foundComment) {
+        const comment = await commentsQueryRepository.getComment(id);
+        if (!comment) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        if (req.userId !== foundComment.commentatorInfo.userId) {
+        if (req.userId !== comment.commentatorInfo.userId) {
             res.sendStatus(HTTP_STATUS_CODES.FORBIDDEN);
             return;
         }
@@ -45,14 +43,12 @@ export const commentsController = {
     },
 
     async deleteComment(req: TDeleteCommentRequest, res: Response) {
-        const foundComment = await commentsQueryRepository.getComment(
-            req.params.id
-        );
-        if (!foundComment) {
+        const comment = await commentsQueryRepository.getComment(req.params.id);
+        if (!comment) {
             res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
             return;
         }
-        if (req.userId !== foundComment.commentatorInfo.userId) {
+        if (req.userId !== comment.commentatorInfo.userId) {
             res.sendStatus(HTTP_STATUS_CODES.FORBIDDEN);
             return;
         }

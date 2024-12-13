@@ -1,15 +1,8 @@
 import { ObjectId } from 'mongodb';
 import { commentsCollection, CommentsDBSearchParams } from '../model';
-import { CommentViewModel } from '../types';
 import { postsCollection } from '../../../domain/posts';
-import {
-    AllItemsViewModel,
-    TMappedSearchQueryParams,
-} from '../../../shared/types';
-import {
-    createResponseError,
-    getDBSearchQueries,
-} from '../../../shared/helpers';
+import { TMappedSearchQueryParams } from '../../../shared/types';
+import { getDBSearchQueries } from '../../../shared/helpers';
 
 export const commentsQueryRepository = {
     async getComment(id: string) {
@@ -36,17 +29,12 @@ export const commentsQueryRepository = {
             CommentsDBSearchParams['sortBy']
         >;
         postId: string;
-    }): Promise<
-        | AllItemsViewModel<CommentViewModel>
-        | ReturnType<typeof createResponseError>
-    > {
+    }) {
         const post = await postsCollection.findOne({
             _id: new ObjectId(postId),
         });
         if (!post) {
-            return await Promise.resolve(
-                createResponseError('post not found', 'id')
-            );
+            return;
         }
         const dbSearchQueries =
             getDBSearchQueries<CommentsDBSearchParams['sortBy']>(searchQueries);

@@ -327,23 +327,20 @@ describe('Blogs Controller', () => {
                 content: newTestPost.content,
                 shortDescription: newTestPost.shortDescription,
             };
-            const response_1 = await req
+            const response = await req
                 .post(`${baseRoutes.blogs}/${invalidObjectId}/posts`)
                 .auth(...validAuthData)
                 .send(newPost)
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response_1.body.errorsMessages[0].field).toEqual('id');
-            expect(response_1.body.errorsMessages[0].message).toEqual(
+            expect(response.body.errorsMessages[0].field).toEqual('id');
+            expect(response.body.errorsMessages[0].message).toEqual(
                 idValidationErrorMessages
             );
-            const response_2 = await req
+            await req
                 .post(`${baseRoutes.blogs}/${validObjectId}/posts`)
                 .auth(...validAuthData)
                 .send(newPost)
                 .expect(HTTP_STATUS_CODES.NOT_FOUND);
-            expect(response_2.body.errorsMessages[0].message).toEqual(
-                postsValidationErrorMessages.blogId.value
-            );
         });
     });
 

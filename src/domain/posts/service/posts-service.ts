@@ -3,7 +3,6 @@ import { postsRepository } from '../repository';
 import { blogsRepository } from '../../../domain/blogs';
 import { ObjectId } from 'mongodb';
 import { PostDBModel } from '../model';
-import { createResponseError } from '../../../shared/helpers';
 
 export const postsService = {
     async createNewPost({
@@ -14,12 +13,7 @@ export const postsService = {
     }: PostCreateRequestModel) {
         const blog = await blogsRepository.findBlogById(new ObjectId(blogId));
         if (!blog) {
-            return await Promise.resolve(
-                createResponseError(
-                    'Incorrect Blog Id, no blogs found',
-                    'blogId'
-                )
-            );
+            return;
         }
         const newPost: PostDBModel = {
             blogId,
@@ -40,9 +34,7 @@ export const postsService = {
     }: Omit<PostCreateRequestModel, 'blogId'> & { id: string }) {
         const blog = await blogsRepository.findBlogById(new ObjectId(id));
         if (!blog) {
-            return await Promise.resolve(
-                createResponseError('Incorrect Blog Id, no blogs found', 'id')
-            );
+            return;
         }
         const newPost: PostDBModel = {
             title,
