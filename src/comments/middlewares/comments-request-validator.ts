@@ -1,5 +1,5 @@
 import { Schema } from 'express-validator';
-import { requestValidator } from '../../helpers';
+import { requestValidator } from '../../shared/helpers';
 
 const contentMinLength = 20;
 const contentMaxLength = 300;

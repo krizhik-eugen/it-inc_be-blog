@@ -3,9 +3,9 @@ import {
     AllItemsViewModel,
     TIDParam,
     TSearchQueryParams,
-} from '../common-types';
+} from '../shared/types';
 import { PostsDBSearchParams } from './model/posts-model';
-import { createResponseError } from '../helpers';
+import { createResponseError } from '../shared/helpers';
 import {
     CommentCreateRequestModel,
     CommentsDBSearchParams,

@@ -1,9 +1,9 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { HTTP_STATUS_CODES } from '../../constants';
-import { jwtSecret } from '../../configs/app-config';
+import { HTTP_STATUS_CODES } from '../../../constants';
+import { jwtSecret } from '../../configs';
 import { ObjectId } from 'mongodb';
-import { usersRepository } from '../../users';
+import { usersRepository } from '../../../users';
 
 export const userAuthValidator = async (
     req: Request,

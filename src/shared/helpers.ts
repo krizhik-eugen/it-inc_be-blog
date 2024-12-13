@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
 import { checkSchema, Schema, validationResult } from 'express-validator';
-import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from './constants';
-import { TMappedSearchQueryParams, TSearchQueryParams } from './common-types';
+import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from '../constants';
+import { TMappedSearchQueryParams, TSearchQueryParams } from './types';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array({ onlyFirstError: true });

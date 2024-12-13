@@ -1,7 +1,8 @@
-import { baseRoutes } from '../../src/configs';
+import { baseRoutes } from '../../src/app/configs';
 import { addNewUser, DBHandlers, req, getTestUser } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository } from '../../src/users';
+import { routersPaths } from '../../src/app/configs';
 
 describe('Auth Controller', () => {
     const testUser = getTestUser(1);
@@ -28,7 +29,7 @@ describe('Auth Controller', () => {
                 const loginUser = { ...loginCredentials };
                 delete loginUser[key];
                 const response = await req
-                    .post(`${baseRoutes.auth}/login`)
+                    .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                     .send(loginUser)
                     .expect(HTTP_STATUS_CODES.BAD_REQUEST);
                 expect(response.body.errorsMessages[0].field).toEqual(key);
@@ -41,7 +42,7 @@ describe('Auth Controller', () => {
             };
             loginUser.loginOrEmail = 'invalidLoginOrEmail';
             const response = await req
-                .post(`${baseRoutes.auth}/login`)
+                .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                 .send(loginUser)
                 .expect(HTTP_STATUS_CODES.UNAUTHORIZED);
             expect(response.body.errorsMessages[0].message).toEqual(
@@ -55,7 +56,7 @@ describe('Auth Controller', () => {
             };
             loginUser.password = 'wrongPassword';
             const response = await req
-                .post(`${baseRoutes.auth}/login`)
+                .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                 .send(loginUser)
                 .expect(HTTP_STATUS_CODES.UNAUTHORIZED);
             expect(response.body.errorsMessages[0].message).toEqual(
@@ -65,7 +66,7 @@ describe('Auth Controller', () => {
 
         it('login successfully', async () => {
             const response = await req
-                .post(`${baseRoutes.auth}/login`)
+                .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                 .send(loginCredentials);
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.accessToken).toBeDefined();
@@ -81,7 +82,7 @@ describe('Auth Controller', () => {
             };
             accessToken = (
                 await req
-                    .post(`${baseRoutes.auth}/login`)
+                    .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                     .send(loginCredentials)
             ).body.accessToken;
         });
@@ -94,14 +95,14 @@ describe('Auth Controller', () => {
         it('returns an error if token is not valid', async () => {
             const inValidToken = accessToken + '123';
             const response = await req
-                .get(`${baseRoutes.auth}/me`)
+                .get(`${baseRoutes.auth}${routersPaths.auth.me}`)
                 .auth(inValidToken, { type: 'bearer' });
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
 
         it('get user details successfully', async () => {
             const response = await req
-                .get(`${baseRoutes.auth}/me`)
+                .get(`${baseRoutes.auth}${routersPaths.auth.me}`)
                 .auth(accessToken, { type: 'bearer' });
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.userId).toBeDefined();

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { TIDParam } from '../common-types';
+import { TIDParam } from '../shared/types';
 
 export type TCommentatorInfo = {
     userId: string;

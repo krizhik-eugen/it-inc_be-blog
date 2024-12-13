@@ -1,4 +1,4 @@
-import { baseRoutes } from '../../src/configs';
+import { baseRoutes } from '../../src/app/configs';
 import {
     addNewUser,
     DBHandlers,

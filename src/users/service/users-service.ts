@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
 import { UserCreateRequestModel } from '../types';
 import { usersRepository } from '../repository';
-import { createResponseError } from '../../helpers';
+import { createResponseError } from '../../shared/helpers';
 
 export const usersService = {
     async createNewUser({ login, email, password }: UserCreateRequestModel) {

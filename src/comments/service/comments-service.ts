@@ -7,7 +7,7 @@ import {
 import { ObjectId } from 'mongodb';
 import { commentsRepository } from '../repository/comments-repository';
 import { postsRepository } from '../../posts';
-import { createResponseError } from '../../helpers';
+import { createResponseError } from '../../shared/helpers';
 import { CommentDBModel } from '../model';
 import { usersRepository } from '../../users';
 

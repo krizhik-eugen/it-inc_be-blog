@@ -1,5 +1,5 @@
 import express from 'express';
-import { baseRoutes } from './configs';
+import { baseRoutes } from './app/configs';
 import { testingRouter } from './testing';
 import { postsRouter } from './posts';
 import { blogsRouter } from './blogs';

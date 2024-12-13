@@ -10,7 +10,7 @@ import {
 } from '../types';
 import { usersService } from '../service';
 import { UsersDBSearchParams } from '../model';
-import { getSearchQueries } from '../../helpers';
+import { getSearchQueries } from '../../shared/helpers';
 
 export const usersController = {
     async getAllUsers(req: TGetAllUsersRequest, res: TGetAllUsersResponse) {

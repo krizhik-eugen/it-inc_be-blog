@@ -1,4 +1,4 @@
-import { baseRoutes } from '../../src/configs';
+import { baseRoutes } from '../../src/app/configs';
 import { blogsRepository, BlogViewModel } from '../../src/blogs';
 import {
     addNewBlog,

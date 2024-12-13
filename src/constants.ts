@@ -1,4 +1,4 @@
-import { TMappedSearchQueryParams } from './common-types';
+import { TMappedSearchQueryParams } from './shared/types';
 
 export const HTTP_STATUS_CODES = {
     OK: 200,

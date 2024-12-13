@@ -3,14 +3,14 @@ import {
     AllItemsViewModel,
     TIDParam,
     TSearchQueryParams,
-} from '../common-types';
+} from '../shared/types';
 import { BlogsDBSearchParams } from './model';
 import {
     PostViewModel,
     TGetAllPostsRequestQueries,
     PostCreateRequestModel,
 } from '../posts';
-import { createResponseError } from '../helpers';
+import { createResponseError } from '../shared/helpers';
 
 export type BlogViewModel = {
     id: string;

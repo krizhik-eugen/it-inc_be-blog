@@ -22,7 +22,7 @@ import {
     commentsService,
 } from '../../comments';
 import { PostsDBSearchParams } from '../model';
-import { getSearchQueries } from '../../helpers';
+import { getSearchQueries } from '../../shared/helpers';
 
 export const postsController = {
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {

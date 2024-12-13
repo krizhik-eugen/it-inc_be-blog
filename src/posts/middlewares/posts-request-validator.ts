@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { Schema } from 'express-validator';
-import { requestValidator } from '../../helpers';
+import { requestValidator } from '../../shared/helpers';
 import { blogsRepository } from '../../blogs';
 import { commentsBodySchema, commentsQuerySchema } from '../../comments';
 

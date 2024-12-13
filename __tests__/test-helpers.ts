@@ -1,9 +1,9 @@
-import { app } from '../src/app';
+import { app } from '../src/initApp';
 import { agent } from 'supertest';
 import { client, connectToDB, db } from '../src/db';
 import { BlogViewModel } from '../src/blogs';
 import { PostViewModel } from '../src/posts';
-import { baseRoutes } from '../src/configs';
+import { baseRoutes } from '../src/app/configs';
 import { UserViewModel } from '../src/users';
 
 export const req = agent(app);

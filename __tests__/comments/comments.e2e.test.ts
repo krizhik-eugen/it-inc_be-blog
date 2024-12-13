@@ -1,4 +1,4 @@
-import { baseRoutes } from '../../src/configs';
+import { baseRoutes, routersPaths } from '../../src/app/configs';
 import { PostCreateRequestModel, PostViewModel } from '../../src/posts';
 import { BlogViewModel } from '../../src/blogs';
 import {
@@ -49,11 +49,15 @@ describe('Comments Controller', () => {
             password: getTestUser(2).password,
         };
         accessToken_1 = (
-            await req.post(`${baseRoutes.auth}/login`).send(loginCredentials_1)
+            await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
+                .send(loginCredentials_1)
         ).body.accessToken;
 
         accessToken_2 = (
-            await req.post(`${baseRoutes.auth}/login`).send(loginCredentials_2)
+            await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
+                .send(loginCredentials_2)
         ).body.accessToken;
         addedComment_1 = (
             await req

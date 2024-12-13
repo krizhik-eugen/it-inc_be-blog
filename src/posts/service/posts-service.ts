@@ -3,7 +3,7 @@ import { postsRepository } from '../repository';
 import { blogsRepository } from '../../blogs';
 import { ObjectId } from 'mongodb';
 import { PostDBModel } from '../model';
-import { createResponseError } from '../../helpers';
+import { createResponseError } from '../../shared/helpers';
 
 export const postsService = {
     async createNewPost({

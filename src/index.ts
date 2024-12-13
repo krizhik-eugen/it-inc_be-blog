@@ -1,5 +1,5 @@
-import { app } from './app';
-import { port } from './configs';
+import { app } from './initApp';
+import { port } from './app/configs';
 import { connectToDB } from './db';
 
 app.listen(port, async () => {

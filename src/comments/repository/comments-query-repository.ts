@@ -5,8 +5,8 @@ import { postsCollection } from '../../posts';
 import {
     AllItemsViewModel,
     TMappedSearchQueryParams,
-} from '../../common-types';
-import { createResponseError, getDBSearchQueries } from '../../helpers';
+} from '../../shared/types';
+import { createResponseError, getDBSearchQueries } from '../../shared/helpers';
 
 export const commentsQueryRepository = {
     async getComment(id: string) {

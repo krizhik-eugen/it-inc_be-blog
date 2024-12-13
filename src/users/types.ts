@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { TIDParam, TSearchQueryParams } from '../common-types';
+import { TIDParam, TSearchQueryParams } from '../shared/types';
 import { UsersDBSearchParams } from './model';
-import { createResponseError } from '../helpers';
+import { createResponseError } from '../shared/helpers';
 
 export type UserViewModel = {
     id: string;

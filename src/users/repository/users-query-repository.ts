@@ -1,8 +1,8 @@
 import { Filter, ObjectId } from 'mongodb';
-import { getDBSearchQueries } from '../../helpers';
+import { getDBSearchQueries } from '../../shared/helpers';
 import { usersCollection, UserDBModel, UsersDBSearchParams } from '../model';
 import { AllUsersResponseModel, UserViewModel } from '../types';
-import { TMappedSearchQueryParams } from '../../common-types';
+import { TMappedSearchQueryParams } from '../../shared/types';
 
 export const usersQueryRepository = {
     async getUsers({

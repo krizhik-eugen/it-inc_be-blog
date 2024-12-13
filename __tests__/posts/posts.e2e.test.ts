@@ -1,4 +1,4 @@
-import { baseRoutes } from '../../src/configs';
+import { baseRoutes } from '../../src/app/configs';
 import { PostCreateRequestModel, PostViewModel } from '../../src/posts';
 import { BlogViewModel } from '../../src/blogs';
 import {
@@ -25,6 +25,7 @@ import {
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { commentsRepository } from '../../src/comments';
+import { routersPaths } from '../../src/app/configs';
 
 describe('Posts Controller', () => {
     let createdTestBlog: BlogViewModel;
@@ -47,7 +48,9 @@ describe('Posts Controller', () => {
             password: testUser.password,
         };
         accessToken = (
-            await req.post(`${baseRoutes.auth}/login`).send(loginCredentials)
+            await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
+                .send(loginCredentials)
         ).body.accessToken;
         await setComments();
     }, 15000);

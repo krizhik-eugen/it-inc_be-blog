@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { createResponseError } from '../../helpers';
+import { createResponseError } from '../../shared/helpers';
 import { usersRepository } from '../../users';
-import { jwtSecret } from '../../configs/app-config';
+import { jwtSecret } from '../../app/configs';
 import { AuthLoginRequestModel } from '../types';
 
 export const authService = {

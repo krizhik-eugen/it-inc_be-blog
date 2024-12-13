@@ -4,8 +4,8 @@ import { BlogViewModel } from '../types';
 import {
     AllItemsViewModel,
     TMappedSearchQueryParams,
-} from '../../common-types';
-import { getDBSearchQueries } from '../../helpers';
+} from '../../shared/types';
+import { getDBSearchQueries } from '../../shared/helpers';
 
 export const blogsQueryRepository = {
     async getBlogs({

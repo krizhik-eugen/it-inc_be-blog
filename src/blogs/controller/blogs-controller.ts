@@ -21,7 +21,7 @@ import {
     postsQueryRepository,
     postsService,
 } from '../../posts';
-import { getSearchQueries } from '../../helpers';
+import { getSearchQueries } from '../../shared/helpers';
 import { BlogsDBSearchParams } from '../model';
 
 export const blogsController = {
