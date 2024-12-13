@@ -6,22 +6,16 @@ import { routersPaths } from '../../../app/configs';
 
 export const commentsRouter = Router();
 
-commentsRouter.get(
-    routersPaths.comments.id,
-    ...commentsValidators.getCommentRequest,
-    commentsController.getComment
-);
-
-commentsRouter.put(
-    routersPaths.comments.id,
-    userAuthValidator,
-    ...commentsValidators.updateCommentRequest,
-    commentsController.updateComment
-);
-
-commentsRouter.delete(
-    routersPaths.comments.id,
-    userAuthValidator,
-    ...commentsValidators.deleteCommentRequest,
-    commentsController.deleteComment
-);
+commentsRouter
+    .route(routersPaths.comments.id)
+    .get(...commentsValidators.getCommentRequest, commentsController.getComment)
+    .put(
+        userAuthValidator,
+        ...commentsValidators.updateCommentRequest,
+        commentsController.updateComment
+    )
+    .delete(
+        userAuthValidator,
+        ...commentsValidators.deleteCommentRequest,
+        commentsController.deleteComment
+    );

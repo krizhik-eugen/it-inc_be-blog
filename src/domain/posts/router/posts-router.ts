@@ -9,48 +9,37 @@ import { routersPaths } from '../../../app/configs';
 
 export const postsRouter = Router();
 
-postsRouter.get(
-    routersPaths.posts.main,
-    ...postsValidators.getPostsRequest,
-    postsController.getAllPosts
-);
+postsRouter
+    .route(routersPaths.posts.main)
+    .get(...postsValidators.getPostsRequest, postsController.getAllPosts)
+    .post(
+        ...adminAuthValidator,
+        ...postsValidators.createNewPostRequest,
+        postsController.createNewPost
+    );
 
-postsRouter.get(
-    routersPaths.posts.id,
-    ...postsValidators.getPostRequest,
-    postsController.getPost
-);
+postsRouter
+    .route(routersPaths.posts.id)
+    .get(...postsValidators.getPostRequest, postsController.getPost)
+    .put(
+        ...adminAuthValidator,
+        ...postsValidators.updatePostRequest,
+        postsController.updatePost
+    )
+    .delete(
+        ...adminAuthValidator,
+        ...postsValidators.deletePostRequest,
+        postsController.deletePost
+    );
 
-postsRouter.get(
-    routersPaths.posts.idComments,
-    ...postsValidators.getPostCommentsRequest,
-    postsController.getPostComments
-);
-
-postsRouter.post(
-    routersPaths.posts.main,
-    ...adminAuthValidator,
-    ...postsValidators.createNewPostRequest,
-    postsController.createNewPost
-);
-
-postsRouter.post(
-    routersPaths.posts.idComments,
-    userAuthValidator,
-    ...postsValidators.createNewCommentForPostRequest,
-    postsController.createNewCommentForPost
-);
-
-postsRouter.put(
-    routersPaths.posts.id,
-    ...adminAuthValidator,
-    ...postsValidators.updatePostRequest,
-    postsController.updatePost
-);
-
-postsRouter.delete(
-    routersPaths.posts.id,
-    ...adminAuthValidator,
-    ...postsValidators.deletePostRequest,
-    postsController.deletePost
-);
+postsRouter
+    .route(routersPaths.posts.idComments)
+    .get(
+        ...postsValidators.getPostCommentsRequest,
+        postsController.getPostComments
+    )
+    .post(
+        userAuthValidator,
+        ...postsValidators.createNewCommentForPostRequest,
+        postsController.createNewCommentForPost
+    );

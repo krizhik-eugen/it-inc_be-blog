@@ -6,9 +6,10 @@ import { routersPaths } from '../../../app/configs';
 
 export const authRouter = Router();
 
-authRouter.post(
-    routersPaths.auth.login,
-    ...authValidators.loginRequest,
-    authController.login
-);
-authRouter.get(routersPaths.auth.me, userAuthValidator, authController.me);
+authRouter
+    .route(routersPaths.auth.login)
+    .post(...authValidators.loginRequest, authController.login);
+
+authRouter
+    .route(routersPaths.auth.me)
+    .get(userAuthValidator, authController.me);

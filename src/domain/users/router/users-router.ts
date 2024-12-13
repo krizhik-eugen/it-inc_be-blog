@@ -6,23 +6,19 @@ import { usersValidators } from '../middlewares';
 
 export const usersRouter = Router();
 
-usersRouter.get(
-    routersPaths.users.main,
-    ...adminAuthValidator,
-    ...usersValidators.getUsersRequest,
-    usersController.getAllUsers
-);
+usersRouter
+    .route(routersPaths.users.main)
+    .all(...adminAuthValidator)
+    .get(...usersValidators.getUsersRequest, usersController.getAllUsers)
+    .post(
+        ...usersValidators.createNewUserRequest,
+        usersController.createNewUser
+    );
 
-usersRouter.post(
-    routersPaths.users.main,
-    ...adminAuthValidator,
-    ...usersValidators.createNewUserRequest,
-    usersController.createNewUser
-);
-
-usersRouter.delete(
-    routersPaths.users.id,
-    ...adminAuthValidator,
-    ...usersValidators.deleteUserRequest,
-    usersController.deleteUser
-);
+usersRouter
+    .route(routersPaths.users.id)
+    .delete(
+        ...adminAuthValidator,
+        ...usersValidators.deleteUserRequest,
+        usersController.deleteUser
+    );
