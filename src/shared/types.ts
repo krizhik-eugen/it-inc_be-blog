@@ -1,3 +1,4 @@
+import { ResultStatus } from '../constants';
 export type TSearchQueryParams<T> = {
     sortBy?: T;
     sortDirection?: 'asc' | 'desc';
@@ -22,4 +23,18 @@ export type AllItemsViewModel<T> = {
     pageSize: number;
     totalCount: number;
     items: T[];
+};
+
+type ExtensionType = {
+    field: string | null;
+    message: string;
+};
+
+export type TStatus = (typeof ResultStatus)[keyof typeof ResultStatus];
+
+export type TResult<T = null> = {
+    status: TStatus;
+    errorMessage?: string;
+    extensions: ExtensionType[];
+    data: T;
 };

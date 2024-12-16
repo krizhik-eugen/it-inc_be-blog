@@ -13,3 +13,21 @@ authRouter
 authRouter
     .route(routersPaths.auth.me)
     .get(userAuthValidator, authController.me);
+
+authRouter
+    .route(routersPaths.auth.registration)
+    .post(...authValidators.registrationRequest, authController.register);
+
+authRouter
+    .route(routersPaths.auth.confirmation)
+    .post(
+        ...authValidators.confirmationRequest,
+        authController.confirmRegistration
+    );
+
+authRouter
+    .route(routersPaths.auth.resendEmail)
+    .post(
+        ...authValidators.resendRegistrationRequest,
+        authController.resendRegistrationEmail
+    );

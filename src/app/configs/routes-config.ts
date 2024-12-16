@@ -12,6 +12,9 @@ export const routersPaths = {
         main: '/',
         login: '/login',
         me: '/me',
+        registration: '/registration',
+        confirmation: '/registration-confirmation',
+        resendEmail: '/registration-email-resending',
     },
     blogs: {
         main: '/',

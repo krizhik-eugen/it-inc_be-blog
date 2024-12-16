@@ -1,7 +1,7 @@
 import { Filter, ObjectId } from 'mongodb';
 import { getDBSearchQueries } from '../../../shared/helpers';
 import { usersCollection, UserDBModel, UsersDBSearchParams } from '../model';
-import { AllUsersResponseModel, UserViewModel } from '../types';
+import { UserViewModel } from '../types';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 
 export const usersQueryRepository = {
@@ -16,16 +16,16 @@ export const usersQueryRepository = {
     }) {
         const dbSearchQueries =
             getDBSearchQueries<UsersDBSearchParams['sortBy']>(searchQueries);
-        const findQuery: Filter<Pick<UserDBModel, 'login' | 'email'>> = {};
-        const searchConditions = [];
+        const findQuery: Filter<UserDBModel> = {};
+        const searchConditions: Filter<UserDBModel>[] = [];
         if (searchLoginTerm) {
             searchConditions.push({
-                login: { $regex: searchLoginTerm, $options: 'i' },
+                'accountData.login': { $regex: searchLoginTerm, $options: 'i' },
             });
         }
         if (searchEmailTerm) {
             searchConditions.push({
-                email: { $regex: searchEmailTerm, $options: 'i' },
+                'accountData.email': { $regex: searchEmailTerm, $options: 'i' },
             });
         }
         if (searchConditions.length > 0) {
@@ -41,8 +41,8 @@ export const usersQueryRepository = {
         const mappedFoundUsers: UserViewModel[] = foundUsers
             ? foundUsers.map((user: Required<UserDBModel>) => ({
                   id: user._id.toString(),
-                  login: user.login,
-                  email: user.email,
+                  login: user.accountData.login,
+                  email: user.accountData.email,
                   createdAt: user.createdAt,
               }))
             : [];
@@ -62,8 +62,8 @@ export const usersQueryRepository = {
         if (!user) return undefined;
         return {
             id: user._id.toString(),
-            login: user.login,
-            email: user.email,
+            login: user.accountData.login,
+            email: user.accountData.email,
             createdAt: user.createdAt,
         };
     },

@@ -3,6 +3,8 @@ import { ObjectId } from 'mongodb';
 import { UserCreateRequestModel } from '../types';
 import { usersRepository } from '../repository';
 import { createResponseError } from '../../../shared/helpers';
+import { UserDBModel } from '../model';
+import { add } from 'date-fns';
 
 export const usersService = {
     async createNewUser({ login, email, password }: UserCreateRequestModel) {
@@ -17,10 +19,17 @@ export const usersService = {
             );
         }
         const passwordHash = await bcrypt.hash(password, 10);
-        const newUser = {
-            login,
-            email,
-            passwordHash,
+        const newUser: UserDBModel = {
+            accountData: {
+                login,
+                email,
+                passwordHash,
+            },
+            emailConfirmation: {
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date(), { hours: 1, minutes: 3 }),
+                isConfirmed: false,
+            },
             createdAt: new Date().toISOString(),
         };
         return await usersRepository.addNewUser(newUser);
@@ -31,3 +40,6 @@ export const usersService = {
         return isDeleted;
     },
 };
+function uuidv4(): string | null {
+    throw new Error('Function not implemented.');
+}

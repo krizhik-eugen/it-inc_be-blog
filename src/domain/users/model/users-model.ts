@@ -2,10 +2,17 @@ import { OptionalUnlessRequiredId } from 'mongodb';
 import { db } from '../../../db';
 
 export type UserDBModel = OptionalUnlessRequiredId<{
-    login: string;
-    email: string;
+    accountData: {
+        login: string;
+        email: string;
+        passwordHash: string;
+    };
+    emailConfirmation: {
+        confirmationCode: string | null;
+        expirationDate: Date | null;
+        isConfirmed: boolean;
+    };
     createdAt: string;
-    passwordHash: string;
 }>;
 
 export type UsersDBSearchParams = {

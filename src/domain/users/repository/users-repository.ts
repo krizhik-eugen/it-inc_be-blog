@@ -11,9 +11,24 @@ export const usersRepository = {
         return await usersCollection.findOne({ _id });
     },
 
+    async findUserByConfirmationCode(code: string) {
+        return await usersCollection.findOne({
+            'emailConfirmation.confirmationCode': code,
+        });
+    },
+
     async addNewUser(newUser: UserDBModel) {
         const result = await usersCollection.insertOne(newUser);
         return result.insertedId.toString();
+    },
+
+    async updateUser(updatedUser: Partial<UserDBModel>) {
+        const { _id, ...userToUpdate } = updatedUser;
+        const result = await usersCollection.updateOne(
+            { _id },
+            { $set: userToUpdate }
+        );
+        return result.modifiedCount > 0;
     },
 
     async deleteUser(_id: UserDBModel['_id']) {
