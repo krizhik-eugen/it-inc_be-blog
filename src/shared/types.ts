@@ -35,8 +35,12 @@ export type TStatus = (typeof ResultStatus)[keyof typeof ResultStatus];
 
 export type TResult<T = null> =
     | { status: Extract<TStatus, 'Success'>; data: T; errorsMessages?: never }
-    | { status: Exclude<TStatus, 'Success'>; data?: never; errorsMessages: TErrorType[] };
+    | {
+          status: Exclude<TStatus, 'Success'>;
+          data?: never;
+          errorsMessages: TErrorType[];
+      };
 
-
-export type TResponseWithError<T = undefined> = Response<T | { errorsMessages: { field: string; message: string }[] }
->
+export type TResponseWithError<T = undefined> = Response<
+    T | { errorsMessages: { field: string; message: string }[] }
+>;

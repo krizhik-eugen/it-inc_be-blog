@@ -62,6 +62,8 @@ describe('Auth Controller', () => {
             const response = await req
                 .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                 .send(loginCredentials);
+            console.log(response.body);
+
             expect(response.status).toBe(HTTP_STATUS_CODES.OK);
             expect(response.body.accessToken).toBeDefined();
         });

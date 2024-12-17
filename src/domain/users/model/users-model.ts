@@ -10,7 +10,7 @@ export type UserDBModel = OptionalUnlessRequiredId<{
     emailConfirmation: {
         confirmationCode: string | null;
         expirationDate: Date | null;
-        isConfirmed: boolean;
+        isConfirmed: 'Confirmed' | 'NotConfirmed';
     };
     createdAt: string;
 }>;

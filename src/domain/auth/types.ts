@@ -4,8 +4,8 @@ import { TResponseWithError } from '../../shared/types';
 export type MeViewModel = {
     userId: string;
     login: string;
-    email: string
-}
+    email: string;
+};
 
 export type LoginRequestModel = {
     loginOrEmail: string;
@@ -26,13 +26,13 @@ export type ResendRegistrationEmailRequestModel = {
     email: string;
 };
 
-export type TMeResponse = TResponseWithError<MeViewModel>
+export type TMeResponse = TResponseWithError<MeViewModel>;
 
 export type TLoginRequest = Request<object, object, LoginRequestModel>;
 
-export type TLoginResponse = TResponseWithError<{ accessToken: string }>
+export type TLoginResponse = TResponseWithError<{ accessToken: string }>;
 
-export type TRegisterResponse = TResponseWithError
+export type TRegisterResponse = TResponseWithError;
 
 export type TRegisterRequest = Request<object, object, RegisterRequestModel>;
 
@@ -42,8 +42,12 @@ export type TConfirmationRequest = Request<
     ConfirmationRequestModel
 >;
 
+export type TConfirmationResponse = TResponseWithError;
+
 export type TResendRegistrationEmailRequest = Request<
     object,
     object,
     ResendRegistrationEmailRequestModel
 >;
+
+export type TResendRegistrationEmailResponse = TResponseWithError;

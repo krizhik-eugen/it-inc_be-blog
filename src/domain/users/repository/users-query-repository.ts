@@ -31,10 +31,14 @@ export const usersQueryRepository = {
         if (searchConditions.length > 0) {
             findQuery.$or = searchConditions;
         }
+        const sortBySearchQuery =
+            searchQueries.sortBy === 'createdAt'
+                ? 'createdAt'
+                : 'accountData.' + searchQueries.sortBy;
         const totalCount = await usersCollection.countDocuments(findQuery);
         const foundUsers = await usersCollection
             .find(findQuery)
-            .sort({ [searchQueries.sortBy]: searchQueries.sortDirection })
+            .sort({ [sortBySearchQuery]: searchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit)
             .toArray();

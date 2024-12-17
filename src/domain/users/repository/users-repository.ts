@@ -2,8 +2,11 @@ import { usersCollection, UserDBModel } from '../model';
 
 export const usersRepository = {
     async findUserByLoginOrEmail(loginOrEmail: string) {
-        return usersCollection.findOne({
-            $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+        return await usersCollection.findOne({
+            $or: [
+                { 'accountData.login': loginOrEmail },
+                { 'accountData.email': loginOrEmail },
+            ],
         });
     },
 

@@ -10,7 +10,7 @@ export const blogsService = {
         name,
         description,
         websiteUrl,
-    }: BlogCreateRequestModel): Promise<TResult<string>> {
+    }: BlogCreateRequestModel): Promise<TResult<{ blogId: string }>> {
         const newBlog: BlogDBModel = {
             name,
             description,
@@ -18,19 +18,21 @@ export const blogsService = {
             createdAt: new Date().toISOString(),
             isMembership: false,
         };
-        const createdBlogId = await blogsRepository.addNewBlog(newBlog)
+        const createdBlogId = await blogsRepository.addNewBlog(newBlog);
 
         if (!createdBlogId) {
             return {
                 status: 'InternalError',
-                errorsMessages: [createResponseError('The error occurred during creation')]
-            }
+                errorsMessages: [
+                    createResponseError('The error occurred during creation'),
+                ],
+            };
         }
 
         return {
             status: 'Success',
-            data: createdBlogId
-        }
+            data: { blogId: createdBlogId },
+        };
     },
 
     async updateBlog({
@@ -48,12 +50,12 @@ export const blogsService = {
         if (!isBlogUpdated) {
             return {
                 status: 'NotFound',
-                errorsMessages: [createResponseError('Blog is not found')]
-            }
+                errorsMessages: [createResponseError('Blog is not found')],
+            };
         }
         return {
             status: 'Success',
-            data: null
+            data: null,
         };
     },
 
@@ -64,12 +66,12 @@ export const blogsService = {
         if (!isBlogDeleted) {
             return {
                 status: 'NotFound',
-                errorsMessages: [createResponseError('Blog is not found')]
-            }
+                errorsMessages: [createResponseError('Blog is not found')],
+            };
         }
         return {
             status: 'Success',
-            data: null
-        };;
+            data: null,
+        };
     },
 };

@@ -15,6 +15,11 @@ export const commentsRepository = {
         return result.modifiedCount > 0;
     },
 
+    async findCommentById(_id: CommentDBModel['_id']) {
+        const result = await commentsCollection.findOne({ _id });
+        return result;
+    },
+
     async deleteComment(_id: CommentDBModel['_id']) {
         const result = await commentsCollection.deleteOne({ _id });
         return result.deletedCount > 0;

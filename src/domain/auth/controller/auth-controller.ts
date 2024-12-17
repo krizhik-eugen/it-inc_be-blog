@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
     TLoginRequest,
@@ -8,6 +8,8 @@ import {
     TLoginResponse,
     TRegisterResponse,
     TMeResponse,
+    TConfirmationResponse,
+    TResendRegistrationEmailResponse,
 } from '../types';
 import { authService } from '../service';
 import { usersQueryRepository } from '../../../domain/users';
@@ -17,7 +19,9 @@ export const authController = {
         const { loginOrEmail, password } = req.body;
         const result = await authService.login({ loginOrEmail, password });
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.UNAUTHORIZED).send({ errorsMessages: result.errorsMessages });
+            res.status(HTTP_STATUS_CODES.UNAUTHORIZED).send({
+                errorsMessages: result.errorsMessages,
+            });
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).send(result.data);
@@ -37,18 +41,24 @@ export const authController = {
         const { login, email, password } = req.body;
         const result = await authService.createUser({ login, email, password });
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ errorsMessages: result.errorsMessages },
-            );
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                errorsMessages: result.errorsMessages,
+            });
             return;
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 
-    async confirmRegistration(req: TConfirmationRequest, res: Response) {
+    async confirmRegistration(
+        req: TConfirmationRequest,
+        res: TConfirmationResponse
+    ) {
         const { code } = req.body;
         const result = await authService.confirmEmail(code);
         if (result.status !== 'Success') {
-            res.sendStatus(HTTP_STATUS_CODES.BAD_REQUEST);
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).send({
+                errorsMessages: result.errorsMessages,
+            });
             return;
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
@@ -56,12 +66,14 @@ export const authController = {
 
     async resendRegistrationEmail(
         req: TResendRegistrationEmailRequest,
-        res: Response
+        res: TResendRegistrationEmailResponse
     ) {
         const { email } = req.body;
         const result = await authService.resendConfirmationCode(email);
         if (result.status !== 'Success') {
-            res.sendStatus(HTTP_STATUS_CODES.BAD_REQUEST);
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).send({
+                errorsMessages: result.errorsMessages,
+            });
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },

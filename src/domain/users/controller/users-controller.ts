@@ -1,16 +1,16 @@
-import { Response } from 'express';
 import { usersQueryRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
     TCreateNewUserRequest,
     TCreateNewUserResponse,
     TDeleteUserRequest,
+    TDeleteUserResponse,
     TGetAllUsersRequest,
     TGetAllUsersResponse,
 } from '../types';
 import { usersService } from '../service';
 import { UsersDBSearchParams } from '../model';
-import { getSearchQueries } from '../../../shared/helpers';
+import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 
 export const usersController = {
     async getAllUsers(req: TGetAllUsersRequest, res: TGetAllUsersResponse) {
@@ -35,24 +35,30 @@ export const usersController = {
             email,
             password,
         });
-        if (typeof result !== 'string' && 'errorsMessages' in result) {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json(result);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                errorsMessages: result.errorsMessages,
+            });
             return;
         }
-        const user = await usersQueryRepository.getUser(result);
+        const user = await usersQueryRepository.getUser(result.data.userId);
         if (!user) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: [createResponseError('User is not found')],
+            });
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(user);
     },
 
-    async deleteUser(req: TDeleteUserRequest, res: Response) {
-        const isUserDeleted = await usersService.deleteUser(req.params.id);
-        res.sendStatus(
-            isUserDeleted
-                ? HTTP_STATUS_CODES.NO_CONTENT
-                : HTTP_STATUS_CODES.NOT_FOUND
-        );
+    async deleteUser(req: TDeleteUserRequest, res: TDeleteUserResponse) {
+        const result = await usersService.deleteUser(req.params.id);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 };

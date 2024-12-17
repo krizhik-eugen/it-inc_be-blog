@@ -1,11 +1,11 @@
 import { NextFunction, Response, Request } from 'express';
 import { checkSchema, Schema, validationResult } from 'express-validator';
+import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from '../constants';
 import {
-    DEFAULT_SEARCH_PARAMS,
-    HTTP_STATUS_CODES,
-    ResultStatus,
-} from '../constants';
-import { TErrorType, TMappedSearchQueryParams, TSearchQueryParams, TStatus } from './types';
+    TErrorType,
+    TMappedSearchQueryParams,
+    TSearchQueryParams,
+} from './types';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array({ onlyFirstError: true });
@@ -21,10 +21,11 @@ const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     next();
 };
 
-export const createResponseError = (message: string, field = ''): TErrorType => ({
-    message,
-    field,
-}) as const;
+export const createResponseError = (message: string, field = ''): TErrorType =>
+    ({
+        message,
+        field,
+    }) as const;
 
 export const requestValidator = ({
     bodySchema,

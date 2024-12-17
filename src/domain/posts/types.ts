@@ -40,7 +40,9 @@ export type TGetAllPostsRequest = Request<
     TGetAllPostsRequestQueries
 >;
 
-export type TGetAllPostsResponse = TResponseWithError<AllItemsViewModel<PostViewModel>>;
+export type TGetAllPostsResponse = TResponseWithError<
+    AllItemsViewModel<PostViewModel>
+>;
 
 export type TCreateNewPostRequest = Request<
     object,
@@ -59,8 +61,11 @@ export type TUpdatePostRequest = Request<
     object,
     PostCreateRequestModel
 >;
+export type TUpdatePostResponse = TResponseWithError;
 
 export type TDeletePostRequest = Request<TIDParam>;
+
+export type TDeletePostResponse = TResponseWithError;
 
 export type TGetAllPostCommentsRequestQueries = TSearchQueryParams<
     CommentsDBSearchParams['sortBy']
@@ -83,4 +88,5 @@ export type TCreateNewPostCommentRequest = Request<
     CommentCreateRequestModel
 >;
 
-export type TCreateNewPostCommentResponse = TResponseWithError<CommentViewModel>;
+export type TCreateNewPostCommentResponse =
+    TResponseWithError<CommentViewModel>;

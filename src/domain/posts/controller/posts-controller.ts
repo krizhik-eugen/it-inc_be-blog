@@ -1,4 +1,3 @@
-import { Response } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
     TCreateNewPostCommentRequest,
@@ -6,6 +5,7 @@ import {
     TCreateNewPostRequest,
     TCreateNewPostResponse,
     TDeletePostRequest,
+    TDeletePostResponse,
     TGetAllPostCommentsRequest,
     TGetAllPostCommentsResponse,
     TGetAllPostsRequest,
@@ -13,6 +13,7 @@ import {
     TGetPostRequest,
     TGetPostResponse,
     TUpdatePostRequest,
+    TUpdatePostResponse,
 } from '../types';
 import { postsService } from '../service';
 import { postsQueryRepository } from '../repository';
@@ -22,7 +23,7 @@ import {
     commentsService,
 } from '../../comments';
 import { PostsDBSearchParams } from '../model';
-import { getSearchQueries } from '../../../shared/helpers';
+import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 
 export const postsController = {
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {
@@ -36,7 +37,9 @@ export const postsController = {
     async getPost(req: TGetPostRequest, res: TGetPostResponse) {
         const post = await postsQueryRepository.getPost(req.params.id);
         if (!post) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: [createResponseError('Post is not found')],
+            });
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).json(post);
@@ -55,7 +58,9 @@ export const postsController = {
             postId: id,
         });
         if (!postComments) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: [createResponseError('Post is not found')],
+            });
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).json(postComments);
@@ -66,19 +71,23 @@ export const postsController = {
         res: TCreateNewPostResponse
     ) {
         const { title, shortDescription, content, blogId } = req.body;
-        const post = await postsService.createNewPost({
+        const result = await postsService.createNewPost({
             title,
             shortDescription,
             content,
             blogId,
         });
-        if (!post) {
-            res.sendStatus(HTTP_STATUS_CODES.BAD_REQUEST);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).send({
+                errorsMessages: [createResponseError('Post is not created')],
+            });
             return;
         }
-        const createdPost = await postsQueryRepository.getPost(post);
+        const createdPost = await postsQueryRepository.getPost(result.data.id);
         if (!createdPost) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: [createResponseError('Post is not found')],
+            });
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(createdPost);
@@ -90,47 +99,56 @@ export const postsController = {
     ) {
         const { content } = req.body;
         const id = req.params.id;
-        const commentId = await commentsService.createNewCommentForPost({
+        const result = await commentsService.createNewCommentForPost(
             content,
             id,
-            userId: req.userId!,
-        });
-        if (!commentId) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            req.userId!
+        );
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: result.errorsMessages,
+            });
             return;
         }
-        const createdComment =
-            await commentsQueryRepository.getComment(commentId);
+        const createdComment = await commentsQueryRepository.getComment(
+            result.data.id
+        );
         if (!createdComment) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: [createResponseError('Comment is not found')],
+            });
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(createdComment);
     },
 
-    async updatePost(req: TUpdatePostRequest, res: Response) {
+    async updatePost(req: TUpdatePostRequest, res: TUpdatePostResponse) {
         const { title, shortDescription, content, blogId } = req.body;
         const id = req.params.id;
-        const isPostUpdated = await postsService.updatePost({
+        const result = await postsService.updatePost(
             title,
             shortDescription,
             content,
             blogId,
-            id,
-        });
-        res.sendStatus(
-            isPostUpdated
-                ? HTTP_STATUS_CODES.NO_CONTENT
-                : HTTP_STATUS_CODES.NOT_FOUND
+            id
         );
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 
-    async deletePost(req: TDeletePostRequest, res: Response) {
-        const isPostDeleted = await postsService.deletePost(req.params.id);
-        res.sendStatus(
-            isPostDeleted
-                ? HTTP_STATUS_CODES.NO_CONTENT
-                : HTTP_STATUS_CODES.NOT_FOUND
-        );
+    async deletePost(req: TDeletePostRequest, res: TDeletePostResponse) {
+        const result = await postsService.deletePost(req.params.id);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 };

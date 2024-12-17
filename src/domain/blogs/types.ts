@@ -38,7 +38,9 @@ export type TGetAllBlogsRequest = Request<
     TGetAllBlogsRequestQueries
 >;
 
-export type TGetAllBlogsResponse = TResponseWithError<AllItemsViewModel<BlogViewModel>>;
+export type TGetAllBlogsResponse = TResponseWithError<
+    AllItemsViewModel<BlogViewModel>
+>;
 
 export type TCreateNewBlogRequest = Request<
     object,
@@ -58,11 +60,11 @@ export type TUpdateBlogRequest = Request<
     BlogCreateRequestModel
 >;
 
-export type TUpdateBlogResponse = TResponseWithError
+export type TUpdateBlogResponse = TResponseWithError;
 
 export type TDeleteBlogRequest = Request<TIDParam>;
 
-export type TDeleteBlogResponse = TResponseWithError
+export type TDeleteBlogResponse = TResponseWithError;
 
 export type TGetAllBlogPostsRequest = Request<
     TIDParam,

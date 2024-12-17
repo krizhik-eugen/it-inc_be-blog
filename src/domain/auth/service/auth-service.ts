@@ -8,7 +8,6 @@ import { createResponseError } from '../../../shared/helpers';
 import { UserDBModel } from '../../users/model';
 import { add } from 'date-fns';
 import { emailManager } from '../../../app/managers';
-import { ObjectId } from 'mongodb';
 import { TResult } from '../../../shared/types';
 
 export const authService = {
@@ -23,10 +22,12 @@ export const authService = {
                 errorsMessages: [createResponseError('User not found')],
             };
         }
-        if (user.emailConfirmation.isConfirmed) {
+        if (user.emailConfirmation.isConfirmed === 'NotConfirmed') {
             return {
                 status: 'BadRequest',
-                errorsMessages: [createResponseError('This email has been already confirmed')],
+                errorsMessages: [
+                    createResponseError('This email has not been confirmed'),
+                ],
             };
         }
         const isCredentialsValid = await bcrypt.compare(
@@ -55,13 +56,18 @@ export const authService = {
         email,
         password,
     }: RegisterRequestModel): Promise<TResult> {
-        const user = await usersRepository.findUserByLoginOrEmail(
-            login || email
-        );
-        if (user) {
+        const foundUserByLogin =
+            await usersRepository.findUserByLoginOrEmail(login);
+        const foundUserByEmail =
+            await usersRepository.findUserByLoginOrEmail(email);
+        if (foundUserByLogin || foundUserByEmail) {
             return {
                 status: 'BadRequest',
-                errorsMessages: [createResponseError('User with this login or email already exists')],
+                errorsMessages: [
+                    createResponseError(
+                        'User with this login or email already exists'
+                    ),
+                ],
             };
         }
         const passwordHash = await bcrypt.hash(password, 10);
@@ -74,24 +80,27 @@ export const authService = {
             emailConfirmation: {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date(), { hours: 1, minutes: 3 }),
-                isConfirmed: false,
+                isConfirmed: 'NotConfirmed',
             },
             createdAt: new Date().toISOString(),
         };
-        const addedUserId = await usersRepository.addNewUser(newUser);
-        try {
-            await emailManager.sendEmailConfirmationMessage();
-            return {
-                status: 'Success',
-                data: null
-            };
-        } catch {
-            usersRepository.deleteUser(new ObjectId(addedUserId));
-            return {
-                status: 'InternalError',
-                errorsMessages: [createResponseError('Error sending email')],
-            };
-        }
+        await usersRepository.addNewUser(newUser);
+        // try {
+        emailManager
+            .sendEmailConfirmationMessage()
+            .catch((e) => console.log(e));
+        return {
+            status: 'Success',
+            data: null,
+        };
+        // }
+        // catch {
+        //     await usersRepository.deleteUser(new ObjectId(addedUserId));
+        //     return {
+        //         status: 'InternalError',
+        //         errorsMessages: [createResponseError('Error sending email')],
+        //     };
+        // }
     },
 
     async confirmEmail(code: string): Promise<TResult> {
@@ -99,7 +108,7 @@ export const authService = {
         if (!user) {
             return {
                 status: 'NotFound',
-                errorsMessages: [createResponseError('User not found')]
+                errorsMessages: [createResponseError('User not found')],
             };
         }
         if (
@@ -108,16 +117,18 @@ export const authService = {
         ) {
             return {
                 status: 'BadRequest',
-                errorsMessages: [createResponseError('Confirmation code expired')],
+                errorsMessages: [
+                    createResponseError('Confirmation code expired'),
+                ],
             };
         }
         user.emailConfirmation.confirmationCode = null;
         user.emailConfirmation.expirationDate = null;
-        user.emailConfirmation.isConfirmed = true;
+        user.emailConfirmation.isConfirmed = 'Confirmed';
         await usersRepository.updateUser(user);
         return {
             status: 'Success',
-            data: null
+            data: null,
         };
     },
 
@@ -129,17 +140,19 @@ export const authService = {
                 errorsMessages: [createResponseError('User not found')],
             };
         }
-        if (user.emailConfirmation.isConfirmed) {
+        if (user.emailConfirmation.isConfirmed === 'Confirmed') {
             return {
                 status: 'BadRequest',
-                errorsMessages: [createResponseError('Email already confirmed')],
+                errorsMessages: [
+                    createResponseError('Email already confirmed'),
+                ],
             };
         }
         try {
             await emailManager.sendEmailConfirmationMessage();
             return {
                 status: 'Success',
-                data: null
+                data: null,
             };
         } catch {
             return {
