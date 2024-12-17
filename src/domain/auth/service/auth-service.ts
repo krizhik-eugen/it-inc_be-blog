@@ -15,22 +15,18 @@ export const authService = {
     async login({
         loginOrEmail,
         password,
-    }: LoginRequestModel): Promise<TResult<{ accessToken: string } | null>> {
+    }: LoginRequestModel): Promise<TResult<{ accessToken: string }>> {
         const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail);
-        if (!user || !user.emailConfirmation.isConfirmed) {
+        if (!user) {
             return {
                 status: 'NotFound',
-                errorMessage: 'User not found',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('User not found')],
             };
         }
-        if (!user.emailConfirmation.isConfirmed) {
+        if (user.emailConfirmation.isConfirmed) {
             return {
                 status: 'BadRequest',
-                errorMessage: 'This email has been already confirmed',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('This email has been already confirmed')],
             };
         }
         const isCredentialsValid = await bcrypt.compare(
@@ -40,9 +36,7 @@ export const authService = {
         if (!isCredentialsValid) {
             return {
                 status: 'BadRequest',
-                errorMessage: 'Invalid credentials',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('Invalid credentials')],
             };
         }
         const accessToken = jwt.sign(
@@ -52,7 +46,6 @@ export const authService = {
         );
         return {
             status: 'Success',
-            extensions: [],
             data: { accessToken },
         };
     },
@@ -68,14 +61,7 @@ export const authService = {
         if (user) {
             return {
                 status: 'BadRequest',
-                errorMessage: 'User with this login or email already exists',
-                extensions: [
-                    {
-                        field: null,
-                        message: 'User with this login or email already exists',
-                    },
-                ],
-                data: null,
+                errorsMessages: [createResponseError('User with this login or email already exists')],
             };
         }
         const passwordHash = await bcrypt.hash(password, 10);
@@ -97,16 +83,13 @@ export const authService = {
             await emailManager.sendEmailConfirmationMessage();
             return {
                 status: 'Success',
-                extensions: [],
-                data: null,
+                data: null
             };
         } catch {
             usersRepository.deleteUser(new ObjectId(addedUserId));
             return {
                 status: 'InternalError',
-                errorMessage: 'Error sending email',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('Error sending email')],
             };
         }
     },
@@ -116,9 +99,7 @@ export const authService = {
         if (!user) {
             return {
                 status: 'NotFound',
-                errorMessage: 'User not found',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('User not found')]
             };
         }
         if (
@@ -127,9 +108,7 @@ export const authService = {
         ) {
             return {
                 status: 'BadRequest',
-                errorMessage: 'Confirmation code expired',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('Confirmation code expired')],
             };
         }
         user.emailConfirmation.confirmationCode = null;
@@ -138,8 +117,7 @@ export const authService = {
         await usersRepository.updateUser(user);
         return {
             status: 'Success',
-            extensions: [],
-            data: null,
+            data: null
         };
     },
 
@@ -148,32 +126,25 @@ export const authService = {
         if (!user) {
             return {
                 status: 'NotFound',
-                errorMessage: 'User not found',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('User not found')],
             };
         }
         if (user.emailConfirmation.isConfirmed) {
             return {
                 status: 'BadRequest',
-                errorMessage: 'Email already confirmed',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('Email already confirmed')],
             };
         }
         try {
             await emailManager.sendEmailConfirmationMessage();
             return {
                 status: 'Success',
-                extensions: [],
-                data: null,
+                data: null
             };
         } catch {
             return {
                 status: 'InternalError',
-                errorMessage: 'Error sending email',
-                extensions: [],
-                data: null,
+                errorsMessages: [createResponseError('Error sending email')],
             };
         }
     },

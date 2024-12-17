@@ -2,13 +2,15 @@ import { ObjectId } from 'mongodb';
 import { blogsRepository } from '../repository';
 import { BlogCreateRequestModel, BlogViewModel } from '../types';
 import { BlogDBModel } from '../model';
+import { TResult } from '../../../shared/types';
+import { createResponseError } from '../../../shared/helpers';
 
 export const blogsService = {
     async createNewBlog({
         name,
         description,
         websiteUrl,
-    }: BlogCreateRequestModel) {
+    }: BlogCreateRequestModel): Promise<TResult<string>> {
         const newBlog: BlogDBModel = {
             name,
             description,
@@ -16,7 +18,19 @@ export const blogsService = {
             createdAt: new Date().toISOString(),
             isMembership: false,
         };
-        return await blogsRepository.addNewBlog(newBlog);
+        const createdBlogId = await blogsRepository.addNewBlog(newBlog)
+
+        if (!createdBlogId) {
+            return {
+                status: 'InternalError',
+                errorsMessages: [createResponseError('The error occurred during creation')]
+            }
+        }
+
+        return {
+            status: 'Success',
+            data: createdBlogId
+        }
     },
 
     async updateBlog({
@@ -24,20 +38,38 @@ export const blogsService = {
         description,
         websiteUrl,
         id,
-    }: Partial<BlogViewModel>) {
+    }: Partial<BlogViewModel>): Promise<TResult> {
         const isBlogUpdated = await blogsRepository.updateBlog({
             name,
             description,
             websiteUrl,
             _id: new ObjectId(id),
         });
-        return isBlogUpdated;
+        if (!isBlogUpdated) {
+            return {
+                status: 'NotFound',
+                errorsMessages: [createResponseError('Blog is not found')]
+            }
+        }
+        return {
+            status: 'Success',
+            data: null
+        };
     },
 
-    async deleteBlog(id: string) {
+    async deleteBlog(id: string): Promise<TResult> {
         const isBlogDeleted = await blogsRepository.deleteBlog(
             new ObjectId(id)
         );
-        return isBlogDeleted;
+        if (!isBlogDeleted) {
+            return {
+                status: 'NotFound',
+                errorsMessages: [createResponseError('Blog is not found')]
+            }
+        }
+        return {
+            status: 'Success',
+            data: null
+        };;
     },
 };

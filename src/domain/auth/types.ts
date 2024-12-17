@@ -1,5 +1,11 @@
-import { Request, Response } from 'express';
-import { createResponseError } from '../../shared/helpers';
+import { Request } from 'express';
+import { TResponseWithError } from '../../shared/types';
+
+export type MeViewModel = {
+    userId: string;
+    login: string;
+    email: string
+}
 
 export type LoginRequestModel = {
     loginOrEmail: string;
@@ -20,13 +26,15 @@ export type ResendRegistrationEmailRequestModel = {
     email: string;
 };
 
+export type TMeResponse = TResponseWithError<MeViewModel>
+
 export type TLoginRequest = Request<object, object, LoginRequestModel>;
 
-export type TRegisterRequest = Request<object, object, RegisterRequestModel>;
+export type TLoginResponse = TResponseWithError<{ accessToken: string }>
 
-export type TRegisterResponse = Response<
-    undefined | { errorsMessages: { field: string | null; message: string }[] }
->;
+export type TRegisterResponse = TResponseWithError
+
+export type TRegisterRequest = Request<object, object, RegisterRequestModel>;
 
 export type TConfirmationRequest = Request<
     object,

@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import {
     AllItemsViewModel,
     TIDParam,
+    TResponseWithError,
     TSearchQueryParams,
 } from '../../shared/types';
 import { PostsDBSearchParams } from './model/posts-model';
@@ -39,7 +40,7 @@ export type TGetAllPostsRequest = Request<
     TGetAllPostsRequestQueries
 >;
 
-export type TGetAllPostsResponse = Response<AllItemsViewModel<PostViewModel>>;
+export type TGetAllPostsResponse = TResponseWithError<AllItemsViewModel<PostViewModel>>;
 
 export type TCreateNewPostRequest = Request<
     object,
@@ -47,11 +48,11 @@ export type TCreateNewPostRequest = Request<
     PostCreateRequestModel
 >;
 
-export type TCreateNewPostResponse = Response<PostViewModel>;
+export type TCreateNewPostResponse = TResponseWithError<PostViewModel>;
 
 export type TGetPostRequest = Request<TIDParam, object, object, object>;
 
-export type TGetPostResponse = Response<PostViewModel>;
+export type TGetPostResponse = TResponseWithError<PostViewModel>;
 
 export type TUpdatePostRequest = Request<
     TIDParam,
@@ -72,7 +73,7 @@ export type TGetAllPostCommentsRequest = Request<
     TGetAllPostCommentsRequestQueries
 >;
 
-export type TGetAllPostCommentsResponse = Response<
+export type TGetAllPostCommentsResponse = TResponseWithError<
     AllItemsViewModel<CommentViewModel>
 >;
 
@@ -82,4 +83,4 @@ export type TCreateNewPostCommentRequest = Request<
     CommentCreateRequestModel
 >;
 
-export type TCreateNewPostCommentResponse = Response<CommentViewModel>;
+export type TCreateNewPostCommentResponse = TResponseWithError<CommentViewModel>;

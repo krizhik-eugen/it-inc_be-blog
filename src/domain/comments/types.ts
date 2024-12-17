@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { TIDParam } from '../../shared/types';
+import { Request } from 'express';
+import { TIDParam, TResponseWithError } from '../../shared/types';
 
 export type TCommentatorInfo = {
     userId: string;
@@ -19,7 +19,7 @@ export type CommentCreateRequestModel = {
 
 export type TGetCommentRequest = Request<TIDParam, object, object, object>;
 
-export type TGetCommentResponse = Response<CommentViewModel>;
+export type TGetCommentResponse = TResponseWithError<CommentViewModel>;
 
 export type TUpdateCommentRequest = Request<
     TIDParam,

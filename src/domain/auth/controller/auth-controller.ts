@@ -1,22 +1,23 @@
 import { Request, Response } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
-    TMeResponse,
     TLoginRequest,
     TRegisterRequest,
     TConfirmationRequest,
-    TRegisterResponse,
     TResendRegistrationEmailRequest,
+    TLoginResponse,
+    TRegisterResponse,
+    TMeResponse,
 } from '../types';
 import { authService } from '../service';
 import { usersQueryRepository } from '../../../domain/users';
 
 export const authController = {
-    async login(req: TLoginRequest, res: Response) {
+    async login(req: TLoginRequest, res: TLoginResponse) {
         const { loginOrEmail, password } = req.body;
         const result = await authService.login({ loginOrEmail, password });
         if (result.status !== 'Success') {
-            res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
+            res.status(HTTP_STATUS_CODES.UNAUTHORIZED).send({ errorsMessages: result.errorsMessages });
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).send(result.data);
@@ -35,15 +36,9 @@ export const authController = {
     async register(req: TRegisterRequest, res: TRegisterResponse) {
         const { login, email, password } = req.body;
         const result = await authService.createUser({ login, email, password });
-        if (result.extensions.length > 0) {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-                errorsMessages: result.extensions,
-            });
-            return;
-        }
-
-        if (!result) {
-            res.sendStatus(HTTP_STATUS_CODES.BAD_REQUEST);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ errorsMessages: result.errorsMessages },
+            );
             return;
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);

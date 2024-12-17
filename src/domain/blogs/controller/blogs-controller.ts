@@ -7,6 +7,7 @@ import {
     TCreateNewBlogRequest,
     TCreateNewBlogResponse,
     TDeleteBlogRequest,
+    TDeleteBlogResponse,
     TGetAllBlogPostsRequest,
     TGetAllBlogPostsResponse,
     TGetAllBlogsRequest,
@@ -14,6 +15,7 @@ import {
     TGetBlogRequest,
     TGetBlogResponse,
     TUpdateBlogRequest,
+    TUpdateBlogResponse,
 } from '../types';
 import { blogsService } from '../service';
 import {
@@ -21,7 +23,7 @@ import {
     postsQueryRepository,
     postsService,
 } from '../../posts';
-import { getSearchQueries } from '../../../shared/helpers';
+import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { BlogsDBSearchParams } from '../model';
 
 export const blogsController = {
@@ -40,7 +42,7 @@ export const blogsController = {
     async getBlog(req: TGetBlogRequest, res: TGetBlogResponse) {
         const foundBlog = await blogsQueryRepository.getBlog(req.params.id);
         if (!foundBlog) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({ errorsMessages: [createResponseError('Blog is not found')] });
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).json(foundBlog);
@@ -59,7 +61,7 @@ export const blogsController = {
             blogId: id,
         });
         if (!posts) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({ errorsMessages: [createResponseError('Blog is not found')] });
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).json(posts);
@@ -70,18 +72,18 @@ export const blogsController = {
         res: TCreateNewBlogResponse
     ) {
         const { name, description, websiteUrl } = req.body;
-        const createdBlogId = await blogsService.createNewBlog({
+        const result = await blogsService.createNewBlog({
             name,
             description,
             websiteUrl,
         });
-        if (!createdBlogId) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({ errorsMessages: result.errorsMessages });
             return;
         }
-        const createdBlog = await blogsQueryRepository.getBlog(createdBlogId);
+        const createdBlog = await blogsQueryRepository.getBlog(result.data);
         if (!createdBlog) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({ errorsMessages: [createResponseError('Blog is not found')] });
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(createdBlog);
@@ -93,46 +95,44 @@ export const blogsController = {
     ) {
         const { title, shortDescription, content } = req.body;
         const id = req.params.id;
-        const createdPostId = await postsService.createNewPostForBlog({
+        const result = await postsService.createNewPostForBlog({
             title,
             shortDescription,
             content,
             id,
         });
-        if (!createdPostId) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({ errorsMessages: result.errorsMessages });
             return;
         }
-        const addedPost = await postsQueryRepository.getPost(createdPostId);
+        const addedPost = await postsQueryRepository.getPost(result.data);
         if (!addedPost) {
-            res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND);
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({ errorsMessages: [createResponseError('Post is not found')] });
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(addedPost);
     },
 
-    async updateBlog(req: TUpdateBlogRequest, res: Response) {
+    async updateBlog(req: TUpdateBlogRequest, res: TUpdateBlogResponse) {
         const { name, description, websiteUrl } = req.body;
         const id = req.params.id;
-        const isBlogUpdated = await blogsService.updateBlog({
+        const result = await blogsService.updateBlog({
             name,
             description,
             websiteUrl,
             id,
         });
-        res.sendStatus(
-            isBlogUpdated
-                ? HTTP_STATUS_CODES.NO_CONTENT
-                : HTTP_STATUS_CODES.NOT_FOUND
-        );
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({ errorsMessages: result.errorsMessages });
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 
-    async deleteBlog(req: TDeleteBlogRequest, res: Response) {
-        const isBlogDeleted = await blogsService.deleteBlog(req.params.id);
-        res.sendStatus(
-            isBlogDeleted
-                ? HTTP_STATUS_CODES.NO_CONTENT
-                : HTTP_STATUS_CODES.NOT_FOUND
-        );
+    async deleteBlog(req: TDeleteBlogRequest, res: TDeleteBlogResponse) {
+        const result = await blogsService.deleteBlog(req.params.id);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({ errorsMessages: result.errorsMessages });
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 };

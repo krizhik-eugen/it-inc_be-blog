@@ -3,6 +3,8 @@ import { postsRepository } from '../repository';
 import { blogsRepository } from '../../../domain/blogs';
 import { ObjectId } from 'mongodb';
 import { PostDBModel } from '../model';
+import { TResult } from '../../../shared/types';
+import { createResponseError } from '../../../shared/helpers';
 
 export const postsService = {
     async createNewPost({
@@ -31,10 +33,13 @@ export const postsService = {
         shortDescription,
         content,
         id,
-    }: Omit<PostCreateRequestModel, 'blogId'> & { id: string }) {
+    }: Omit<PostCreateRequestModel, 'blogId'> & { id: string }): Promise<TResult<string>> {
         const blog = await blogsRepository.findBlogById(new ObjectId(id));
         if (!blog) {
-            return;
+            return {
+                status: 'NotFound',
+                errorsMessages: [createResponseError('Blog is not found')]
+            }
         }
         const newPost: PostDBModel = {
             title,
@@ -44,7 +49,17 @@ export const postsService = {
             blogName: blog.name,
             createdAt: new Date().toISOString(),
         };
-        return await postsRepository.addNewPost(newPost);
+        const createdPostId = await postsRepository.addNewPost(newPost);
+        if (!createdPostId) {
+            return {
+                status: 'NotFound',
+                errorsMessages: [createResponseError('Post is not found')]
+            }
+        }
+        return {
+            status: 'Success',
+            data: createdPostId
+        };
     },
 
     async updatePost({

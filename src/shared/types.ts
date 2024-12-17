@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { ResultStatus } from '../constants';
 export type TSearchQueryParams<T> = {
     sortBy?: T;
@@ -25,16 +26,17 @@ export type AllItemsViewModel<T> = {
     items: T[];
 };
 
-type ExtensionType = {
-    field: string | null;
+export type TErrorType = {
+    field: string;
     message: string;
 };
 
 export type TStatus = (typeof ResultStatus)[keyof typeof ResultStatus];
 
-export type TResult<T = null> = {
-    status: TStatus;
-    errorMessage?: string;
-    extensions: ExtensionType[];
-    data: T;
-};
+export type TResult<T = null> =
+    | { status: Extract<TStatus, 'Success'>; data: T; errorsMessages?: never }
+    | { status: Exclude<TStatus, 'Success'>; data?: never; errorsMessages: TErrorType[] };
+
+
+export type TResponseWithError<T = undefined> = Response<T | { errorsMessages: { field: string; message: string }[] }
+>

@@ -5,7 +5,7 @@ import {
     HTTP_STATUS_CODES,
     ResultStatus,
 } from '../constants';
-import { TMappedSearchQueryParams, TSearchQueryParams, TStatus } from './types';
+import { TErrorType, TMappedSearchQueryParams, TSearchQueryParams, TStatus } from './types';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array({ onlyFirstError: true });
@@ -21,15 +21,10 @@ const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     next();
 };
 
-export const createResponseError = (message: string, field = '') =>
-    ({
-        errorsMessages: [
-            {
-                message,
-                field,
-            },
-        ],
-    }) as const;
+export const createResponseError = (message: string, field = ''): TErrorType => ({
+    message,
+    field,
+}) as const;
 
 export const requestValidator = ({
     bodySchema,
@@ -82,15 +77,4 @@ export const getDBSearchQueries = <T>(
         limit: pageSize ?? 0,
     };
     return dbSearchQueries;
-};
-
-export const resultCodeToHttpException = (resultCode: TStatus): number => {
-    switch (resultCode) {
-        case ResultStatus.BadRequest:
-            return HTTP_STATUS_CODES.BAD_REQUEST;
-        case ResultStatus.Forbidden:
-            return HTTP_STATUS_CODES.FORBIDDEN;
-        default:
-            return HTTP_STATUS_CODES.SERVER_ERROR;
-    }
 };

@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import {
     AllItemsViewModel,
     TIDParam,
+    TResponseWithError,
     TSearchQueryParams,
 } from '../../shared/types';
 import { BlogsDBSearchParams } from './model';
@@ -37,7 +38,7 @@ export type TGetAllBlogsRequest = Request<
     TGetAllBlogsRequestQueries
 >;
 
-export type TGetAllBlogsResponse = Response<AllItemsViewModel<BlogViewModel>>;
+export type TGetAllBlogsResponse = TResponseWithError<AllItemsViewModel<BlogViewModel>>;
 
 export type TCreateNewBlogRequest = Request<
     object,
@@ -45,11 +46,11 @@ export type TCreateNewBlogRequest = Request<
     BlogCreateRequestModel
 >;
 
-export type TCreateNewBlogResponse = Response<BlogViewModel>;
+export type TCreateNewBlogResponse = TResponseWithError<BlogViewModel>;
 
 export type TGetBlogRequest = Request<TIDParam, object, object, object>;
 
-export type TGetBlogResponse = Response<BlogViewModel>;
+export type TGetBlogResponse = TResponseWithError<BlogViewModel>;
 
 export type TUpdateBlogRequest = Request<
     TIDParam,
@@ -57,7 +58,11 @@ export type TUpdateBlogRequest = Request<
     BlogCreateRequestModel
 >;
 
+export type TUpdateBlogResponse = TResponseWithError
+
 export type TDeleteBlogRequest = Request<TIDParam>;
+
+export type TDeleteBlogResponse = TResponseWithError
 
 export type TGetAllBlogPostsRequest = Request<
     TIDParam,
@@ -66,7 +71,7 @@ export type TGetAllBlogPostsRequest = Request<
     TGetAllPostsRequestQueries
 >;
 
-export type TGetAllBlogPostsResponse = Response<
+export type TGetAllBlogPostsResponse = TResponseWithError<
     AllItemsViewModel<PostViewModel>
 >;
 
@@ -76,4 +81,4 @@ export type TCreateNewBlogPostRequest = Request<
     Omit<PostCreateRequestModel, 'blogId'>
 >;
 
-export type TCreateNewBlogPostResponse = Response<PostViewModel>;
+export type TCreateNewBlogPostResponse = TResponseWithError<PostViewModel>;
