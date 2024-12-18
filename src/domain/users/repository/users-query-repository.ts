@@ -32,9 +32,8 @@ export const usersQueryRepository = {
             findQuery.$or = searchConditions;
         }
         const sortBySearchQuery =
-            searchQueries.sortBy === 'createdAt'
-                ? 'createdAt'
-                : 'accountData.' + searchQueries.sortBy;
+            (searchQueries.sortBy === 'login' || searchQueries.sortBy === 'email') ?
+                'accountData.' + searchQueries.sortBy : searchQueries.sortBy
         const totalCount = await usersCollection.countDocuments(findQuery);
         const foundUsers = await usersCollection
             .find(findQuery)
@@ -44,11 +43,11 @@ export const usersQueryRepository = {
             .toArray();
         const mappedFoundUsers: UserViewModel[] = foundUsers
             ? foundUsers.map((user: Required<UserDBModel>) => ({
-                  id: user._id.toString(),
-                  login: user.accountData.login,
-                  email: user.accountData.email,
-                  createdAt: user.createdAt,
-              }))
+                id: user._id.toString(),
+                login: user.accountData.login,
+                email: user.accountData.email,
+                createdAt: user.createdAt,
+            }))
             : [];
         return {
             pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
