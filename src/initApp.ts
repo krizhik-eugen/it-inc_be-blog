@@ -6,6 +6,8 @@ import { blogsRouter } from './domain/blogs';
 import { usersRouter } from './domain/users';
 import { authRouter } from './domain/auth';
 import { commentsRouter } from './domain/comments';
+import { emailManager } from './app/managers';
+import { HTTP_STATUS_CODES } from './constants';
 // import cors from 'cors';
 
 export const app = express();

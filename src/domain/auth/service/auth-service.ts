@@ -87,7 +87,10 @@ export const authService = {
         await usersRepository.addNewUser(newUser);
         // try {
         emailManager
-            .sendEmailConfirmationMessage()
+            .sendEmailConfirmationMessage(
+                newUser.accountData.email,
+                newUser.emailConfirmation.confirmationCode!
+            )
             .catch((e) => console.log(e));
         return {
             status: 'Success',
@@ -108,7 +111,11 @@ export const authService = {
         if (!user) {
             return {
                 status: 'NotFound',
-                errorsMessages: [createResponseError('User not found')],
+                errorsMessages: [
+                    createResponseError(
+                        'No user found for this confirmation code'
+                    ),
+                ],
             };
         }
         if (
@@ -149,7 +156,10 @@ export const authService = {
             };
         }
         try {
-            await emailManager.sendEmailConfirmationMessage();
+            await emailManager.sendEmailConfirmationMessage(
+                user.accountData.email,
+                user.emailConfirmation.confirmationCode!
+            );
             return {
                 status: 'Success',
                 data: null,
