@@ -27,6 +27,7 @@ export const validObjectId = '57430b985302e02a9657421c';
 export const invalidObjectId = 'qwerty1234567890';
 export const invalidEmailFormat = 'invalid_email_format@.d';
 export const invalidURLFormat = 'invalid_email_format.dom';
+export const textWithLengthGraterThan10 = `Ten symbols.`;
 export const textWithLengthGraterThan15 = `Sixteen symbols.`;
 export const textWithLengthGraterThan20 = textWithLengthGraterThan15 + '+five';
 export const textWithLengthGraterThan30 =

@@ -317,7 +317,7 @@ describe('Users Controller', () => {
             expect(response.body.email).toEqual(newUser.email);
         });
 
-        it('returns an error if required fields are missing', async () => {
+        it('returns an error if required password field is missing', async () => {
             const newWrongUser = { ...newUser };
             newWrongUser.password = '';
             const response = await req
