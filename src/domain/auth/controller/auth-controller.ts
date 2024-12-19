@@ -74,6 +74,7 @@ export const authController = {
             res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
                 errorsMessages: result.errorsMessages,
             });
+            return;
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
