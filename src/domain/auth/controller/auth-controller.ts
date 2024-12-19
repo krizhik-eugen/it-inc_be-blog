@@ -19,18 +19,18 @@ export const authController = {
         const { loginOrEmail, password } = req.body;
         const result = await authService.login({ loginOrEmail, password });
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.UNAUTHORIZED).send({
+            res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                 errorsMessages: result.errorsMessages,
             });
             return;
         }
-        res.status(HTTP_STATUS_CODES.OK).send(result.data);
+        res.status(HTTP_STATUS_CODES.OK).json(result.data);
     },
 
     async me(req: Request, res: TMeResponse) {
         const userId = req.userId!;
         const user = await usersQueryRepository.getUser(userId);
-        res.status(HTTP_STATUS_CODES.OK).send({
+        res.status(HTTP_STATUS_CODES.OK).json({
             userId: user!.id,
             login: user!.login,
             email: user!.email,
@@ -56,7 +56,7 @@ export const authController = {
         const { code } = req.body;
         const result = await authService.confirmEmail(code);
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).send({
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
                 errorsMessages: result.errorsMessages,
             });
             return;
@@ -71,7 +71,7 @@ export const authController = {
         const { email } = req.body;
         const result = await authService.resendConfirmationCode(email);
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).send({
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
                 errorsMessages: result.errorsMessages,
             });
         }

@@ -37,7 +37,7 @@ export const postsController = {
     async getPost(req: TGetPostRequest, res: TGetPostResponse) {
         const post = await postsQueryRepository.getPost(req.params.id);
         if (!post) {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('Post is not found')],
             });
             return;
@@ -58,7 +58,7 @@ export const postsController = {
             postId: id,
         });
         if (!postComments) {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('Post is not found')],
             });
             return;
@@ -78,14 +78,14 @@ export const postsController = {
             blogId,
         });
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.BAD_REQUEST).send({
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
                 errorsMessages: [createResponseError('Post is not created')],
             });
             return;
         }
         const createdPost = await postsQueryRepository.getPost(result.data.id);
         if (!createdPost) {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('Post is not found')],
             });
             return;
@@ -105,7 +105,7 @@ export const postsController = {
             req.userId!
         );
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
             });
             return;
@@ -114,7 +114,7 @@ export const postsController = {
             result.data.id
         );
         if (!createdComment) {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('Comment is not found')],
             });
             return;
@@ -133,7 +133,7 @@ export const postsController = {
             id
         );
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
             });
             return;
@@ -144,7 +144,7 @@ export const postsController = {
     async deletePost(req: TDeletePostRequest, res: TDeletePostResponse) {
         const result = await postsService.deletePost(req.params.id);
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
             });
             return;

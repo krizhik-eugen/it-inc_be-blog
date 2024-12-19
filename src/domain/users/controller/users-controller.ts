@@ -43,7 +43,7 @@ export const usersController = {
         }
         const user = await usersQueryRepository.getUser(result.data.userId);
         if (!user) {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('User is not found')],
             });
             return;
@@ -54,7 +54,7 @@ export const usersController = {
     async deleteUser(req: TDeleteUserRequest, res: TDeleteUserResponse) {
         const result = await usersService.deleteUser(req.params.id);
         if (result.status !== 'Success') {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
             });
             return;

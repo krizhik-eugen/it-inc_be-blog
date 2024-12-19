@@ -123,7 +123,7 @@ export const authService = {
             return {
                 status: 'BadRequest',
                 errorsMessages: [
-                    createResponseError('Email already confirmed', 'email'),
+                    createResponseError('Code already confirmed', 'code'),
                 ],
             };
         }
@@ -160,7 +160,7 @@ export const authService = {
             return {
                 status: 'BadRequest',
                 errorsMessages: [
-                    createResponseError('Email already confirmed'),
+                    createResponseError('Email already confirmed', 'email'),
                 ],
             };
         }

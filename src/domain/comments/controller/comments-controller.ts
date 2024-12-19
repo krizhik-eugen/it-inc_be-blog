@@ -15,7 +15,7 @@ export const commentsController = {
     async getComment(req: TGetCommentRequest, res: TGetCommentResponse) {
         const comment = await commentsQueryRepository.getComment(req.params.id);
         if (!comment) {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('Comment is not found')],
             });
             return;
@@ -36,13 +36,13 @@ export const commentsController = {
             userId
         );
         if (result.status === 'Forbidden') {
-            res.status(HTTP_STATUS_CODES.FORBIDDEN).send({
+            res.status(HTTP_STATUS_CODES.FORBIDDEN).json({
                 errorsMessages: result.errorsMessages,
             });
             return;
         }
         if (result.status === 'NotFound') {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
             });
             return;
@@ -59,13 +59,13 @@ export const commentsController = {
             req.userId!
         );
         if (result.status === 'Forbidden') {
-            res.status(HTTP_STATUS_CODES.FORBIDDEN).send({
+            res.status(HTTP_STATUS_CODES.FORBIDDEN).json({
                 errorsMessages: result.errorsMessages,
             });
             return;
         }
         if (result.status === 'NotFound') {
-            res.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
             });
             return;
