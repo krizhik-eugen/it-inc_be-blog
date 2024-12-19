@@ -7,10 +7,8 @@ export const emailAdapter = async (
     html: string
 ) => {
     const transporter = nodemailer.createTransport({
-        // service: 'gmail',
+        service: 'gmail',
         host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
         auth: {
             user: hostEmailLogin,
             pass: hostEmailPassword,
