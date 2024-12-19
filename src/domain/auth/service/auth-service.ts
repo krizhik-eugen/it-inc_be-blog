@@ -65,7 +65,8 @@ export const authService = {
                 status: 'BadRequest',
                 errorsMessages: [
                     createResponseError(
-                        'User with this login or email already exists'
+                        'User with this login or email already exists',
+                        foundUserByLogin ? 'login' : 'email'
                     ),
                 ],
             };
@@ -110,11 +111,19 @@ export const authService = {
         const user = await usersRepository.findUserByConfirmationCode(code);
         if (!user) {
             return {
-                status: 'NotFound',
+                status: 'BadRequest',
                 errorsMessages: [
                     createResponseError(
                         'No user found for this confirmation code'
                     ),
+                ],
+            };
+        }
+        if (user.emailConfirmation.isConfirmed === 'Confirmed') {
+            return {
+                status: 'BadRequest',
+                errorsMessages: [
+                    createResponseError('Email already confirmed', 'email'),
                 ],
             };
         }
@@ -129,8 +138,6 @@ export const authService = {
                 ],
             };
         }
-        user.emailConfirmation.confirmationCode = null;
-        user.emailConfirmation.expirationDate = null;
         user.emailConfirmation.isConfirmed = 'Confirmed';
         await usersRepository.updateUser(user);
         return {
@@ -143,8 +150,12 @@ export const authService = {
         const user = await usersRepository.findUserByLoginOrEmail(email);
         if (!user) {
             return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('User not found')],
+                status: 'BadRequest',
+                errorsMessages: [
+                    createResponseError(
+                        'No user found for this confirmation code'
+                    ),
+                ],
             };
         }
         if (user.emailConfirmation.isConfirmed === 'Confirmed') {
@@ -155,10 +166,20 @@ export const authService = {
                 ],
             };
         }
+
+        const updatedUser: UserDBModel = {
+            ...user,
+            emailConfirmation: {
+                ...user.emailConfirmation,
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date(), { hours: 1, minutes: 3 }),
+            },
+        };
+        await usersRepository.updateUser(updatedUser);
         try {
             await emailManager.sendEmailConfirmationMessage(
                 user.accountData.email,
-                user.emailConfirmation.confirmationCode!
+                updatedUser.emailConfirmation.confirmationCode!
             );
             return {
                 status: 'Success',

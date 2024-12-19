@@ -6,7 +6,6 @@ import {
     TMappedSearchQueryParams,
     TSearchQueryParams,
 } from './types';
-import { appDeploymentURL } from '../app/configs/app-config';
 
 const errorValidator = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array({ onlyFirstError: true });
