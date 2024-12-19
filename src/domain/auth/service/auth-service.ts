@@ -152,7 +152,10 @@ export const authService = {
             return {
                 status: 'BadRequest',
                 errorsMessages: [
-                    createResponseError('No user found with this email', email),
+                    createResponseError(
+                        'No user found with this email',
+                        'email'
+                    ),
                 ],
             };
         }
