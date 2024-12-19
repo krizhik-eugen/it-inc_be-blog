@@ -1,6 +1,15 @@
 import nodemailer from 'nodemailer';
 import { baseRoutes } from '../../src/app/configs';
-import { addNewUser, DBHandlers, req, getTestUser, textWithLengthGraterThan20, textWithLengthGraterThan10, invalidEmailFormat, emailWithLengthGraterThan100 } from '../test-helpers';
+import {
+    addNewUser,
+    DBHandlers,
+    req,
+    getTestUser,
+    textWithLengthGraterThan20,
+    textWithLengthGraterThan10,
+    invalidEmailFormat,
+    emailWithLengthGraterThan100,
+} from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository } from '../../src/domain/users';
 import { routersPaths } from '../../src/app/configs';
@@ -114,10 +123,14 @@ describe('Auth Controller', () => {
         let sendMailMock: jest.Mock;
         let createTransportMock: jest.Mock;
 
-        beforeEach(() => {
+        beforeAll(() => {
             sendMailMock = jest.fn().mockResolvedValue({});
-            createTransportMock = jest.fn().mockReturnValue({ sendMail: sendMailMock });
-            (nodemailer.createTransport as jest.Mock).mockImplementation(createTransportMock);
+            createTransportMock = jest
+                .fn()
+                .mockReturnValue({ sendMail: sendMailMock });
+            (nodemailer.createTransport as jest.Mock).mockImplementation(
+                createTransportMock
+            );
         });
 
         afterEach(() => {
@@ -206,7 +219,9 @@ describe('Auth Controller', () => {
                 .post(`${baseRoutes.auth}${routersPaths.auth.registration}`)
                 .send(newWrongUser)
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response.body.errorsMessages[0].message).toEqual('User with this login or email already exists');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                'User with this login or email already exists'
+            );
         });
 
         it('returns an error if provided login already registered', async () => {
@@ -216,7 +231,9 @@ describe('Auth Controller', () => {
                 .post(`${baseRoutes.auth}${routersPaths.auth.registration}`)
                 .send(newWrongUser)
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response.body.errorsMessages[0].message).toEqual('User with this login or email already exists');
+            expect(response.body.errorsMessages[0].message).toEqual(
+                'User with this login or email already exists'
+            );
         });
 
         it('creates a new user and send email confirmation code', async () => {
@@ -224,9 +241,158 @@ describe('Auth Controller', () => {
                 .post(`${baseRoutes.auth}${routersPaths.auth.registration}`)
                 .send(newUser);
             expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
-            expect(response.body).toEqual({})
-            expect(sendMailMock).toHaveBeenCalledTimes(1)
-            expect(sendMailMock).toHaveBeenCalledWith(expect.objectContaining({ to: newUser.email, html: expect.stringContaining('code') }))
+            expect(response.body).toEqual({});
+            expect(sendMailMock).toHaveBeenCalledTimes(1);
+            expect(sendMailMock).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    to: newUser.email,
+                    html: expect.stringContaining('code'),
+                })
+            );
+        });
+    });
+
+    describe('POST /registration-email-resending', () => {
+        const newUser = getTestUser(112);
+
+        let sendMailMock: jest.Mock;
+        let createTransportMock: jest.Mock;
+
+        beforeAll(async () => {
+            sendMailMock = jest.fn().mockResolvedValue({});
+            createTransportMock = jest
+                .fn()
+                .mockReturnValue({ sendMail: sendMailMock });
+            (nodemailer.createTransport as jest.Mock).mockImplementation(
+                createTransportMock
+            );
+
+            await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.registration}`)
+                .send(newUser);
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('returns an error if required email field is missing', async () => {
+            const resendEmail = { email: '' };
+            const response = await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.resendEmail}`)
+                .send(resendEmail)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('email');
+        });
+
+        it('returns an error if email is not valid', async () => {
+            const resendEmail = { email: invalidEmailFormat };
+            const response = await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.resendEmail}`)
+                .send(resendEmail)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('email');
+        });
+
+        it('returns an error if email is to long', async () => {
+            const resendEmail = { email: emailWithLengthGraterThan100 };
+            const response = await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.resendEmail}`)
+                .send(resendEmail)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('email');
+        });
+
+        it('returns an error if email is already confirmed', async () => {
+            const resendEmail = { email: testUser.email };
+            const response = await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.resendEmail}`)
+                .send(resendEmail)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('email');
+        });
+
+        it('sends new email confirmation code', async () => {
+            const resendEmail = { email: newUser.email };
+            await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.resendEmail}`)
+                .send(resendEmail)
+                .expect(HTTP_STATUS_CODES.NO_CONTENT);
+            expect(sendMailMock).toHaveBeenCalledTimes(1);
+            expect(sendMailMock).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    to: newUser.email,
+                    html: expect.stringContaining('code'),
+                })
+            );
+        });
+    });
+
+    describe('POST /registration-confirmation', () => {
+        const newUser = getTestUser(113);
+
+        let sendMailMock: jest.Mock;
+        let createTransportMock: jest.Mock;
+
+        let sentCode: string;
+
+        beforeAll(async () => {
+            sendMailMock = jest.fn((sendInfo) => {
+                const regex = /code=([\w-]+)/;
+                const match = sendInfo.html.match(regex);
+                const code = match ? match[1] : null;
+                sentCode = code;
+                return Promise.resolve({});
+            });
+            createTransportMock = jest
+                .fn()
+                .mockReturnValue({ sendMail: sendMailMock });
+            (nodemailer.createTransport as jest.Mock).mockImplementation(
+                createTransportMock
+            );
+
+            await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.registration}`)
+                .send(newUser);
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('returns an error if required code field is missing', async () => {
+            const confirmCode = { code: '' };
+            const response = await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.confirmation}`)
+                .send(confirmCode)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('code');
+        });
+
+        it('returns an error if email is not valid', async () => {
+            const confirmCode = { code: 'asdch iuys 23' };
+            const response = await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.confirmation}`)
+                .send(confirmCode)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('code');
+        });
+
+        it('confirms code successfully', async () => {
+            const confirmCode = { code: sentCode };
+            await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.confirmation}`)
+                .send(confirmCode)
+                .expect(HTTP_STATUS_CODES.NO_CONTENT);
+        });
+
+        it('returns an error if code is already confirmed ', async () => {
+            const confirmCode = { code: sentCode };
+            const response = await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.confirmation}`)
+                .send(confirmCode)
+                .expect(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages[0].field).toEqual('code');
         });
     });
 });
