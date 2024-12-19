@@ -98,6 +98,9 @@ export const confirmationBodySchema: Schema = {
         notEmpty: {
             errorMessage: 'Confirmation code is required',
         },
+        isUUID: {
+            errorMessage: 'Invalid confirmation code',
+        },
     },
 };
 

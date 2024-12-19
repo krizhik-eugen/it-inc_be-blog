@@ -152,9 +152,7 @@ export const authService = {
             return {
                 status: 'BadRequest',
                 errorsMessages: [
-                    createResponseError(
-                        'No user found for this confirmation code'
-                    ),
+                    createResponseError('No user found with this email', email),
                 ],
             };
         }
@@ -170,7 +168,7 @@ export const authService = {
         const updatedUser: UserDBModel = {
             ...user,
             emailConfirmation: {
-                ...user.emailConfirmation,
+                isConfirmed: 'NotConfirmed',
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date(), { hours: 1, minutes: 3 }),
             },
