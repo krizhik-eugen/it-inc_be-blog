@@ -230,8 +230,10 @@ export const authService = {
             return {
                 status: 'Success',
                 data: {
-                    accessToken: jwtService.generateAccessToken('user'),
-                    refreshToken: jwtService.generateRefreshToken('user'),
+                    accessToken: jwtService.generateAccessToken(result.userId),
+                    refreshToken: jwtService.generateRefreshToken(
+                        result.userId
+                    ),
                 },
             };
         } catch {
@@ -273,7 +275,7 @@ export const authService = {
             );
             return {
                 status: 'Success',
-                data: null
+                data: null,
             };
         } catch {
             return {
