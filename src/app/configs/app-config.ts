@@ -12,8 +12,8 @@ export const appDeploymentURL =
 export const hostEmailLogin = process.env.HOST_EMAIL_LOGIN;
 export const hostEmailPassword = process.env.HOST_EMAIL_PASSWORD;
 export const hashSaltRounds = 10;
-export const accessTokenExpirationTime = '10s';
-export const refreshTokenExpirationTime = '20s';
+export const accessTokenExpirationTime = 10;
+export const refreshTokenExpirationTime = 20;
 export const getCodeExpirationDate = () => {
-    return add(new Date(), { hours: 1, minutes: 3 });
+    return add(new Date(), { hours: 1 });
 };
