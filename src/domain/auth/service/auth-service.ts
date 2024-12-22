@@ -1,20 +1,22 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { usersRepository } from '../../users';
-import { jwtSecret } from '../../../app/configs';
 import { LoginRequestModel, RegisterRequestModel } from '../types';
 import { createResponseError } from '../../../shared/helpers';
 import { UserDBModel } from '../../users/model';
-import { add } from 'date-fns';
 import { emailManager } from '../../../app/managers';
 import { TResult } from '../../../shared/types';
+import { jwtService } from '../../../app/services';
+import { getCodeExpirationDate, hashSaltRounds } from '../../../app/configs';
+import { ObjectId } from 'mongodb';
 
 export const authService = {
     async login({
         loginOrEmail,
         password,
-    }: LoginRequestModel): Promise<TResult<{ accessToken: string }>> {
+    }: LoginRequestModel): Promise<
+        TResult<{ accessToken: string; refreshToken: string }>
+    > {
         const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail);
         if (!user) {
             return {
@@ -40,14 +42,13 @@ export const authService = {
                 errorsMessages: [createResponseError('Invalid credentials')],
             };
         }
-        const accessToken = jwt.sign(
-            { userId: user._id.toString() },
-            jwtSecret,
-            { expiresIn: '30d' }
+        const accessToken = jwtService.generateAccessToken(user._id.toString());
+        const refreshToken = jwtService.generateRefreshToken(
+            user._id.toString()
         );
         return {
             status: 'Success',
-            data: { accessToken },
+            data: { accessToken, refreshToken },
         };
     },
 
@@ -71,7 +72,7 @@ export const authService = {
                 ],
             };
         }
-        const passwordHash = await bcrypt.hash(password, 10);
+        const passwordHash = await bcrypt.hash(password, hashSaltRounds);
         const newUser: UserDBModel = {
             accountData: {
                 login,
@@ -80,10 +81,11 @@ export const authService = {
             },
             emailConfirmation: {
                 confirmationCode: uuidv4(),
-                expirationDate: add(new Date(), { hours: 1, minutes: 3 }),
+                expirationDate: getCodeExpirationDate(),
                 isConfirmed: 'NotConfirmed',
             },
             createdAt: new Date().toISOString(),
+            revokedRefreshTokens: [],
         };
         await usersRepository.addNewUser(newUser);
         // try {
@@ -173,7 +175,7 @@ export const authService = {
             emailConfirmation: {
                 isConfirmed: 'NotConfirmed',
                 confirmationCode: uuidv4(),
-                expirationDate: add(new Date(), { hours: 1, minutes: 3 }),
+                expirationDate: getCodeExpirationDate(),
             },
         };
         await usersRepository.updateUser(updatedUser);
@@ -190,6 +192,93 @@ export const authService = {
             return {
                 status: 'InternalError',
                 errorsMessages: [createResponseError('Error sending email')],
+            };
+        }
+    },
+
+    async generateNewTokens(
+        refreshToken: string
+    ): Promise<TResult<{ accessToken: string; refreshToken: string }>> {
+        try {
+            const result = jwtService.verifyToken(refreshToken);
+            if (result.exp && result.exp < Date.now() / 1000) {
+                return {
+                    status: 'Unauthorized',
+                    errorsMessages: [
+                        createResponseError('Refresh token expired'),
+                    ],
+                };
+            }
+            const user = await usersRepository.findUserById(
+                new ObjectId(result.userId)
+            );
+            const isTokenRevoked = user!.revokedRefreshTokens.some(
+                (token) => token === refreshToken
+            );
+            if (isTokenRevoked) {
+                return {
+                    status: 'Unauthorized',
+                    errorsMessages: [
+                        createResponseError('Refresh token revoked'),
+                    ],
+                };
+            }
+            await usersRepository.updateUserRevokedTokens(
+                new ObjectId(result.userId),
+                refreshToken
+            );
+            return {
+                status: 'Success',
+                data: {
+                    accessToken: jwtService.generateAccessToken('user'),
+                    refreshToken: jwtService.generateRefreshToken('user'),
+                },
+            };
+        } catch {
+            return {
+                status: 'Unauthorized',
+                errorsMessages: [createResponseError('Invalid refresh token')],
+            };
+        }
+    },
+
+    async logout(refreshToken: string): Promise<TResult> {
+        try {
+            const result = jwtService.verifyToken(refreshToken);
+            if (result.exp && result.exp < Date.now() / 1000) {
+                return {
+                    status: 'Unauthorized',
+                    errorsMessages: [
+                        createResponseError('Refresh token expired'),
+                    ],
+                };
+            }
+            const user = await usersRepository.findUserById(
+                new ObjectId(result.userId)
+            );
+            const isTokenRevoked = user!.revokedRefreshTokens.some(
+                (token) => token === refreshToken
+            );
+            if (isTokenRevoked) {
+                return {
+                    status: 'Unauthorized',
+                    errorsMessages: [
+                        createResponseError('Refresh token revoked'),
+                    ],
+                };
+            }
+            await usersRepository.updateUserRevokedTokens(
+                new ObjectId(result.userId),
+                refreshToken
+            );
+            return {
+                status: 'Success',
+                data: null
+            };
+        } catch {
+            return {
+                status: 'Unauthorized',
+                errorsMessages: [createResponseError('Invalid refresh token')],
             };
         }
     },

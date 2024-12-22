@@ -24,7 +24,13 @@ export const authController = {
             });
             return;
         }
-        res.status(HTTP_STATUS_CODES.OK).json(result.data);
+        res.cookie('refreshToken', result.data.refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+        res.status(HTTP_STATUS_CODES.OK).json({
+            accessToken: result.data.accessToken,
+        });
     },
 
     async me(req: Request, res: TMeResponse) {
@@ -78,4 +84,35 @@ export const authController = {
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
+
+    async generateNewTokens(req: Request, res: TLoginResponse) {
+        const refreshToken = req.cookies.refreshToken;
+        const result = await authService.generateNewTokens(refreshToken);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.cookie('refreshToken', result.data.refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+        res.status(HTTP_STATUS_CODES.OK).json({
+            accessToken: result.data.accessToken,
+        });
+    },
+
+    async logout(req: Request, res: TLoginResponse) {
+        const refreshToken = req.cookies.refreshToken;
+        const result = await authService.logout(refreshToken);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.clearCookie('refreshToken');
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
+    }
 };

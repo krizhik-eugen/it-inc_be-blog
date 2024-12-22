@@ -44,6 +44,7 @@ export const usersService = {
                 isConfirmed: 'Confirmed',
             },
             createdAt: new Date().toISOString(),
+            revokedRefreshTokens: [],
         };
         const addedUserId = await usersRepository.addNewUser(newUser);
         if (!addedUserId) {

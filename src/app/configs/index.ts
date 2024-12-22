@@ -1,4 +1,24 @@
 import { baseRoutes, routersPaths } from './routes-config';
-import { jwtSecret, mongoDBName, mongoDBUrl, port } from './app-config';
+import {
+    accessTokenExpirationTime,
+    getCodeExpirationDate,
+    hashSaltRounds,
+    jwtSecret,
+    mongoDBName,
+    mongoDBUrl,
+    port,
+    refreshTokenExpirationTime,
+} from './app-config';
 
-export { baseRoutes, port, routersPaths, mongoDBUrl, mongoDBName, jwtSecret };
+export {
+    baseRoutes,
+    port,
+    routersPaths,
+    mongoDBUrl,
+    mongoDBName,
+    jwtSecret,
+    accessTokenExpirationTime,
+    refreshTokenExpirationTime,
+    getCodeExpirationDate,
+    hashSaltRounds,
+};

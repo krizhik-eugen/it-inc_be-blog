@@ -6,13 +6,13 @@ import { blogsRouter } from './domain/blogs';
 import { usersRouter } from './domain/users';
 import { authRouter } from './domain/auth';
 import { commentsRouter } from './domain/comments';
-import { emailManager } from './app/managers';
-import { HTTP_STATUS_CODES } from './constants';
+import cookieParser from 'cookie-parser';
 // import cors from 'cors';
 
 export const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 // app.use(cors());
 
 app.use(baseRoutes.auth, authRouter);

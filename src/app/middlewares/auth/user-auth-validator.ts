@@ -1,9 +1,8 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
-import { jwtSecret } from '../../configs';
 import { ObjectId } from 'mongodb';
 import { usersRepository } from '../../../domain/users';
+import { jwtService } from '../../services';
 
 export const userAuthValidator = async (
     req: Request,
@@ -16,9 +15,7 @@ export const userAuthValidator = async (
     }
     const token = req.headers.authorization.split(' ')[1];
     try {
-        const result = jwt.verify(token, jwtSecret) as JwtPayload & {
-            userId: string;
-        };
+        const result = jwtService.verifyToken(token);
         if (result.userId) {
             const user = await usersRepository.findUserById(
                 new ObjectId(result.userId)

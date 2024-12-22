@@ -34,6 +34,14 @@ export const usersRepository = {
         return result.modifiedCount > 0;
     },
 
+    async updateUserRevokedTokens(_id: UserDBModel['_id'], token: string) {
+        const result = await usersCollection.updateOne(
+            { _id },
+            { $push: { 'accountData.revokedRefreshTokens': token } }
+        );
+        return result.modifiedCount > 0;
+    },
+
     async deleteUser(_id: UserDBModel['_id']) {
         const result = await usersCollection.deleteOne({ _id });
         return result.deletedCount > 0;

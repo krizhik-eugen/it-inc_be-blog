@@ -73,8 +73,9 @@ describe('Auth Controller', () => {
         it('login successfully', async () => {
             const response = await req
                 .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
-                .send(loginCredentials);
-            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+                .send(loginCredentials)
+                .expect(HTTP_STATUS_CODES.OK)
+                .expect('set-cookie', /refreshToken/);
             expect(response.body.accessToken).toBeDefined();
         });
     });

@@ -31,3 +31,9 @@ authRouter
         ...authValidators.resendRegistrationRequest,
         authController.resendRegistrationEmail
     );
+
+authRouter
+    .route(routersPaths.auth.refreshToken)
+    .post(authController.generateNewTokens);
+
+authRouter.route(routersPaths.auth.logout).post(authController.logout);
