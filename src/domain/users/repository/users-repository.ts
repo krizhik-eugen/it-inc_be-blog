@@ -37,7 +37,7 @@ export const usersRepository = {
     async updateUserRevokedTokens(_id: UserDBModel['_id'], token: string) {
         const result = await usersCollection.updateOne(
             { _id },
-            { $push: { 'accountData.revokedRefreshTokens': token } }
+            { $push: { revokedRefreshTokens: token } }
         );
         return result.modifiedCount > 0;
     },
