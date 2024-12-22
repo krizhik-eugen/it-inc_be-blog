@@ -16,6 +16,10 @@ export const userAuthValidator = async (
     const token = req.headers.authorization.split(' ')[1];
     try {
         const result = jwtService.verifyToken(token);
+        if (result.exp && result.exp < Date.now() / 1000) {
+            res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
+            return;
+        }
         if (result.userId) {
             const user = await usersRepository.findUserById(
                 new ObjectId(result.userId)
@@ -32,5 +36,4 @@ export const userAuthValidator = async (
         res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
         return;
     }
-    res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
 };
