@@ -14,6 +14,7 @@ export const app = express();
 app.use(express.json());
 app.use(cookieParser());
 // app.use(cors());
+app.set('trust proxy', true);
 
 app.use(baseRoutes.auth, authRouter);
 app.use(baseRoutes.blogs, blogsRouter);
