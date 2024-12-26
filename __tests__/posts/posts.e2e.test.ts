@@ -53,7 +53,7 @@ describe('Posts Controller', () => {
                 .send(loginCredentials)
         ).body.accessToken;
         await setComments();
-    }, 17000);
+    }, 15000);
 
     afterAll(async () => {
         await DBHandlers.closeDB();

@@ -7,6 +7,8 @@ import {
     mongoDBName,
     mongoDBUrl,
     port,
+    rateLimiterMaxRequests,
+    rateLimiterTimeWindow,
     refreshTokenExpirationTime,
 } from './app-config';
 
@@ -21,4 +23,6 @@ export {
     refreshTokenExpirationTime,
     getCodeExpirationDate,
     hashSaltRounds,
+    rateLimiterTimeWindow,
+    rateLimiterMaxRequests,
 };

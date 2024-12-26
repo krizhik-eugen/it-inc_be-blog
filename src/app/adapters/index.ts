@@ -1,3 +1,3 @@
-import { emailAdapter } from "./email-adapter";
+import { emailAdapter } from './email-adapter';
 
-export { emailAdapter }
+export { emailAdapter };

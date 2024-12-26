@@ -114,5 +114,5 @@ export const authController = {
         }
         res.clearCookie('refreshToken');
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
-    }
+    },
 };

@@ -50,7 +50,7 @@ describe('Blogs Controller', () => {
         await blogsRepository.clearBlogs();
         await setTestBlogs();
         await setTestPosts(createdTestBlog.id);
-    }, 20000);
+    }, 10000);
 
     afterAll(async () => {
         await DBHandlers.closeDB();

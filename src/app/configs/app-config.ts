@@ -14,6 +14,8 @@ export const hostEmailPassword = process.env.HOST_EMAIL_PASSWORD;
 export const hashSaltRounds = 10;
 export const accessTokenExpirationTime = 10;
 export const refreshTokenExpirationTime = 20;
+export const rateLimiterTimeWindow = 10; //min
+export const rateLimiterMaxRequests = 5;
 export const getCodeExpirationDate = () => {
     return add(new Date(), { hours: 1 });
 };

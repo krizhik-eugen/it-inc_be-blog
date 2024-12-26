@@ -1,15 +1,15 @@
 import { OptionalUnlessRequiredId } from 'mongodb';
-import { db } from '../../db';
+import { db } from '../../../db';
 
 export type RateLimiterDBModel = OptionalUnlessRequiredId<{
-    IP: string;
-    URL: string;
+    ip: string;
+    url: string;
     date: number;
 }>;
 
 export type RateLimiterDBSearchParams = {
-    IP: string;
-    URL: string;
+    ip: string;
+    url: string;
     timeRange: number;
 };
 

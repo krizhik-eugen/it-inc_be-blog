@@ -6,8 +6,8 @@ export const emailManager = {
         email: string,
         confirmationCode: string
     ) {
-        const htmlTemplate = getEmailConfirmationTemplate(confirmationCode)
-        const subject = 'Confirm your registration email'
-        emailAdapter(email, subject, htmlTemplate)
+        const htmlTemplate = getEmailConfirmationTemplate(confirmationCode);
+        const subject = 'Confirm your registration email';
+        emailAdapter(email, subject, htmlTemplate);
     },
 };

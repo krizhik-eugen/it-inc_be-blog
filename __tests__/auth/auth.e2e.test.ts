@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import {
     accessTokenExpirationTime,
     baseRoutes,
+    rateLimiterMaxRequests,
     refreshTokenExpirationTime,
 } from '../../src/app/configs';
 import {
@@ -17,6 +18,7 @@ import {
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository } from '../../src/domain/users';
 import { routersPaths } from '../../src/app/configs';
+import { rateLimiterRepository } from '../../src/app/repositories';
 
 jest.mock('nodemailer');
 jest.mock('../../src/app/configs', () => ({
@@ -40,6 +42,10 @@ describe('Auth Controller', () => {
     afterAll(async () => {
         await usersRepository.clearUsers();
         await DBHandlers.closeDB();
+    });
+
+    afterEach(async () => {
+        await rateLimiterRepository.clearRateLimiter();
     });
 
     describe('POST /login', () => {
@@ -86,6 +92,20 @@ describe('Auth Controller', () => {
                 .expect(HTTP_STATUS_CODES.OK)
                 .expect('set-cookie', /refreshToken/);
             expect(response.body.accessToken).toBeDefined();
+        });
+
+        it('returns an error if rate limit is exceeded ', async () => {
+            const loginUser = {
+                ...loginCredentials,
+            };
+            loginUser.password = 'wrongPassword';
+            let response;
+            for (let i = 1; i <= rateLimiterMaxRequests + 1; i++) {
+                response = await req
+                    .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
+                    .send(loginUser);
+            }
+            expect(response?.status).toBe(HTTP_STATUS_CODES.TOO_MANY_REQUESTS);
         });
     });
 
@@ -141,19 +161,6 @@ describe('Auth Controller', () => {
             ).body.accessToken;
         });
 
-        it('returns an error if no authentication provided', async () => {
-            const response = await req.get(`${baseRoutes.auth}/me`);
-            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
-        });
-
-        it('returns an error if token is not valid', async () => {
-            const inValidToken = accessToken + '123';
-            const response = await req
-                .get(`${baseRoutes.auth}${routersPaths.auth.me}`)
-                .auth(inValidToken, { type: 'bearer' });
-            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
-        });
-
         it('get user details successfully', async () => {
             const response = await req
                 .get(`${baseRoutes.auth}${routersPaths.auth.me}`)
@@ -171,6 +178,19 @@ describe('Auth Controller', () => {
             const response = await req
                 .get(`${baseRoutes.auth}${routersPaths.auth.me}`)
                 .auth(accessToken, { type: 'bearer' });
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('returns an error if no authentication provided', async () => {
+            const response = await req.get(`${baseRoutes.auth}/me`);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('returns an error if token is not valid', async () => {
+            const inValidToken = accessToken + '123';
+            const response = await req
+                .get(`${baseRoutes.auth}${routersPaths.auth.me}`)
+                .auth(inValidToken, { type: 'bearer' });
             expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
         });
     });
@@ -360,6 +380,17 @@ describe('Auth Controller', () => {
                 })
             );
         });
+
+        it('returns an error if rate limit is exceeded ', async () => {
+            const newWrongUser = { ...newUser };
+            let response;
+            for (let i = 1; i <= rateLimiterMaxRequests + 1; i++) {
+                response = await req
+                    .post(`${baseRoutes.auth}${routersPaths.auth.registration}`)
+                    .send(newWrongUser);
+            }
+            expect(response?.status).toBe(HTTP_STATUS_CODES.TOO_MANY_REQUESTS);
+        });
     });
 
     describe('POST /registration-email-resending', () => {
@@ -436,6 +467,17 @@ describe('Auth Controller', () => {
                 })
             );
         });
+
+        it('returns an error if rate limit is exceeded ', async () => {
+            const resendEmail = { email: testUser.email };
+            let response;
+            for (let i = 1; i <= rateLimiterMaxRequests + 1; i++) {
+                response = await req
+                    .post(`${baseRoutes.auth}${routersPaths.auth.resendEmail}`)
+                    .send(resendEmail);
+            }
+            expect(response?.status).toBe(HTTP_STATUS_CODES.TOO_MANY_REQUESTS);
+        });
     });
 
     describe('POST /registration-confirmation', () => {
@@ -503,6 +545,17 @@ describe('Auth Controller', () => {
                 .send(confirmCode)
                 .expect(HTTP_STATUS_CODES.BAD_REQUEST);
             expect(response.body.errorsMessages[0].field).toEqual('code');
+        });
+
+        it('returns an error if rate limit is exceeded ', async () => {
+            const confirmCode = { code: sentCode };
+            let response;
+            for (let i = 1; i <= rateLimiterMaxRequests + 1; i++) {
+                response = await req
+                    .post(`${baseRoutes.auth}${routersPaths.auth.confirmation}`)
+                    .send(confirmCode);
+            }
+            expect(response?.status).toBe(HTTP_STATUS_CODES.TOO_MANY_REQUESTS);
         });
     });
 });
