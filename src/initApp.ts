@@ -1,11 +1,11 @@
 import express from 'express';
 import { baseRoutes } from './app/configs';
-import { testingRouter } from './domain/testing';
-import { postsRouter } from './domain/posts';
-import { blogsRouter } from './domain/blogs';
-import { usersRouter } from './domain/users';
-import { authRouter } from './domain/auth';
-import { commentsRouter } from './domain/comments';
+import { testingRouter } from './features/testing';
+import { postsRouter } from './features/posts';
+import { blogsRouter } from './features/blogs';
+import { usersRouter } from './features/users';
+import { authRouter } from './features/auth';
+import { commentsRouter } from './features/comments';
 import cookieParser from 'cookie-parser';
 // import cors from 'cors';
 

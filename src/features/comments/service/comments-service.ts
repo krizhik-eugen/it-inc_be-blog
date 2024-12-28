@@ -1,9 +1,9 @@
 import { CommentCreateRequestModel } from '../types';
 import { ObjectId } from 'mongodb';
 import { commentsRepository } from '../repository/comments-repository';
-import { postsRepository } from '../../../domain/posts';
+import { postsRepository } from '../../../features/posts';
 import { CommentDBModel } from '../model';
-import { usersRepository } from '../../../domain/users';
+import { usersRepository } from '../../../features/users';
 import { createResponseError } from '../../../shared/helpers';
 import { TResult } from '../../../shared/types';
 

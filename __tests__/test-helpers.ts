@@ -1,10 +1,10 @@
 import { app } from '../src/initApp';
 import { agent } from 'supertest';
 import { client, connectToDB, db } from '../src/db';
-import { BlogViewModel } from '../src/domain/blogs';
-import { PostViewModel } from '../src/domain/posts';
+import { BlogViewModel } from '../src/features/blogs';
+import { PostViewModel } from '../src/features/posts';
 import { baseRoutes } from '../src/app/configs';
-import { UserViewModel } from '../src/domain/users';
+import { UserViewModel } from '../src/features/users';
 
 export const req = agent(app);
 

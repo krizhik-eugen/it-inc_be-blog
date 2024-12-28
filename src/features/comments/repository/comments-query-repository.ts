@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { commentsCollection, CommentsDBSearchParams } from '../model';
-import { postsCollection } from '../../../domain/posts';
+import { postsCollection } from '../../../features/posts';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
 

@@ -1,6 +1,9 @@
 import { baseRoutes, routersPaths } from '../../src/app/configs';
-import { PostCreateRequestModel, PostViewModel } from '../../src/domain/posts';
-import { BlogViewModel } from '../../src/domain/blogs';
+import {
+    PostCreateRequestModel,
+    PostViewModel,
+} from '../../src/features/posts';
+import { BlogViewModel } from '../../src/features/blogs';
 import {
     addNewBlog,
     addNewPost,
@@ -17,7 +20,7 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { CommentViewModel } from '../../src/domain/comments';
+import { CommentViewModel } from '../../src/features/comments';
 
 describe('Comments Controller', () => {
     let createdTestBlog: BlogViewModel;

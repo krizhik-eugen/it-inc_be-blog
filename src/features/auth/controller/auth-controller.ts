@@ -12,7 +12,7 @@ import {
     TResendRegistrationEmailResponse,
 } from '../types';
 import { authService } from '../service';
-import { usersQueryRepository } from '../../../domain/users';
+import { usersQueryRepository } from '../../../features/users';
 
 export const authController = {
     async login(req: TLoginRequest, res: TLoginResponse) {

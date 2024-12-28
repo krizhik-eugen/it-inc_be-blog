@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import { postsCollection, PostsDBSearchParams } from '../model';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
-import { blogsCollection } from '../../../domain/blogs';
+import { blogsCollection } from '../../../features/blogs';
 
 export const postsQueryRepository = {
     async getPosts({

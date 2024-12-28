@@ -16,7 +16,7 @@ import {
     emailWithLengthGraterThan100,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { usersRepository } from '../../src/domain/users';
+import { usersRepository } from '../../src/features/users';
 import { routersPaths } from '../../src/app/configs';
 import { rateLimiterRepository } from '../../src/app/repositories';
 

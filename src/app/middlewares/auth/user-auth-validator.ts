@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import { ObjectId } from 'mongodb';
-import { usersRepository } from '../../../domain/users';
+import { usersRepository } from '../../../features/users';
 import { jwtService } from '../../services';
 
 export const userAuthValidator = async (

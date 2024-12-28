@@ -1,6 +1,6 @@
 import { PostCreateRequestModel } from '../types';
 import { postsRepository } from '../repository';
-import { blogsRepository } from '../../../domain/blogs';
+import { blogsRepository } from '../../../features/blogs';
 import { ObjectId } from 'mongodb';
 import { PostDBModel } from '../model';
 import { TResult } from '../../../shared/types';
