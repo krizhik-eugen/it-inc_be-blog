@@ -56,8 +56,7 @@ export const sessionService = {
             return validationResult;
         }
         const session = await sessionsRepository.findSession(
-            validationResult.data.userId,
-            deviceId
+            validationResult.data.userId
         );
         if (!session) {
             return {
@@ -71,7 +70,7 @@ export const sessionService = {
                 errorsMessages: [createResponseError('You are not an owner')],
             };
         }
-        await sessionsRepository.revokeAllSessionsExceptCurrent(
+        await sessionsRepository.revokeSession(
             validationResult.data.userId,
             deviceId
         );

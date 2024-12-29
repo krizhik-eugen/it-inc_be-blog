@@ -6,8 +6,8 @@ export const sessionsRepository = {
         return await sessionsCollection.find({ userId }).toArray();
     },
 
-    async findSession(userId: string, deviceId: string) {
-        return await sessionsCollection.findOne({ userId, deviceId });
+    async findSession(deviceId: string) {
+        return await sessionsCollection.findOne({ deviceId });
     },
 
     async createSession({

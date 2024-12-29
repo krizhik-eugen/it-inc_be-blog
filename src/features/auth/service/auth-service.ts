@@ -280,7 +280,6 @@ export const authService = {
                 };
             }
             const session = await sessionsRepository.findSession(
-                result.userId,
                 result.deviceId
             );
             if (!session) {
