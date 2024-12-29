@@ -242,10 +242,7 @@ export const authService = {
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
-        await sessionsRepository.revokeSession(
-            validationResult.data.userId,
-            validationResult.data.deviceId
-        );
+        await sessionsRepository.revokeSession(validationResult.data.deviceId);
         return {
             status: 'Success',
             data: null,
@@ -258,9 +255,7 @@ export const authService = {
         try {
             const result = jwtService.verifyToken(refreshToken);
             if (result.exp && result.exp < Date.now() / 1000) {
-                await sessionsRepository.revokeSession(
-                    result.deviceId
-                );
+                await sessionsRepository.revokeSession(result.deviceId);
                 return {
                     status: 'Unauthorized',
                     errorsMessages: [
