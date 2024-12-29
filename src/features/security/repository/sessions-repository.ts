@@ -28,22 +28,16 @@ export const sessionsRepository = {
         });
     },
 
-    async updateSession({
-        userId,
-        deviceId,
-        iat,
-        exp,
-        ip,
-    }: Partial<SessionDBModel>) {
+    async updateSession({ deviceId, iat, exp, ip }: Partial<SessionDBModel>) {
         const result = await sessionsCollection.updateOne(
-            { userId, deviceId },
+            { deviceId },
             { $set: { iat, exp, ip } }
         );
         return result.modifiedCount > 0;
     },
 
-    async revokeSession(userId: string, deviceId: string) {
-        const result = await sessionsCollection.deleteOne({ userId, deviceId });
+    async revokeSession(deviceId: string) {
+        const result = await sessionsCollection.deleteOne({ deviceId });
         return result.deletedCount > 0;
     },
 

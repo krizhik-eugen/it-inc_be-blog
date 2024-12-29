@@ -69,7 +69,6 @@ export const sessionService = {
             };
         }
         await sessionsRepository.revokeSession(
-            validationResult.data.userId,
             deviceId
         );
         return {

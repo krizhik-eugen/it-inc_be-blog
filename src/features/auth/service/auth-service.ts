@@ -223,7 +223,6 @@ export const authService = {
         );
         const decodedIssuedToken = jwtService.decodeToken(refreshToken);
         await sessionsRepository.updateSession({
-            userId: validationResult.data.userId,
             deviceId: validationResult.data.deviceId,
             iat: decodedIssuedToken.iat!,
             exp: decodedIssuedToken.exp!,
@@ -260,7 +259,6 @@ export const authService = {
             const result = jwtService.verifyToken(refreshToken);
             if (result.exp && result.exp < Date.now() / 1000) {
                 await sessionsRepository.revokeSession(
-                    result.userId,
                     result.deviceId
                 );
                 return {
