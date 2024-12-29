@@ -51,8 +51,6 @@ export type TGetUserRequest = Request<TIDParam>;
 
 export type TDeleteUserRequest = Request<TIDParam>;
 
-export type TDeleteUserResponse = TResponseWithError;
-
 export type TCreateNewUserResponse = TResponseWithError<
     UserViewModel | ReturnType<typeof createResponseError>
 >;

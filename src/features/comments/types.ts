@@ -27,8 +27,4 @@ export type TUpdateCommentRequest = Request<
     CommentCreateRequestModel
 >;
 
-export type TUpdateCommentResponse = TResponseWithError;
-
 export type TDeleteCommentRequest = Request<TIDParam>;
-
-export type TDeleteCommentResponse = TResponseWithError;

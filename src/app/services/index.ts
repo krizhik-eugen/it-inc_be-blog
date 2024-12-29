@@ -1,4 +1,5 @@
-import { jwtService } from './jwt-service';
+import { jwtService, TDecodedToken } from './jwt-service';
 import { rateLimiterService } from './rate-limiter';
+import { TJwtPayload } from './jwt-service/types';
 
-export { jwtService, rateLimiterService };
+export { jwtService, rateLimiterService, TDecodedToken, TJwtPayload };

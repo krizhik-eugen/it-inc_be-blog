@@ -60,11 +60,7 @@ export type TUpdateBlogRequest = Request<
     BlogCreateRequestModel
 >;
 
-export type TUpdateBlogResponse = TResponseWithError;
-
 export type TDeleteBlogRequest = Request<TIDParam>;
-
-export type TDeleteBlogResponse = TResponseWithError;
 
 export type TGetAllBlogPostsRequest = Request<
     TIDParam,

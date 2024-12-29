@@ -61,11 +61,8 @@ export type TUpdatePostRequest = Request<
     object,
     PostCreateRequestModel
 >;
-export type TUpdatePostResponse = TResponseWithError;
 
 export type TDeletePostRequest = Request<TIDParam>;
-
-export type TDeletePostResponse = TResponseWithError;
 
 export type TGetAllPostCommentsRequestQueries = TSearchQueryParams<
     CommentsDBSearchParams['sortBy']

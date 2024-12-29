@@ -1,5 +1,6 @@
 import { NextFunction, Response, Request } from 'express';
 import { checkSchema, Schema, validationResult } from 'express-validator';
+import { UAParser } from 'ua-parser-js';
 import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from '../constants';
 import {
     TErrorType,
@@ -131,3 +132,17 @@ export const getEmailConfirmationTemplate = (confirmationCode: string) => `
     </body>
     </html>
 `;
+
+export const getDeviceTitle = (userAgent = '') => {
+    let deviceTitle = 'Unknown device';
+    const uaData = UAParser(userAgent);
+    if (uaData.device.vendor) {
+        deviceTitle = `${uaData.device.vendor} ` + `${uaData.device.model}`;
+        return deviceTitle;
+    }
+    if (uaData.browser.name) {
+        deviceTitle += `${uaData.browser.name} ` + `${uaData.browser.version}`;
+        return deviceTitle;
+    }
+    return deviceTitle;
+};

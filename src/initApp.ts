@@ -7,6 +7,7 @@ import { usersRouter } from './features/users';
 import { authRouter } from './features/auth';
 import { commentsRouter } from './features/comments';
 import cookieParser from 'cookie-parser';
+import { securityRouter } from './features/security';
 // import cors from 'cors';
 
 export const app = express();
@@ -22,3 +23,4 @@ app.use(baseRoutes.comments, commentsRouter);
 app.use(baseRoutes.posts, postsRouter);
 app.use(baseRoutes.testing, testingRouter);
 app.use(baseRoutes.users, usersRouter);
+app.use(baseRoutes.security, securityRouter);

@@ -32,8 +32,6 @@ export type TLoginRequest = Request<object, object, LoginRequestModel>;
 
 export type TLoginResponse = TResponseWithError<{ accessToken: string }>;
 
-export type TRegisterResponse = TResponseWithError;
-
 export type TRegisterRequest = Request<object, object, RegisterRequestModel>;
 
 export type TConfirmationRequest = Request<
@@ -42,12 +40,8 @@ export type TConfirmationRequest = Request<
     ConfirmationRequestModel
 >;
 
-export type TConfirmationResponse = TResponseWithError;
-
 export type TResendRegistrationEmailRequest = Request<
     object,
     object,
     ResendRegistrationEmailRequestModel
 >;
-
-export type TResendRegistrationEmailResponse = TResponseWithError;

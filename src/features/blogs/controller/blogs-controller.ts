@@ -1,4 +1,3 @@
-import { Response } from 'express';
 import { blogsQueryRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
@@ -7,7 +6,6 @@ import {
     TCreateNewBlogRequest,
     TCreateNewBlogResponse,
     TDeleteBlogRequest,
-    TDeleteBlogResponse,
     TGetAllBlogPostsRequest,
     TGetAllBlogPostsResponse,
     TGetAllBlogsRequest,
@@ -15,7 +13,6 @@ import {
     TGetBlogRequest,
     TGetBlogResponse,
     TUpdateBlogRequest,
-    TUpdateBlogResponse,
 } from '../types';
 import { blogsService } from '../service';
 import {
@@ -25,6 +22,7 @@ import {
 } from '../../posts';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { BlogsDBSearchParams } from '../model';
+import { TResponseWithError } from '../../../shared/types';
 
 export const blogsController = {
     async getBlogs(req: TGetAllBlogsRequest, res: TGetAllBlogsResponse) {
@@ -129,7 +127,7 @@ export const blogsController = {
         res.status(HTTP_STATUS_CODES.CREATED).json(addedPost);
     },
 
-    async updateBlog(req: TUpdateBlogRequest, res: TUpdateBlogResponse) {
+    async updateBlog(req: TUpdateBlogRequest, res: TResponseWithError) {
         const { name, description, websiteUrl } = req.body;
         const id = req.params.id;
         const result = await blogsService.updateBlog({
@@ -147,7 +145,7 @@ export const blogsController = {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 
-    async deleteBlog(req: TDeleteBlogRequest, res: TDeleteBlogResponse) {
+    async deleteBlog(req: TDeleteBlogRequest, res: TResponseWithError) {
         const result = await blogsService.deleteBlog(req.params.id);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

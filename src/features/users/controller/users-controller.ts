@@ -4,13 +4,13 @@ import {
     TCreateNewUserRequest,
     TCreateNewUserResponse,
     TDeleteUserRequest,
-    TDeleteUserResponse,
     TGetAllUsersRequest,
     TGetAllUsersResponse,
 } from '../types';
 import { usersService } from '../service';
 import { UsersDBSearchParams } from '../model';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
+import { TResponseWithError } from '../../../shared/types';
 
 export const usersController = {
     async getAllUsers(req: TGetAllUsersRequest, res: TGetAllUsersResponse) {
@@ -51,7 +51,7 @@ export const usersController = {
         res.status(HTTP_STATUS_CODES.CREATED).json(user);
     },
 
-    async deleteUser(req: TDeleteUserRequest, res: TDeleteUserResponse) {
+    async deleteUser(req: TDeleteUserRequest, res: TResponseWithError) {
         const result = await usersService.deleteUser(req.params.id);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

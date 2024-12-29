@@ -5,7 +5,6 @@ import {
     TCreateNewPostRequest,
     TCreateNewPostResponse,
     TDeletePostRequest,
-    TDeletePostResponse,
     TGetAllPostCommentsRequest,
     TGetAllPostCommentsResponse,
     TGetAllPostsRequest,
@@ -13,7 +12,6 @@ import {
     TGetPostRequest,
     TGetPostResponse,
     TUpdatePostRequest,
-    TUpdatePostResponse,
 } from '../types';
 import { postsService } from '../service';
 import { postsQueryRepository } from '../repository';
@@ -24,6 +22,7 @@ import {
 } from '../../comments';
 import { PostsDBSearchParams } from '../model';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
+import { TResponseWithError } from '../../../shared/types';
 
 export const postsController = {
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {
@@ -122,7 +121,7 @@ export const postsController = {
         res.status(HTTP_STATUS_CODES.CREATED).json(createdComment);
     },
 
-    async updatePost(req: TUpdatePostRequest, res: TUpdatePostResponse) {
+    async updatePost(req: TUpdatePostRequest, res: TResponseWithError) {
         const { title, shortDescription, content, blogId } = req.body;
         const id = req.params.id;
         const result = await postsService.updatePost(
@@ -141,7 +140,7 @@ export const postsController = {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 
-    async deletePost(req: TDeletePostRequest, res: TDeletePostResponse) {
+    async deletePost(req: TDeletePostRequest, res: TResponseWithError) {
         const result = await postsService.deletePost(req.params.id);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

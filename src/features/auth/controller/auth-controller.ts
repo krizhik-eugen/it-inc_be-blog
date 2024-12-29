@@ -6,18 +6,23 @@ import {
     TConfirmationRequest,
     TResendRegistrationEmailRequest,
     TLoginResponse,
-    TRegisterResponse,
     TMeResponse,
-    TConfirmationResponse,
-    TResendRegistrationEmailResponse,
 } from '../types';
 import { authService } from '../service';
 import { usersQueryRepository } from '../../../features/users';
+import { getDeviceTitle } from '../../../shared/helpers';
+import { TResponseWithError } from '../../../shared/types';
 
 export const authController = {
     async login(req: TLoginRequest, res: TLoginResponse) {
         const { loginOrEmail, password } = req.body;
-        const result = await authService.login({ loginOrEmail, password });
+        const ip = req.ip!;
+        const deviceTitle = getDeviceTitle(req.headers['user-agent']);
+        const result = await authService.login(
+            { loginOrEmail, password },
+            deviceTitle,
+            ip
+        );
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                 errorsMessages: result.errorsMessages,
@@ -43,7 +48,7 @@ export const authController = {
         });
     },
 
-    async register(req: TRegisterRequest, res: TRegisterResponse) {
+    async register(req: TRegisterRequest, res: TResponseWithError) {
         const { login, email, password } = req.body;
         const result = await authService.createUser({ login, email, password });
         if (result.status !== 'Success') {
@@ -57,7 +62,7 @@ export const authController = {
 
     async confirmRegistration(
         req: TConfirmationRequest,
-        res: TConfirmationResponse
+        res: TResponseWithError
     ) {
         const { code } = req.body;
         const result = await authService.confirmEmail(code);
@@ -72,7 +77,7 @@ export const authController = {
 
     async resendRegistrationEmail(
         req: TResendRegistrationEmailRequest,
-        res: TResendRegistrationEmailResponse
+        res: TResponseWithError
     ) {
         const { email } = req.body;
         const result = await authService.resendConfirmationCode(email);
@@ -87,7 +92,8 @@ export const authController = {
 
     async generateNewTokens(req: Request, res: TLoginResponse) {
         const refreshToken = req.cookies.refreshToken;
-        const result = await authService.generateNewTokens(refreshToken);
+        const ip = req.ip!;
+        const result = await authService.generateNewTokens(refreshToken, ip);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                 errorsMessages: result.errorsMessages,

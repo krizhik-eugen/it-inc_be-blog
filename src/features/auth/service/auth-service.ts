@@ -6,17 +6,17 @@ import { createResponseError } from '../../../shared/helpers';
 import { UserDBModel } from '../../users/model';
 import { emailManager } from '../../../app/managers';
 import { TResult } from '../../../shared/types';
-import { jwtService } from '../../../app/services';
+import { jwtService, TDecodedToken } from '../../../app/services';
 import { getCodeExpirationDate, hashSaltRounds } from '../../../app/configs';
 import { ObjectId } from 'mongodb';
+import { sessionsRepository } from '../../security';
 
 export const authService = {
-    async login({
-        loginOrEmail,
-        password,
-    }: LoginRequestModel): Promise<
-        TResult<{ accessToken: string; refreshToken: string }>
-    > {
+    async login(
+        { loginOrEmail, password }: LoginRequestModel,
+        deviceTitle: string,
+        ip: string
+    ): Promise<TResult<{ accessToken: string; refreshToken: string }>> {
         const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail);
         if (!user) {
             return {
@@ -43,9 +43,20 @@ export const authService = {
             };
         }
         const accessToken = jwtService.generateAccessToken(user._id.toString());
+        const deviceId = uuidv4();
         const refreshToken = jwtService.generateRefreshToken(
-            user._id.toString()
+            user._id.toString(),
+            deviceId
         );
+        const decodedIssuedToken = jwtService.decodeToken(refreshToken);
+        await sessionsRepository.createSession({
+            userId: user._id.toString(),
+            deviceId,
+            ip,
+            deviceName: deviceTitle,
+            iat: decodedIssuedToken.iat!,
+            exp: decodedIssuedToken.exp!,
+        });
         return {
             status: 'Success',
             data: { accessToken, refreshToken },
@@ -197,57 +208,70 @@ export const authService = {
     },
 
     async generateNewTokens(
-        refreshToken: string
+        refreshToken: string,
+        ip: string
     ): Promise<TResult<{ accessToken: string; refreshToken: string }>> {
-        try {
-            const result = jwtService.verifyToken(refreshToken);
-            if (result.exp && result.exp < Date.now() / 1000) {
-                return {
-                    status: 'Unauthorized',
-                    errorsMessages: [
-                        createResponseError('Refresh token expired'),
-                    ],
-                };
-            }
-            const user = await usersRepository.findUserById(
-                new ObjectId(result.userId)
-            );
-            const isTokenRevoked = user!.revokedRefreshTokens.some(
-                (token) => token === refreshToken
-            );
-            if (isTokenRevoked) {
-                return {
-                    status: 'Unauthorized',
-                    errorsMessages: [
-                        createResponseError('Refresh token revoked'),
-                    ],
-                };
-            }
-            await usersRepository.updateUserRevokedTokens(
-                new ObjectId(result.userId),
-                refreshToken
-            );
-            return {
-                status: 'Success',
-                data: {
-                    accessToken: jwtService.generateAccessToken(result.userId),
-                    refreshToken: jwtService.generateRefreshToken(
-                        result.userId
-                    ),
-                },
-            };
-        } catch {
-            return {
-                status: 'Unauthorized',
-                errorsMessages: [createResponseError('Invalid refresh token')],
-            };
+        const validationResult = await this.validateRefreshToken(refreshToken);
+        if (validationResult.status !== 'Success') {
+            return validationResult;
         }
+        await usersRepository.updateUserRevokedTokens(
+            new ObjectId(validationResult.data.userId),
+            refreshToken
+        );
+        const updatedAccessToken = jwtService.generateAccessToken(
+            validationResult.data.userId
+        );
+        const updatedRefreshToken = jwtService.generateRefreshToken(
+            validationResult.data.userId,
+            validationResult.data.deviceId
+        );
+        const decodedIssuedToken = jwtService.decodeToken(refreshToken);
+        await sessionsRepository.updateSession({
+            userId: validationResult.data.userId,
+            deviceId: validationResult.data.deviceId,
+            iat: decodedIssuedToken.iat!,
+            exp: decodedIssuedToken.exp!,
+            ip,
+        });
+        return {
+            status: 'Success',
+            data: {
+                accessToken: updatedAccessToken,
+                refreshToken: updatedRefreshToken,
+            },
+        };
     },
 
     async logout(refreshToken: string): Promise<TResult> {
+        const validationResult = await this.validateRefreshToken(refreshToken);
+        if (validationResult.status !== 'Success') {
+            return validationResult;
+        }
+        await sessionsRepository.revokeSession(
+            validationResult.data.userId,
+            validationResult.data.deviceId
+        );
+        await usersRepository.updateUserRevokedTokens(
+            new ObjectId(validationResult.data.userId),
+            refreshToken
+        );
+        return {
+            status: 'Success',
+            data: null,
+        };
+    },
+
+    async validateRefreshToken(
+        refreshToken: string
+    ): Promise<TResult<TDecodedToken>> {
         try {
             const result = jwtService.verifyToken(refreshToken);
             if (result.exp && result.exp < Date.now() / 1000) {
+                await sessionsRepository.revokeSession(
+                    result.userId,
+                    result.deviceId
+                );
                 return {
                     status: 'Unauthorized',
                     errorsMessages: [
@@ -269,18 +293,14 @@ export const authService = {
                     ],
                 };
             }
-            await usersRepository.updateUserRevokedTokens(
-                new ObjectId(result.userId),
-                refreshToken
-            );
             return {
                 status: 'Success',
-                data: null,
+                data: result,
             };
         } catch {
             return {
-                status: 'Unauthorized',
-                errorsMessages: [createResponseError('Invalid refresh token')],
+                status: 'InternalError',
+                errorsMessages: [createResponseError('Error sending email')],
             };
         }
     },

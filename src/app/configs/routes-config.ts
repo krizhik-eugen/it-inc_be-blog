@@ -5,6 +5,7 @@ export const baseRoutes = {
     users: '/users',
     auth: '/auth',
     comments: '/comments',
+    security: '/security',
 } as const;
 
 export const routersPaths = {
@@ -36,5 +37,10 @@ export const routersPaths = {
     users: {
         main: '/',
         id: '/:id',
+    },
+    security: {
+        main: '/',
+        devices: '/devices',
+        devicesId: '/devices/:id',
     },
 } as const;

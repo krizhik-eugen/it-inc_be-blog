@@ -1,15 +1,14 @@
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
     TDeleteCommentRequest,
-    TDeleteCommentResponse,
     TGetCommentRequest,
     TGetCommentResponse,
     TUpdateCommentRequest,
-    TUpdateCommentResponse,
 } from '../types';
 import { commentsService } from '../service';
 import { commentsQueryRepository } from '../repository';
 import { createResponseError } from '../../../shared/helpers';
+import { TResponseWithError } from '../../../shared/types';
 
 export const commentsController = {
     async getComment(req: TGetCommentRequest, res: TGetCommentResponse) {
@@ -23,10 +22,7 @@ export const commentsController = {
         res.status(HTTP_STATUS_CODES.OK).json(comment);
     },
 
-    async updateComment(
-        req: TUpdateCommentRequest,
-        res: TUpdateCommentResponse
-    ) {
+    async updateComment(req: TUpdateCommentRequest, res: TResponseWithError) {
         const commentId = req.params.id;
         const userId = req.userId!;
         const { content } = req.body;
@@ -50,10 +46,7 @@ export const commentsController = {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 
-    async deleteComment(
-        req: TDeleteCommentRequest,
-        res: TDeleteCommentResponse
-    ) {
+    async deleteComment(req: TDeleteCommentRequest, res: TResponseWithError) {
         const result = await commentsService.deleteComment(
             req.params.id,
             req.userId!
