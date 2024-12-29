@@ -96,7 +96,6 @@ export const authService = {
                 isConfirmed: 'NotConfirmed',
             },
             createdAt: new Date().toISOString(),
-            revokedRefreshTokens: [],
         };
         await usersRepository.addNewUser(newUser);
         // try {
