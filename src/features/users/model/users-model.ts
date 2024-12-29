@@ -13,7 +13,6 @@ export type UserDBModel = OptionalUnlessRequiredId<{
         isConfirmed: 'Confirmed' | 'NotConfirmed';
     };
     createdAt: string;
-    revokedRefreshTokens: string[];
 }>;
 
 export type UsersDBSearchParams = {

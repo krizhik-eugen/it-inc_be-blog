@@ -2,7 +2,6 @@ import { sessionsRepository } from '../repository';
 import { SessionViewModel } from '../types';
 import { TResult } from '../../../shared/types';
 import { authService } from '../../auth';
-import { create } from 'domain';
 import { createResponseError } from '../../../shared/helpers';
 
 export const sessionService = {

@@ -215,10 +215,6 @@ export const authService = {
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
-        await usersRepository.updateUserRevokedTokens(
-            new ObjectId(validationResult.data.userId),
-            refreshToken
-        );
         const updatedAccessToken = jwtService.generateAccessToken(
             validationResult.data.userId
         );
@@ -252,10 +248,6 @@ export const authService = {
             validationResult.data.userId,
             validationResult.data.deviceId
         );
-        await usersRepository.updateUserRevokedTokens(
-            new ObjectId(validationResult.data.userId),
-            refreshToken
-        );
         return {
             status: 'Success',
             data: null,
@@ -282,18 +274,12 @@ export const authService = {
             const user = await usersRepository.findUserById(
                 new ObjectId(result.userId)
             );
-            const isTokenRevoked = user!.revokedRefreshTokens.some(
-                (token) => token === refreshToken
-            );
-            if (isTokenRevoked) {
+            if (!user) {
                 return {
                     status: 'Unauthorized',
-                    errorsMessages: [
-                        createResponseError('Refresh token revoked'),
-                    ],
+                    errorsMessages: [createResponseError('User not found')],
                 };
             }
-
             const session = await sessionsRepository.findSession(
                 result.userId,
                 result.deviceId
@@ -305,10 +291,6 @@ export const authService = {
                 };
             }
             if (session.iat !== result.iat) {
-                await usersRepository.updateUserRevokedTokens(
-                    new ObjectId(result.userId),
-                    refreshToken
-                );
                 return {
                     status: 'Unauthorized',
                     errorsMessages: [createResponseError('Invalid token')],
