@@ -40,7 +40,7 @@ export const securityController = {
 
     async terminateDeviceSession(req: Request, res: TResponseWithError) {
         const refreshToken = req.cookies.refreshToken;
-        const deviceId = req.params.deviceId;
+        const deviceId = req.params.id;
         const result = await sessionService.terminateDeviceSession(
             refreshToken,
             deviceId
