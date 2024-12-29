@@ -51,6 +51,12 @@ export const securityController = {
             });
             return;
         }
+        if (result.status === 'Forbidden') {
+            res.status(HTTP_STATUS_CODES.FORBIDDEN).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                 errorsMessages: result.errorsMessages,

@@ -293,6 +293,27 @@ export const authService = {
                     ],
                 };
             }
+
+            const session = await sessionsRepository.findSession(
+                result.userId,
+                result.deviceId
+            );
+            if (!session) {
+                return {
+                    status: 'Unauthorized',
+                    errorsMessages: [createResponseError('Session not found')],
+                };
+            }
+            if (session.iat !== result.iat) {
+                await usersRepository.updateUserRevokedTokens(
+                    new ObjectId(result.userId),
+                    refreshToken
+                );
+                return {
+                    status: 'Unauthorized',
+                    errorsMessages: [createResponseError('Invalid token')],
+                };
+            }
             return {
                 status: 'Success',
                 data: result,

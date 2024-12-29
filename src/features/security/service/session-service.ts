@@ -66,6 +66,12 @@ export const sessionService = {
                 errorsMessages: [createResponseError('Session is not found')],
             };
         }
+        if (session.userId !== validationResult.data.userId) {
+            return {
+                status: 'Forbidden',
+                errorsMessages: [createResponseError('You are not an owner')],
+            };
+        }
         await sessionsRepository.revokeAllSessionsExceptCurrent(
             validationResult.data.userId,
             deviceId
