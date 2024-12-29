@@ -221,7 +221,7 @@ export const authService = {
             validationResult.data.userId,
             validationResult.data.deviceId
         );
-        const decodedIssuedToken = jwtService.decodeToken(refreshToken);
+        const decodedIssuedToken = jwtService.decodeToken(updatedRefreshToken);
         await sessionsRepository.updateSession({
             deviceId: validationResult.data.deviceId,
             iat: decodedIssuedToken.iat!,
