@@ -3,7 +3,7 @@ import { TResponseWithError } from '../../shared/types';
 export type SessionViewModel = {
     ip: string;
     title: string;
-    lastActiveDate: number;
+    lastActiveDate: string;
     deviceId: string;
 };
 

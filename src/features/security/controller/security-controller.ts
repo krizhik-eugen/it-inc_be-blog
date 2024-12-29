@@ -45,6 +45,12 @@ export const securityController = {
             refreshToken,
             deviceId
         );
+        if (result.status === 'NotFound') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                 errorsMessages: result.errorsMessages,

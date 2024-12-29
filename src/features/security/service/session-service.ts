@@ -2,6 +2,8 @@ import { sessionsRepository } from '../repository';
 import { SessionViewModel } from '../types';
 import { TResult } from '../../../shared/types';
 import { authService } from '../../auth';
+import { create } from 'domain';
+import { createResponseError } from '../../../shared/helpers';
 
 export const sessionService = {
     async getAllSessionDevices(
@@ -19,7 +21,7 @@ export const sessionService = {
             deviceId: session.deviceId,
             ip: session.ip,
             title: session.deviceName,
-            lastActiveDate: session.iat,
+            lastActiveDate: new Date(session.iat * 1000).toISOString(),
         }));
         return {
             status: 'Success',
@@ -53,6 +55,16 @@ export const sessionService = {
             await authService.validateRefreshToken(refreshToken);
         if (validationResult.status !== 'Success') {
             return validationResult;
+        }
+        const session = await sessionsRepository.findSession(
+            validationResult.data.userId,
+            deviceId
+        );
+        if (!session) {
+            return {
+                status: 'NotFound',
+                errorsMessages: [createResponseError('Session is not found')],
+            };
         }
         await sessionsRepository.revokeAllSessionsExceptCurrent(
             validationResult.data.userId,
