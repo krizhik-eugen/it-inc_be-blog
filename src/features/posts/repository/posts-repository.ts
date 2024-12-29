@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongodb';
-import { blogsRepository } from '../../blogs';
 import { postsCollection, PostDBModel } from '../model';
 
 export const postsRepository = {

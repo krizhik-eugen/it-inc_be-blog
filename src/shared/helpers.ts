@@ -134,14 +134,14 @@ export const getEmailConfirmationTemplate = (confirmationCode: string) => `
 `;
 
 export const getDeviceTitle = (userAgent = '') => {
-    let deviceTitle = 'Unknown device ';
+    let deviceTitle = 'Unknown device';
     const uaData = UAParser(userAgent);
     if (uaData.device.vendor) {
         deviceTitle = `${uaData.device.vendor} ` + `${uaData.device.model}`;
         return deviceTitle;
     }
     if (uaData.browser.name) {
-        deviceTitle += `${uaData.browser.name} ` + `${uaData.browser.version}`;
+        deviceTitle += ` ${uaData.browser.name} ` + `${uaData.browser.version}`;
         return deviceTitle;
     }
     return deviceTitle;

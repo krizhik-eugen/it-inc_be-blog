@@ -18,7 +18,7 @@ export const sessionsRepository = {
         iat,
         ip,
     }: SessionDBModel) {
-        await sessionsCollection.insertOne({
+        const result = await sessionsCollection.insertOne({
             userId,
             deviceId,
             deviceName,
@@ -26,6 +26,7 @@ export const sessionsRepository = {
             iat,
             ip,
         });
+        return result.insertedId.toString();
     },
 
     async updateSession({ deviceId, iat, exp, ip }: Partial<SessionDBModel>) {
