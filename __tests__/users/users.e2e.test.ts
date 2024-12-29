@@ -16,6 +16,7 @@ import {
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository, UserViewModel } from '../../src/features/users';
+import { testingService } from '../../src/features/testing';
 
 describe('Users Controller', () => {
     const setTestUsers = async () => {
@@ -32,6 +33,7 @@ describe('Users Controller', () => {
     }, 10000);
 
     afterAll(async () => {
+        await testingService.deleteAllData();
         await DBHandlers.closeDB();
     });
 

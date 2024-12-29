@@ -51,6 +51,6 @@ export const sessionsRepository = {
     },
 
     async clearSessions() {
-        await sessionsCollection.deleteMany({});
+        return await sessionsCollection.deleteMany({});
     },
 };

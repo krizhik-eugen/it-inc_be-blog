@@ -19,6 +19,8 @@ import { HTTP_STATUS_CODES } from '../../src/constants';
 import { usersRepository } from '../../src/features/users';
 import { routersPaths } from '../../src/app/configs';
 import { rateLimiterRepository } from '../../src/app/repositories';
+import { sessionsRepository } from '../../src/features/security';
+import { testingService } from '../../src/features/testing';
 
 jest.mock('nodemailer');
 jest.mock('../../src/app/configs', () => ({
@@ -40,7 +42,7 @@ describe('Auth Controller', () => {
     });
 
     afterAll(async () => {
-        await usersRepository.clearUsers();
+        await testingService.deleteAllData();
         await DBHandlers.closeDB();
     });
 
@@ -187,7 +189,7 @@ describe('Auth Controller', () => {
         });
 
         it('returns an error if token is not valid', async () => {
-            const inValidToken = accessToken + '123';
+            const inValidToken = 'qw123' + accessToken;
             const response = await req
                 .get(`${baseRoutes.auth}${routersPaths.auth.me}`)
                 .auth(inValidToken, { type: 'bearer' });

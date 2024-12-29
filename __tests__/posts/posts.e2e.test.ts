@@ -29,6 +29,7 @@ import {
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { commentsRepository } from '../../src/features/comments';
 import { routersPaths } from '../../src/app/configs';
+import { testingService } from '../../src/features/testing';
 
 describe('Posts Controller', () => {
     let createdTestBlog: BlogViewModel;
@@ -36,7 +37,7 @@ describe('Posts Controller', () => {
     let createdTestPost_2: PostViewModel;
     let testPost: PostCreateRequestModel;
     let accessToken = '';
-    const inValidToken = accessToken + '123';
+    const inValidToken = 'qw123' + accessToken;
 
     beforeAll(async () => {
         await DBHandlers.connectToDB();
@@ -59,6 +60,7 @@ describe('Posts Controller', () => {
     }, 15000);
 
     afterAll(async () => {
+        await testingService.deleteAllData();
         await DBHandlers.closeDB();
     });
 

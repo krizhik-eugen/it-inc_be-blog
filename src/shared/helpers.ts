@@ -138,11 +138,9 @@ export const getDeviceTitle = (userAgent = '') => {
     const uaData = UAParser(userAgent);
     if (uaData.device.vendor) {
         deviceTitle = `${uaData.device.vendor} ` + `${uaData.device.model}`;
-        return deviceTitle;
     }
     if (uaData.browser.name) {
         deviceTitle += ` ${uaData.browser.name} ` + `${uaData.browser.version}`;
-        return deviceTitle;
     }
     return deviceTitle;
 };

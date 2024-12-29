@@ -28,6 +28,7 @@ import {
     postsRepository,
 } from '../../src/features/posts';
 import { ObjectId } from 'mongodb';
+import { testingService } from '../../src/features/testing';
 
 describe('Blogs Controller', () => {
     let createdTestBlog: BlogViewModel;
@@ -53,6 +54,7 @@ describe('Blogs Controller', () => {
     }, 10000);
 
     afterAll(async () => {
+        await testingService.deleteAllData();
         await DBHandlers.closeDB();
     });
 

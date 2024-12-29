@@ -21,6 +21,7 @@ import {
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { CommentViewModel } from '../../src/features/comments';
+import { testingService } from '../../src/features/testing';
 
 describe('Comments Controller', () => {
     let createdTestBlog: BlogViewModel;
@@ -33,7 +34,7 @@ describe('Comments Controller', () => {
     let addedComment_2: CommentViewModel;
     let addedUserId_1 = '';
     let addedUserId_2 = '';
-    const inValidToken = accessToken_1 + '123';
+    const inValidToken = 'qw123' + accessToken_1;
 
     beforeAll(async () => {
         // init data for tests: create Blog, Post, Users
@@ -77,6 +78,7 @@ describe('Comments Controller', () => {
     });
 
     afterAll(async () => {
+        await testingService.deleteAllData();
         await DBHandlers.closeDB();
     });
 
