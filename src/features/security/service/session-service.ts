@@ -55,9 +55,7 @@ export const sessionService = {
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
-        const session = await sessionsRepository.findSession(
-            validationResult.data.userId
-        );
+        const session = await sessionsRepository.findSession(deviceId);
         if (!session) {
             return {
                 status: 'NotFound',
