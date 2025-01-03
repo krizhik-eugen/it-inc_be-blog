@@ -1,7 +1,6 @@
-import { OptionalUnlessRequiredId } from 'mongodb';
-import { db } from '../../../db';
+import { model, Schema } from 'mongoose';
 
-export type CommentDBModel = OptionalUnlessRequiredId<{
+export interface CommentDBModel {
     content: string;
     commentatorInfo: {
         userId: string;
@@ -9,7 +8,7 @@ export type CommentDBModel = OptionalUnlessRequiredId<{
     };
     createdAt: string;
     postId: string;
-}>;
+}
 
 export type CommentsDBSearchParams = {
     sortBy: 'createdAt';
@@ -18,4 +17,14 @@ export type CommentsDBSearchParams = {
     limit: number;
 };
 
-export const commentsCollection = db.collection<CommentDBModel>('comments');
+const commentsSchema = new Schema<CommentDBModel>({
+    content: String,
+    commentatorInfo: {
+        userId: String,
+        userLogin: String,
+    },
+    createdAt: String,
+    postId: String,
+});
+
+export const CommentsModel = model('comments', commentsSchema);

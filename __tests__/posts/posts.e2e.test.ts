@@ -85,6 +85,155 @@ describe('Posts Controller', () => {
         }
     };
 
+    describe('GET /posts/:id/comments', () => {
+        it('returns a list of comments', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdTestPost.id}/comments`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.totalCount).toEqual(19);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.pagesCount).toEqual(2);
+            expect(response.body.items[0]).toHaveProperty('createdAt');
+            expect(response.body.items[0]).toHaveProperty('content');
+            expect(response.body.items[0].content).toEqual(
+                getTestComment(19).content
+            );
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeGreaterThan(
+                new Date(response.body.items[9].createdAt).getTime()
+            );
+        });
+
+        it('returns errors if invalid search params are provided', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdTestPost.id}/comments?sortDirection=ascqwerty&sortBy=createdAtqwerty&pageSize=0&pageNumber=big_number`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+            expect(response.body.errorsMessages.length).toEqual(4);
+            const errorsParams = response.body.errorsMessages.map(
+                (error: { message: string; field: string }) => error.field
+            );
+            ['sortDirection', 'sortBy', 'pageSize', 'pageNumber'].forEach(
+                (param) => {
+                    expect(errorsParams).toContain(param);
+                }
+            );
+        });
+
+        it('returns a list of comments sorted by createdAt and ascending order', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdTestPost.id}/comments?sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items[0].content).toEqual(
+                getTestComment(1).content
+            );
+            expect(
+                new Date(response.body.items[0].createdAt).getTime()
+            ).toBeLessThan(
+                new Date(response.body.items[8].createdAt).getTime()
+            );
+            expect(response.body.pagesCount).toEqual(2);
+            expect(response.body.totalCount).toEqual(19);
+        });
+
+        it('returns a list of comments with pagination and page size 3', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdTestPost.id}/comments?pageSize=3&sortDirection=asc`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(1);
+            expect(response.body.items[2].content).toEqual(
+                getTestComment(3).content
+            );
+        });
+
+        it('returns a list of comments with pagination, page size 3, and page number 2', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdTestPost.id}/comments?pageSize=3&sortDirection=asc&pageNumber=2`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(3);
+            expect(response.body.pageSize).toEqual(3);
+            expect(response.body.page).toEqual(2);
+            expect(response.body.items[2].content).toEqual(
+                getTestComment(6).content
+            );
+        });
+
+        it('returns a list of comments with pagination, page size 5, and page number 4', async () => {
+            const response = await req.get(
+                `${baseRoutes.posts}/${createdTestPost.id}/comments?pageSize=5&sortDirection=asc&pageNumber=4`
+            );
+            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
+            expect(response.body.items.length).toEqual(4);
+            expect(response.body.pageSize).toEqual(5);
+            expect(response.body.page).toEqual(4);
+            expect(response.body.items[0].content).toEqual(
+                getTestComment(16).content
+            );
+        });
+    });
+
+    describe('POST /posts/:id/comments', () => {
+        it('can not create a comment without authorization', async () => {
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
+                .send(getTestComment(1));
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('can not create a comment if postId is invalid', async () => {
+            const response = await req
+                .post(`${baseRoutes.posts}/${validObjectId}/comments`)
+                .auth(...getUserAuthData(accessToken))
+                .send(getTestComment(1));
+            expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
+
+        it('can not create a comment if content is too short', async () => {
+            const invalidComment = {
+                content: 'updated',
+            };
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
+                .auth(...getUserAuthData(accessToken))
+                .send(invalidComment);
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+        });
+
+        it('can not create a comment if content is too long', async () => {
+            const invalidComment = {
+                content: textWithLengthGraterThan300,
+            };
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
+                .auth(...getUserAuthData(accessToken))
+                .send(invalidComment);
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+        });
+
+        it('create a comment', async () => {
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
+                .auth(...getUserAuthData(accessToken))
+                .send(getTestComment(1));
+            expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
+        });
+
+        it('can not create a comment if auth data is invalid', async () => {
+            const response = await req
+                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
+                .auth(...getUserAuthData(inValidToken))
+                .send(getTestComment(1));
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+    });
+
     describe('GET /posts', () => {
         it('returns a list of posts', async () => {
             const response = await req.get(`${baseRoutes.posts}`);
@@ -504,155 +653,6 @@ describe('Posts Controller', () => {
                 .delete(`${baseRoutes.posts}/${validObjectId}`)
                 .auth(...validAuthData);
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
-        });
-    });
-
-    describe('GET /posts/:id/comments', () => {
-        it('returns a list of comments', async () => {
-            const response = await req.get(
-                `${baseRoutes.posts}/${createdTestPost.id}/comments`
-            );
-            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.totalCount).toEqual(19);
-            expect(response.body.page).toEqual(1);
-            expect(response.body.pagesCount).toEqual(2);
-            expect(response.body.items[0]).toHaveProperty('createdAt');
-            expect(response.body.items[0]).toHaveProperty('content');
-            expect(response.body.items[0].content).toEqual(
-                getTestComment(19).content
-            );
-            expect(
-                new Date(response.body.items[0].createdAt).getTime()
-            ).toBeGreaterThan(
-                new Date(response.body.items[9].createdAt).getTime()
-            );
-        });
-
-        it('returns errors if invalid search params are provided', async () => {
-            const response = await req.get(
-                `${baseRoutes.posts}/${createdTestPost.id}/comments?sortDirection=ascqwerty&sortBy=createdAtqwerty&pageSize=0&pageNumber=big_number`
-            );
-            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
-            expect(response.body.errorsMessages.length).toEqual(4);
-            const errorsParams = response.body.errorsMessages.map(
-                (error: { message: string; field: string }) => error.field
-            );
-            ['sortDirection', 'sortBy', 'pageSize', 'pageNumber'].forEach(
-                (param) => {
-                    expect(errorsParams).toContain(param);
-                }
-            );
-        });
-
-        it('returns a list of comments sorted by createdAt and ascending order', async () => {
-            const response = await req.get(
-                `${baseRoutes.posts}/${createdTestPost.id}/comments?sortDirection=asc`
-            );
-            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items[0].content).toEqual(
-                getTestComment(1).content
-            );
-            expect(
-                new Date(response.body.items[0].createdAt).getTime()
-            ).toBeLessThan(
-                new Date(response.body.items[8].createdAt).getTime()
-            );
-            expect(response.body.pagesCount).toEqual(2);
-            expect(response.body.totalCount).toEqual(19);
-        });
-
-        it('returns a list of comments with pagination and page size 3', async () => {
-            const response = await req.get(
-                `${baseRoutes.posts}/${createdTestPost.id}/comments?pageSize=3&sortDirection=asc`
-            );
-            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items.length).toEqual(3);
-            expect(response.body.pageSize).toEqual(3);
-            expect(response.body.page).toEqual(1);
-            expect(response.body.items[2].content).toEqual(
-                getTestComment(3).content
-            );
-        });
-
-        it('returns a list of comments with pagination, page size 3, and page number 2', async () => {
-            const response = await req.get(
-                `${baseRoutes.posts}/${createdTestPost.id}/comments?pageSize=3&sortDirection=asc&pageNumber=2`
-            );
-            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items.length).toEqual(3);
-            expect(response.body.pageSize).toEqual(3);
-            expect(response.body.page).toEqual(2);
-            expect(response.body.items[2].content).toEqual(
-                getTestComment(6).content
-            );
-        });
-
-        it('returns a list of comments with pagination, page size 5, and page number 4', async () => {
-            const response = await req.get(
-                `${baseRoutes.posts}/${createdTestPost.id}/comments?pageSize=5&sortDirection=asc&pageNumber=4`
-            );
-            expect(response.status).toBe(HTTP_STATUS_CODES.OK);
-            expect(response.body.items.length).toEqual(4);
-            expect(response.body.pageSize).toEqual(5);
-            expect(response.body.page).toEqual(4);
-            expect(response.body.items[0].content).toEqual(
-                getTestComment(16).content
-            );
-        });
-    });
-
-    describe('POST /posts/:id/comments', () => {
-        it('can not create a comment without authorization', async () => {
-            const response = await req
-                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
-                .send(getTestComment(1));
-            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
-        });
-
-        it('can not create a comment if auth data is invalid', async () => {
-            const response = await req
-                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
-                .auth(...getUserAuthData(inValidToken))
-                .send(getTestComment(1));
-            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
-        });
-
-        it('can not create a comment if postId is invalid', async () => {
-            const response = await req
-                .post(`${baseRoutes.posts}/${validObjectId}/comments`)
-                .auth(...getUserAuthData(accessToken))
-                .send(getTestComment(1));
-            expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
-        });
-
-        it('can not create a comment if content is too short', async () => {
-            const invalidComment = {
-                content: 'updated',
-            };
-            const response = await req
-                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
-                .auth(...getUserAuthData(accessToken))
-                .send(invalidComment);
-            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
-        });
-
-        it('can not create a comment if content is too long', async () => {
-            const invalidComment = {
-                content: textWithLengthGraterThan300,
-            };
-            const response = await req
-                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
-                .auth(...getUserAuthData(accessToken))
-                .send(invalidComment);
-            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
-        });
-
-        it('create a comment', async () => {
-            const response = await req
-                .post(`${baseRoutes.posts}/${createdTestPost.id}/comments`)
-                .auth(...getUserAuthData(accessToken))
-                .send(getTestComment(1));
-            expect(response.status).toBe(HTTP_STATUS_CODES.CREATED);
         });
     });
 });

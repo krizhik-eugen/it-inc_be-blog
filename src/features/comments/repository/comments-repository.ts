@@ -1,31 +1,37 @@
-import { commentsCollection, CommentDBModel } from '../model';
+import { CommentsModel, CommentDBModel } from '../model';
 
 export const commentsRepository = {
     async addNewComment(newComment: CommentDBModel) {
-        const result = await commentsCollection.insertOne(newComment);
-        return result.insertedId.toString();
+        const result = await CommentsModel.create(newComment);
+        return result.id;
     },
 
-    async updateComment(updatedComment: Partial<CommentDBModel>) {
-        const { _id, ...commentToInsert } = updatedComment;
-        const result = await commentsCollection.updateOne(
-            { _id },
-            { $set: commentToInsert }
+    async updateComment(
+        updatedComment: Partial<CommentDBModel & { id: string }>
+    ) {
+        const { id, ...commentToInsert } = updatedComment;
+        const result = await CommentsModel.findByIdAndUpdate(
+            id,
+            commentToInsert,
+            {
+                new: true,
+            }
         );
-        return result.modifiedCount > 0;
-    },
-
-    async findCommentById(_id: CommentDBModel['_id']) {
-        const result = await commentsCollection.findOne({ _id });
         return result;
     },
 
-    async deleteComment(_id: CommentDBModel['_id']) {
-        const result = await commentsCollection.deleteOne({ _id });
-        return result.deletedCount > 0;
+    async findCommentById(id: string) {
+        const result = await CommentsModel.findById(id);
+        return result;
+    },
+
+    async deleteComment(id: string) {
+        const result = await CommentsModel.findByIdAndDelete(id);
+        return result;
     },
 
     async clearComments() {
-        await commentsCollection.deleteMany({});
+        const result = await CommentsModel.deleteMany({});
+        return result.deletedCount || 0;
     },
 };

@@ -1,7 +1,6 @@
-import { OptionalUnlessRequiredId } from 'mongodb';
-import { db } from '../../../db';
+import { model, Schema } from 'mongoose';
 
-export type UserDBModel = OptionalUnlessRequiredId<{
+export interface UserDBModel {
     accountData: {
         login: string;
         email: string;
@@ -13,7 +12,7 @@ export type UserDBModel = OptionalUnlessRequiredId<{
         isConfirmed: 'Confirmed' | 'NotConfirmed';
     };
     createdAt: string;
-}>;
+}
 
 export type UsersDBSearchParams = {
     searchLoginTerm?: string;
@@ -24,4 +23,18 @@ export type UsersDBSearchParams = {
     limit: number;
 };
 
-export const usersCollection = db.collection<UserDBModel>('users');
+const usersSchema = new Schema<UserDBModel>({
+    accountData: {
+        login: String,
+        email: String,
+        passwordHash: String,
+    },
+    emailConfirmation: {
+        confirmationCode: String,
+        expirationDate: Date,
+        isConfirmed: String,
+    },
+    createdAt: String,
+});
+
+export const UsersModel = model('users', usersSchema);

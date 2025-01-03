@@ -1,5 +1,4 @@
 import { CommentCreateRequestModel } from '../types';
-import { ObjectId } from 'mongodb';
 import { commentsRepository } from '../repository/comments-repository';
 import { postsRepository } from '../../../features/posts';
 import { CommentDBModel } from '../model';
@@ -14,14 +13,14 @@ export const commentsService = {
         userId: string
     ): Promise<TResult<{ id: string }>> {
         const postId = id;
-        const post = await postsRepository.findPostById(new ObjectId(postId));
+        const post = await postsRepository.findPostById(postId);
         if (!post) {
             return {
                 status: 'NotFound',
                 errorsMessages: [createResponseError('Post is not found')],
             };
         }
-        const user = await usersRepository.findUserById(new ObjectId(userId));
+        const user = await usersRepository.findUserById(userId);
         const newComment: CommentDBModel = {
             content,
             commentatorInfo: {
@@ -52,9 +51,7 @@ export const commentsService = {
         id: string,
         userId: string
     ): Promise<TResult> {
-        const comment = await commentsRepository.findCommentById(
-            new ObjectId(id)
-        );
+        const comment = await commentsRepository.findCommentById(id);
         if (!comment) {
             return {
                 status: 'NotFound',
@@ -68,7 +65,7 @@ export const commentsService = {
             };
         }
         const isCommentUpdated = await commentsRepository.updateComment({
-            _id: new ObjectId(id),
+            id,
             content,
         });
         if (!isCommentUpdated) {
@@ -84,9 +81,7 @@ export const commentsService = {
     },
 
     async deleteComment(id: string, userId: string): Promise<TResult> {
-        const comment = await commentsRepository.findCommentById(
-            new ObjectId(id)
-        );
+        const comment = await commentsRepository.findCommentById(id);
         if (!comment) {
             return {
                 status: 'NotFound',
@@ -99,9 +94,7 @@ export const commentsService = {
                 errorsMessages: [createResponseError('You are not an owner')],
             };
         }
-        const isCommentDeleted = await commentsRepository.deleteComment(
-            new ObjectId(id)
-        );
+        const isCommentDeleted = await commentsRepository.deleteComment(id);
         if (!isCommentDeleted) {
             return {
                 status: 'NotFound',

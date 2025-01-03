@@ -1,12 +1,13 @@
 import { securityController } from './controller';
-import { sessionsCollection } from './model';
-import { sessionsRepository } from './repository';
+import { SessionsModel } from './model';
+import { sessionsQueryRepository, sessionsRepository } from './repository';
 import { securityRouter } from './router';
 import { sessionService } from './service';
 
 export {
-    sessionsCollection,
+    SessionsModel,
     sessionsRepository,
+    sessionsQueryRepository,
     securityController,
     sessionService,
     securityRouter,

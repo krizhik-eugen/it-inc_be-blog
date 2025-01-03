@@ -41,6 +41,6 @@ authRouter
 
 authRouter
     .route(routersPaths.auth.refreshToken)
-    .post(authController.generateNewTokens);
+    .post(authController.createNewSession);
 
 authRouter.route(routersPaths.auth.logout).post(authController.logout);

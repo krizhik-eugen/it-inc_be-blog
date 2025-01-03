@@ -380,6 +380,7 @@ describe('Users Controller', () => {
             password: 'password101',
         };
         let createdUserToDelete: UserViewModel;
+
         beforeAll(async () => {
             createdUserToDelete = await addNewUser(newUserToDelete);
         });

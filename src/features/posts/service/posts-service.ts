@@ -1,7 +1,6 @@
 import { PostCreateRequestModel } from '../types';
 import { postsRepository } from '../repository';
 import { blogsRepository } from '../../../features/blogs';
-import { ObjectId } from 'mongodb';
 import { PostDBModel } from '../model';
 import { TResult } from '../../../shared/types';
 import { createResponseError } from '../../../shared/helpers';
@@ -13,7 +12,7 @@ export const postsService = {
         content,
         blogId,
     }: PostCreateRequestModel): Promise<TResult<{ id: string }>> {
-        const blog = await blogsRepository.findBlogById(new ObjectId(blogId));
+        const blog = await blogsRepository.findBlogById(blogId);
         if (!blog) {
             return {
                 status: 'NotFound',
@@ -51,7 +50,7 @@ export const postsService = {
     }: Omit<PostCreateRequestModel, 'blogId'> & { id: string }): Promise<
         TResult<{ postId: string }>
     > {
-        const blog = await blogsRepository.findBlogById(new ObjectId(id));
+        const blog = await blogsRepository.findBlogById(id);
         if (!blog) {
             return {
                 status: 'NotFound',
@@ -62,7 +61,7 @@ export const postsService = {
             title,
             shortDescription,
             content,
-            blogId: blog._id.toString(),
+            blogId: blog.id,
             blogName: blog.name,
             createdAt: new Date().toISOString(),
         };
@@ -80,14 +79,14 @@ export const postsService = {
     },
 
     async updatePost(
+        id: string,
         title: PostCreateRequestModel['title'],
         shortDescription: PostCreateRequestModel['shortDescription'],
         content: PostCreateRequestModel['content'],
-        blogId: PostCreateRequestModel['blogId'],
-        id: string
+        blogId: PostCreateRequestModel['blogId']
     ): Promise<TResult> {
         const isPostUpdated = await postsRepository.updatePost({
-            _id: new ObjectId(id),
+            id,
             title,
             shortDescription,
             content,
@@ -106,9 +105,7 @@ export const postsService = {
     },
 
     async deletePost(id: string): Promise<TResult> {
-        const isPostDeleted = await postsRepository.deletePost(
-            new ObjectId(id)
-        );
+        const isPostDeleted = await postsRepository.deletePost(id);
         if (!isPostDeleted) {
             return {
                 status: 'NotFound',

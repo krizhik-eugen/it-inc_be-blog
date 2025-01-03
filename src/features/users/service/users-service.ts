@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { ObjectId } from 'mongodb';
 import { UserCreateRequestModel } from '../types';
 import { usersRepository } from '../repository';
 import { createResponseError } from '../../../shared/helpers';
@@ -61,7 +60,7 @@ export const usersService = {
     },
 
     async deleteUser(id: string): Promise<TResult> {
-        const isDeleted = await usersRepository.deleteUser(new ObjectId(id));
+        const isDeleted = await usersRepository.deleteUser(id);
         if (!isDeleted) {
             return {
                 status: 'NotFound',

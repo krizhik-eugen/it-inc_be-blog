@@ -1,36 +1,36 @@
-import { blogsCollection, BlogDBModel } from '../model';
+import { BlogsModel, BlogDBModel } from '../model';
 
 export const blogsRepository = {
     async getBlogsCount(findName = '') {
-        return await blogsCollection.countDocuments({
+        return await BlogsModel.countDocuments({
             name: { $regex: findName, $options: 'i' },
         });
     },
 
     async addNewBlog(newBlog: BlogDBModel) {
-        const result = await blogsCollection.insertOne(newBlog);
-        return result.insertedId.toString();
+        const result = await BlogsModel.create(newBlog);
+        return result.id;
     },
 
-    async findBlogById(_id: BlogDBModel['_id']) {
-        return await blogsCollection.findOne({ _id });
+    async findBlogById(id: string) {
+        return await BlogsModel.findById(id);
     },
 
-    async updateBlog(updatedBlog: Partial<BlogDBModel>) {
-        const { _id, ...blogToUpdate } = updatedBlog;
-        const result = await blogsCollection.updateOne(
-            { _id },
-            { $set: blogToUpdate }
-        );
-        return result.modifiedCount > 0;
+    async updateBlog(updatedBlog: Partial<BlogDBModel & { id: string }>) {
+        const { id, ...blogToUpdate } = updatedBlog;
+        const result = await BlogsModel.findByIdAndUpdate(id, blogToUpdate, {
+            new: true,
+        });
+        return result;
     },
 
-    async deleteBlog(_id: BlogDBModel['_id']) {
-        const result = await blogsCollection.deleteOne({ _id });
-        return result.deletedCount > 0;
+    async deleteBlog(id: string) {
+        const result = await BlogsModel.findByIdAndDelete(id);
+        return result;
     },
 
     async clearBlogs() {
-        await blogsCollection.deleteMany({});
+        const result = await BlogsModel.deleteMany({});
+        return result.deletedCount || 0;
     },
 };

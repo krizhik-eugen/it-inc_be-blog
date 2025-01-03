@@ -1,16 +1,14 @@
-import { MongoClient, Db } from 'mongodb';
+import { connect, disconnect } from 'mongoose';
 import { mongoDBName, mongoDBUrl } from '../app/configs';
 
-export const client: MongoClient = new MongoClient(mongoDBUrl);
-export const db: Db = client.db(mongoDBName);
 export const connectToDB = async () => {
     try {
-        await client.connect();
+        await connect(`${mongoDBUrl}/${mongoDBName}`);
         console.log('connected to db');
         return true;
     } catch (e) {
         console.log(e);
-        await client.close();
+        await disconnect();
         return false;
     }
 };

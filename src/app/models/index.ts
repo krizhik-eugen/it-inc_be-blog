@@ -1,7 +1,7 @@
 import {
-    rateLimiterCollection,
+    RateLimiterModel,
     RateLimiterDBModel,
     RateLimiterDBSearchParams,
 } from './rate-limiter';
 
-export { rateLimiterCollection, RateLimiterDBModel, RateLimiterDBSearchParams };
+export { RateLimiterModel, RateLimiterDBModel, RateLimiterDBSearchParams };

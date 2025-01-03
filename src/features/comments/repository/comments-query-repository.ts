@@ -1,17 +1,14 @@
-import { ObjectId } from 'mongodb';
-import { commentsCollection, CommentsDBSearchParams } from '../model';
-import { postsCollection } from '../../../features/posts';
+import { CommentsModel, CommentsDBSearchParams } from '../model';
+import { PostsModel } from '../../../features/posts';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
 
 export const commentsQueryRepository = {
     async getComment(id: string) {
-        const foundComment = await commentsCollection.findOne({
-            _id: new ObjectId(id),
-        });
+        const foundComment = await CommentsModel.findById(id);
         if (!foundComment) return undefined;
         return {
-            id: foundComment._id.toString(),
+            id: foundComment.id,
             content: foundComment.content,
             commentatorInfo: {
                 userId: foundComment.commentatorInfo.userId,
@@ -30,24 +27,20 @@ export const commentsQueryRepository = {
         >;
         postId: string;
     }) {
-        const post = await postsCollection.findOne({
-            _id: new ObjectId(postId),
-        });
+        const post = await PostsModel.findById(postId);
         if (!post) {
             return;
         }
         const dbSearchQueries =
             getDBSearchQueries<CommentsDBSearchParams['sortBy']>(searchQueries);
-        const totalCount = await commentsCollection.countDocuments({ postId });
-        const foundPosts = await commentsCollection
-            .find({ postId })
+        const totalCount = await CommentsModel.countDocuments({ postId });
+        const foundPosts = await CommentsModel.find({ postId })
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
-            .limit(dbSearchQueries.limit)
-            .toArray();
+            .limit(dbSearchQueries.limit);
         const mappedFoundComments = foundPosts.map((comment) => {
             return {
-                id: comment._id.toString(),
+                id: comment.id,
                 commentatorInfo: {
                     userId: comment.commentatorInfo.userId,
                     userLogin: comment.commentatorInfo.userLogin,

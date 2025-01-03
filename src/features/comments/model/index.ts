@@ -1,7 +1,7 @@
 import {
-    commentsCollection,
+    CommentsModel,
     CommentsDBSearchParams,
     CommentDBModel,
 } from './comments-model';
 
-export { commentsCollection, CommentsDBSearchParams, CommentDBModel };
+export { CommentsModel, CommentsDBSearchParams, CommentDBModel };

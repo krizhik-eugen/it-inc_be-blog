@@ -1,13 +1,12 @@
-import { OptionalUnlessRequiredId } from 'mongodb';
-import { db } from '../../../db';
+import { model, Schema } from 'mongoose';
 
-export type BlogDBModel = OptionalUnlessRequiredId<{
+export interface BlogDBModel {
     name: string;
     description: string;
     websiteUrl: string;
     isMembership: boolean;
     createdAt: string;
-}>;
+}
 
 export type BlogsDBSearchParams = {
     searchNameTerm?: string;
@@ -17,4 +16,12 @@ export type BlogsDBSearchParams = {
     limit: number;
 };
 
-export const blogsCollection = db.collection<BlogDBModel>('blogs');
+const blogsSchema = new Schema<BlogDBModel>({
+    name: String,
+    description: String,
+    websiteUrl: String,
+    isMembership: Boolean,
+    createdAt: String,
+});
+
+export const BlogsModel = model('blogs', blogsSchema);

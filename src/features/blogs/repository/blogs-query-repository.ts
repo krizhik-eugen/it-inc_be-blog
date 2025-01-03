@@ -1,5 +1,4 @@
-import { ObjectId } from 'mongodb';
-import { blogsCollection, BlogDBModel, BlogsDBSearchParams } from '../model';
+import { BlogsModel, BlogsDBSearchParams } from '../model';
 import { BlogViewModel } from '../types';
 import {
     AllItemsViewModel,
@@ -17,20 +16,18 @@ export const blogsQueryRepository = {
     }): Promise<AllItemsViewModel<BlogViewModel>> {
         const dbSearchQueries =
             getDBSearchQueries<BlogsDBSearchParams['sortBy']>(searchQueries);
-        const totalCount = await blogsCollection.countDocuments({
+        const totalCount = await BlogsModel.countDocuments({
             name: { $regex: term ?? '', $options: 'i' },
         });
-        const foundBlogs = await blogsCollection
-            .find({
-                name: { $regex: term ?? '', $options: 'i' },
-            })
+        const foundBlogs = await BlogsModel.find({
+            name: { $regex: term ?? '', $options: 'i' },
+        })
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
-            .limit(dbSearchQueries.limit)
-            .toArray();
+            .limit(dbSearchQueries.limit);
         const mappedFoundBlogs: BlogViewModel[] = foundBlogs
-            ? foundBlogs.map((blog: Required<BlogDBModel>) => ({
-                  id: blog._id.toString(),
+            ? foundBlogs.map((blog) => ({
+                  id: blog.id,
                   name: blog.name,
                   description: blog.description,
                   websiteUrl: blog.websiteUrl,
@@ -48,12 +45,10 @@ export const blogsQueryRepository = {
     },
 
     async getBlog(id: string): Promise<BlogViewModel | undefined> {
-        const foundBlog = await blogsCollection.findOne({
-            _id: new ObjectId(id),
-        });
+        const foundBlog = await BlogsModel.findById(id);
         if (!foundBlog) return undefined;
         return {
-            id: foundBlog._id.toString(),
+            id: foundBlog.id,
             name: foundBlog.name,
             description: foundBlog.description,
             websiteUrl: foundBlog.websiteUrl,

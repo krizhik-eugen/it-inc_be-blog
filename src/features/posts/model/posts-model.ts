@@ -1,14 +1,13 @@
-import { OptionalUnlessRequiredId } from 'mongodb';
-import { db } from '../../../db';
+import { model, Schema } from 'mongoose';
 
-export type PostDBModel = OptionalUnlessRequiredId<{
+export interface PostDBModel {
     blogId: string;
     blogName: string;
     content: string;
     createdAt: string;
     shortDescription: string;
     title: string;
-}>;
+}
 
 export type PostsDBSearchParams = {
     sortBy: 'createdAt' | 'title' | 'blogName';
@@ -17,4 +16,13 @@ export type PostsDBSearchParams = {
     limit: number;
 };
 
-export const postsCollection = db.collection<PostDBModel>('posts');
+const postsSchema = new Schema<PostDBModel>({
+    blogId: String,
+    blogName: String,
+    content: String,
+    createdAt: String,
+    shortDescription: String,
+    title: String,
+});
+
+export const PostsModel = model('posts', postsSchema);

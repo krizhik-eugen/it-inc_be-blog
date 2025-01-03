@@ -1,8 +1,7 @@
-import { ObjectId } from 'mongodb';
-import { postsCollection, PostsDBSearchParams } from '../model';
+import { PostsModel, PostsDBSearchParams } from '../model';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
-import { blogsCollection } from '../../../features/blogs';
+import { BlogsModel } from '../../../features/blogs';
 
 export const postsQueryRepository = {
     async getPosts({
@@ -12,16 +11,14 @@ export const postsQueryRepository = {
     }) {
         const dbSearchQueries =
             getDBSearchQueries<PostsDBSearchParams['sortBy']>(searchQueries);
-        const totalCount = await postsCollection.countDocuments({});
-        const foundPosts = await postsCollection
-            .find({})
+        const totalCount = await PostsModel.countDocuments({});
+        const foundPosts = await PostsModel.find({})
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
-            .limit(dbSearchQueries.limit)
-            .toArray();
+            .limit(dbSearchQueries.limit);
         const mappedFoundPosts = foundPosts.map((post) => {
             return {
-                id: post._id.toString(),
+                id: post.id,
                 title: post.title,
                 shortDescription: post.shortDescription,
                 content: post.content,
@@ -40,12 +37,10 @@ export const postsQueryRepository = {
     },
 
     async getPost(id: string) {
-        const foundPost = await postsCollection.findOne({
-            _id: new ObjectId(id),
-        });
+        const foundPost = await PostsModel.findById(id);
         if (!foundPost) return undefined;
         return {
-            id: foundPost._id.toString(),
+            id: foundPost.id,
             title: foundPost.title,
             shortDescription: foundPost.shortDescription,
             content: foundPost.content,
@@ -62,24 +57,20 @@ export const postsQueryRepository = {
         searchQueries: TMappedSearchQueryParams<PostsDBSearchParams['sortBy']>;
         blogId: string;
     }) {
-        const blog = await blogsCollection.findOne({
-            _id: new ObjectId(blogId),
-        });
+        const blog = await BlogsModel.findById(blogId);
         if (!blog) {
             return;
         }
         const dbSearchQueries =
             getDBSearchQueries<PostsDBSearchParams['sortBy']>(searchQueries);
-        const totalCount = await postsCollection.countDocuments({ blogId });
-        const foundPosts = await postsCollection
-            .find({ blogId })
+        const totalCount = await PostsModel.countDocuments({ blogId });
+        const foundPosts = await PostsModel.find({ blogId })
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
-            .limit(dbSearchQueries.limit)
-            .toArray();
+            .limit(dbSearchQueries.limit);
         const mappedFoundPosts = foundPosts.map((post) => {
             return {
-                id: post._id.toString(),
+                id: post.id,
                 title: post.title,
                 shortDescription: post.shortDescription,
                 content: post.content,

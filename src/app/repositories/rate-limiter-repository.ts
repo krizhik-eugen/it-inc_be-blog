@@ -1,26 +1,28 @@
 import {
-    rateLimiterCollection,
+    RateLimiterModel,
     RateLimiterDBModel,
     RateLimiterDBSearchParams,
 } from '../models/rate-limiter';
 
 export const rateLimiterRepository = {
     async registerRequest({ ip, url, date }: RateLimiterDBModel) {
-        const result = await rateLimiterCollection.insertOne({ ip, url, date });
-        return result.insertedId.toString();
+        const result = await RateLimiterModel.create({ ip, url, date });
+        return result.id;
     },
 
     async getRequestsCount({ ip, url, timeRange }: RateLimiterDBSearchParams) {
         const now = Date.now();
         const startingTime = now - timeRange * 1000;
-        return await rateLimiterCollection.countDocuments({
+        const result = await RateLimiterModel.countDocuments({
             ip,
             url,
             date: { $gte: startingTime, $lte: now },
         });
+        return result;
     },
 
     async clearRateLimiter() {
-        await rateLimiterCollection.deleteMany({});
+        const result = await RateLimiterModel.deleteMany({});
+        return result.deletedCount || 0;
     },
 };

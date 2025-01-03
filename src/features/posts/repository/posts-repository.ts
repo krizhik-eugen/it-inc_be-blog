@@ -1,36 +1,36 @@
-import { postsCollection, PostDBModel } from '../model';
+import { PostsModel, PostDBModel } from '../model';
 
 export const postsRepository = {
     async getPostsCount(blogId = '') {
-        return await postsCollection.countDocuments({
+        return await PostsModel.countDocuments({
             blogId: { $regex: blogId ?? '', $options: 'i' },
         });
     },
 
-    async findPostById(_id: PostDBModel['_id']) {
-        return await postsCollection.findOne({ _id });
+    async findPostById(id: string) {
+        return await PostsModel.findById(id);
     },
 
     async addNewPost(newPost: PostDBModel) {
-        const result = await postsCollection.insertOne(newPost);
-        return result.insertedId.toString();
+        const result = await PostsModel.create(newPost);
+        return result.id;
     },
 
-    async updatePost(updatedPost: Partial<PostDBModel>) {
-        const { _id, ...postToInsert } = updatedPost;
-        const result = await postsCollection.updateOne(
-            { _id },
-            { $set: postToInsert }
-        );
-        return result.modifiedCount > 0;
+    async updatePost(updatedPost: Partial<PostDBModel & { id: string }>) {
+        const { id, ...postToInsert } = updatedPost;
+        const result = await PostsModel.findByIdAndUpdate(id, postToInsert, {
+            new: true,
+        });
+        return result;
     },
 
-    async deletePost(_id: PostDBModel['_id']) {
-        const result = await postsCollection.deleteOne({ _id });
-        return result.deletedCount > 0;
+    async deletePost(id: string) {
+        const result = await PostsModel.findByIdAndDelete(id);
+        return result;
     },
 
     async clearPosts() {
-        await postsCollection.deleteMany({});
+        const result = await PostsModel.deleteMany({});
+        return result.deletedCount || 0;
     },
 };

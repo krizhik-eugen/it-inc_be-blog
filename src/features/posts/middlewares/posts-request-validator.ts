@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../../shared/helpers';
 import { blogsRepository } from '../../../features/blogs';
@@ -78,10 +77,7 @@ export const postsBodySchema: Schema = {
         },
         custom: {
             options: async (value: string) => {
-                //TODO: why we do here the search (required in home tasks)
-                const blog = await blogsRepository.findBlogById(
-                    new ObjectId(value)
-                );
+                const blog = await blogsRepository.findBlogById(value);
                 if (!blog) {
                     throw 'Incorrect Blog Id, no blogs found';
                 }

@@ -45,3 +45,5 @@ export type TResendRegistrationEmailRequest = Request<
     object,
     ResendRegistrationEmailRequestModel
 >;
+
+export type TTokens = { accessToken: string; refreshToken: string };

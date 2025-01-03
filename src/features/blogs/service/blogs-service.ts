@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { blogsRepository } from '../repository';
 import { BlogCreateRequestModel, BlogViewModel } from '../types';
 import { BlogDBModel } from '../model';
@@ -36,16 +35,16 @@ export const blogsService = {
     },
 
     async updateBlog({
+        id,
         name,
         description,
         websiteUrl,
-        id,
     }: Partial<BlogViewModel>): Promise<TResult> {
         const isBlogUpdated = await blogsRepository.updateBlog({
+            id,
             name,
             description,
             websiteUrl,
-            _id: new ObjectId(id),
         });
         if (!isBlogUpdated) {
             return {
@@ -60,9 +59,7 @@ export const blogsService = {
     },
 
     async deleteBlog(id: string): Promise<TResult> {
-        const isBlogDeleted = await blogsRepository.deleteBlog(
-            new ObjectId(id)
-        );
+        const isBlogDeleted = await blogsRepository.deleteBlog(id);
         if (!isBlogDeleted) {
             return {
                 status: 'NotFound',

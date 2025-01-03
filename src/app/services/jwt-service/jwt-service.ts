@@ -23,7 +23,18 @@ export const jwtService = {
     },
 
     verifyToken(token: string) {
-        return jwt.verify(token, jwtSecret) as TDecodedToken;
+        try {
+            return {
+                error: null,
+                data: jwt.verify(token, jwtSecret) as TDecodedToken,
+            };
+        } catch (e) {
+            return {
+                data: jwt.decode(token) as TDecodedToken,
+                error:
+                    e instanceof Error ? e.message : 'Token verification error',
+            };
+        }
     },
 
     decodeToken(token: string) {

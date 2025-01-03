@@ -125,11 +125,11 @@ export const postsController = {
         const { title, shortDescription, content, blogId } = req.body;
         const id = req.params.id;
         const result = await postsService.updatePost(
+            id,
             title,
             shortDescription,
             content,
-            blogId,
-            id
+            blogId
         );
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

@@ -1,8 +1,11 @@
-import { Filter, ObjectId } from 'mongodb';
+import { FilterQuery } from 'mongoose';
 import { getDBSearchQueries } from '../../../shared/helpers';
-import { usersCollection, UserDBModel, UsersDBSearchParams } from '../model';
+import { UsersModel, UserDBModel, UsersDBSearchParams } from '../model';
 import { UserViewModel } from '../types';
-import { TMappedSearchQueryParams } from '../../../shared/types';
+import {
+    AllItemsViewModel,
+    TMappedSearchQueryParams,
+} from '../../../shared/types';
 
 export const usersQueryRepository = {
     async getUsers({
@@ -13,11 +16,11 @@ export const usersQueryRepository = {
         searchQueries: TMappedSearchQueryParams<UsersDBSearchParams['sortBy']>;
         searchLoginTerm?: string;
         searchEmailTerm?: string;
-    }) {
+    }): Promise<AllItemsViewModel<UserViewModel>> {
         const dbSearchQueries =
             getDBSearchQueries<UsersDBSearchParams['sortBy']>(searchQueries);
-        const findQuery: Filter<UserDBModel> = {};
-        const searchConditions: Filter<UserDBModel>[] = [];
+        const findQuery: FilterQuery<UserDBModel> = {};
+        const searchConditions: FilterQuery<UserDBModel>[] = [];
         if (searchLoginTerm) {
             searchConditions.push({
                 'accountData.login': { $regex: searchLoginTerm, $options: 'i' },
@@ -35,16 +38,14 @@ export const usersQueryRepository = {
             searchQueries.sortBy === 'login' || searchQueries.sortBy === 'email'
                 ? 'accountData.' + searchQueries.sortBy
                 : searchQueries.sortBy;
-        const totalCount = await usersCollection.countDocuments(findQuery);
-        const foundUsers = await usersCollection
-            .find(findQuery)
+        const totalCount = await UsersModel.countDocuments(findQuery);
+        const foundUsers = await UsersModel.find(findQuery)
             .sort({ [sortBySearchQuery]: searchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
-            .limit(dbSearchQueries.limit)
-            .toArray();
+            .limit(dbSearchQueries.limit);
         const mappedFoundUsers: UserViewModel[] = foundUsers
-            ? foundUsers.map((user: Required<UserDBModel>) => ({
-                  id: user._id.toString(),
+            ? foundUsers.map((user) => ({
+                  id: user.id,
                   login: user.accountData.login,
                   email: user.accountData.email,
                   createdAt: user.createdAt,
@@ -59,13 +60,11 @@ export const usersQueryRepository = {
         };
     },
 
-    async getUser(id: string) {
-        const user = await usersCollection.findOne({
-            _id: new ObjectId(id),
-        });
-        if (!user) return undefined;
+    async getUser(id: string): Promise<UserViewModel | null> {
+        const user = await UsersModel.findById(id);
+        if (!user) return null;
         return {
-            id: user._id.toString(),
+            id: user.id,
             login: user.accountData.login,
             email: user.accountData.email,
             createdAt: user.createdAt,

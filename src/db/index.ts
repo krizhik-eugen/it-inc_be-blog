@@ -1,3 +1,3 @@
-import { client, connectToDB, db } from './db';
+import { connectToDB } from './db';
 
-export { client, connectToDB, db };
+export { connectToDB };

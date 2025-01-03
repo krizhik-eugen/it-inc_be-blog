@@ -1,14 +1,13 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { usersRepository } from '../../users';
-import { LoginRequestModel, RegisterRequestModel } from '../types';
+import { LoginRequestModel, RegisterRequestModel, TTokens } from '../types';
 import { createResponseError } from '../../../shared/helpers';
 import { UserDBModel } from '../../users/model';
 import { emailManager } from '../../../app/managers';
 import { TResult } from '../../../shared/types';
 import { jwtService, TDecodedToken } from '../../../app/services';
 import { getCodeExpirationDate, hashSaltRounds } from '../../../app/configs';
-import { ObjectId } from 'mongodb';
 import { sessionsRepository } from '../../security';
 
 export const authService = {
@@ -16,7 +15,7 @@ export const authService = {
         { loginOrEmail, password }: LoginRequestModel,
         deviceTitle: string,
         ip: string
-    ): Promise<TResult<{ accessToken: string; refreshToken: string }>> {
+    ): Promise<TResult<TTokens>> {
         const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail);
         if (!user) {
             return {
@@ -42,15 +41,15 @@ export const authService = {
                 errorsMessages: [createResponseError('Invalid credentials')],
             };
         }
-        const accessToken = jwtService.generateAccessToken(user._id.toString());
+        const accessToken = jwtService.generateAccessToken(user.id);
         const deviceId = uuidv4();
         const refreshToken = jwtService.generateRefreshToken(
-            user._id.toString(),
+            user.id!,
             deviceId
         );
         const decodedIssuedToken = jwtService.decodeToken(refreshToken);
         await sessionsRepository.createSession({
-            userId: user._id.toString(),
+            userId: user.id!,
             deviceId,
             ip,
             deviceName: deviceTitle,
@@ -111,7 +110,7 @@ export const authService = {
         };
         // }
         // catch {
-        //     await usersRepository.deleteUser(new ObjectId(addedUserId));
+        //     await usersRepository.deleteUser(addedUserId);
         //     return {
         //         status: 'InternalError',
         //         errorsMessages: [createResponseError('Error sending email')],
@@ -206,10 +205,10 @@ export const authService = {
         }
     },
 
-    async generateNewTokens(
+    async createNewSession(
         refreshToken: string,
         ip: string
-    ): Promise<TResult<{ accessToken: string; refreshToken: string }>> {
+    ): Promise<TResult<TTokens>> {
         const validationResult = await this.validateRefreshToken(refreshToken);
         if (validationResult.status !== 'Success') {
             return validationResult;
@@ -252,50 +251,43 @@ export const authService = {
     async validateRefreshToken(
         refreshToken: string
     ): Promise<TResult<TDecodedToken>> {
-        try {
-            const result = jwtService.verifyToken(refreshToken);
-            if (result.exp && result.exp < Date.now() / 1000) {
-                await sessionsRepository.revokeSession(result.deviceId);
-                return {
-                    status: 'Unauthorized',
-                    errorsMessages: [
-                        createResponseError('Refresh token expired'),
-                    ],
-                };
-            }
-            const user = await usersRepository.findUserById(
-                new ObjectId(result.userId)
-            );
-            if (!user) {
-                return {
-                    status: 'Unauthorized',
-                    errorsMessages: [createResponseError('User not found')],
-                };
-            }
-            const session = await sessionsRepository.findSession(
-                result.deviceId
-            );
-            if (!session) {
-                return {
-                    status: 'Unauthorized',
-                    errorsMessages: [createResponseError('Session not found')],
-                };
-            }
-            if (session.iat !== result.iat) {
-                return {
-                    status: 'Unauthorized',
-                    errorsMessages: [createResponseError('Invalid token')],
-                };
+        const result = jwtService.verifyToken(refreshToken);
+        if (result.error) {
+            if (result.data) {
+                await sessionsRepository.revokeSession(result.data.deviceId);
             }
             return {
-                status: 'Success',
-                data: result,
-            };
-        } catch {
-            return {
-                status: 'InternalError',
-                errorsMessages: [createResponseError('Error sending email')],
+                status: 'Unauthorized',
+                errorsMessages: [
+                    createResponseError('Refresh token verification error'),
+                ],
             };
         }
+        const user = await usersRepository.findUserById(result.data.userId);
+        if (!user) {
+            return {
+                status: 'Unauthorized',
+                errorsMessages: [createResponseError('User not found')],
+            };
+        }
+        const session = await sessionsRepository.findSession(
+            result.data.deviceId
+        );
+        if (!session) {
+            return {
+                status: 'Unauthorized',
+                errorsMessages: [createResponseError('Session not found')],
+            };
+        }
+        if (session.iat !== result.data.iat) {
+            return {
+                status: 'Unauthorized',
+                errorsMessages: [createResponseError('Invalid token')],
+            };
+        }
+        return {
+            status: 'Success',
+            data: result.data,
+        };
     },
 };

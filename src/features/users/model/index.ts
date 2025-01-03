@@ -1,7 +1,3 @@
-import {
-    usersCollection,
-    UsersDBSearchParams,
-    UserDBModel,
-} from './users-model';
+import { UsersDBSearchParams, UserDBModel, UsersModel } from './users-model';
 
-export { usersCollection, UsersDBSearchParams, UserDBModel };
+export { UsersDBSearchParams, UserDBModel, UsersModel };

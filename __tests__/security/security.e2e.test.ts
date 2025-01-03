@@ -1,23 +1,12 @@
-import nodemailer from 'nodemailer';
-import {
-    accessTokenExpirationTime,
-    baseRoutes,
-    rateLimiterMaxRequests,
-    refreshTokenExpirationTime,
-} from '../../src/app/configs';
+import { baseRoutes, refreshTokenExpirationTime } from '../../src/app/configs';
 import {
     addNewUser,
     DBHandlers,
     req,
     getTestUser,
-    textWithLengthGraterThan20,
-    textWithLengthGraterThan10,
-    invalidEmailFormat,
-    emailWithLengthGraterThan100,
     mockUserAgents,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { usersRepository } from '../../src/features/users';
 import { routersPaths } from '../../src/app/configs';
 import { rateLimiterRepository } from '../../src/app/repositories';
 import { sessionsRepository } from '../../src/features/security';

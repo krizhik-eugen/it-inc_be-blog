@@ -27,7 +27,6 @@ import {
     PostCreateRequestModel,
     postsRepository,
 } from '../../src/features/posts';
-import { ObjectId } from 'mongodb';
 import { testingService } from '../../src/features/testing';
 
 describe('Blogs Controller', () => {
@@ -208,7 +207,7 @@ describe('Blogs Controller', () => {
 
         afterAll(async () => {
             if (createdPostId) {
-                await postsRepository.deletePost(new ObjectId(createdPostId));
+                await postsRepository.deletePost(createdPostId);
             }
         });
 

@@ -1,13 +1,10 @@
-import { sessionsCollection } from '../model';
+import { SessionsModel } from '../model';
 import { SessionDBModel } from '../model/session-model';
 
 export const sessionsRepository = {
-    async getAllSessionDevices(userId: string) {
-        return await sessionsCollection.find({ userId }).toArray();
-    },
-
     async findSession(deviceId: string) {
-        return await sessionsCollection.findOne({ deviceId });
+        const result = await SessionsModel.findOne({ deviceId });
+        return result;
     },
 
     async createSession({
@@ -18,7 +15,7 @@ export const sessionsRepository = {
         iat,
         ip,
     }: SessionDBModel) {
-        const result = await sessionsCollection.insertOne({
+        const result = await SessionsModel.create({
             userId,
             deviceId,
             deviceName,
@@ -26,31 +23,36 @@ export const sessionsRepository = {
             iat,
             ip,
         });
-        return result.insertedId.toString();
+        return result.id;
     },
 
     async updateSession({ deviceId, iat, exp, ip }: Partial<SessionDBModel>) {
-        const result = await sessionsCollection.updateOne(
+        const result = await SessionsModel.findOneAndUpdate(
             { deviceId },
-            { $set: { iat, exp, ip } }
+            {
+                iat,
+                exp,
+                ip,
+            }
         );
-        return result.modifiedCount > 0;
+        return result;
     },
 
     async revokeSession(deviceId: string) {
-        const result = await sessionsCollection.deleteOne({ deviceId });
-        return result.deletedCount > 0;
+        const result = await SessionsModel.findOneAndDelete({ deviceId });
+        return result;
     },
 
     async revokeAllSessionsExceptCurrent(userId: string, deviceId: string) {
-        const result = await sessionsCollection.deleteMany({
+        const result = await SessionsModel.deleteMany({
             userId,
             deviceId: { $ne: deviceId },
         });
-        return result.deletedCount;
+        return result.deletedCount || 0;
     },
 
     async clearSessions() {
-        return await sessionsCollection.deleteMany({});
+        const result = await SessionsModel.deleteMany({});
+        return result.deletedCount || 0;
     },
 };

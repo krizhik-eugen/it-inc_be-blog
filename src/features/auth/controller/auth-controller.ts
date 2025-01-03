@@ -90,10 +90,10 @@ export const authController = {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     },
 
-    async generateNewTokens(req: Request, res: TLoginResponse) {
+    async createNewSession(req: Request, res: TLoginResponse) {
         const refreshToken = req.cookies.refreshToken;
         const ip = req.ip!;
-        const result = await authService.generateNewTokens(refreshToken, ip);
+        const result = await authService.createNewSession(refreshToken, ip);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                 errorsMessages: result.errorsMessages,

@@ -1,6 +1,7 @@
-import { app } from '../src/initApp';
+import { connection, disconnect } from 'mongoose';
 import { agent } from 'supertest';
-import { client, connectToDB, db } from '../src/db';
+import { app } from '../src/initApp';
+import { connectToDB } from '../src/db';
 import { BlogViewModel } from '../src/features/blogs';
 import { PostViewModel } from '../src/features/posts';
 import { baseRoutes } from '../src/app/configs';
@@ -13,8 +14,9 @@ export const DBHandlers = {
         await connectToDB();
     },
     closeDB: async () => {
-        await db.dropDatabase();
-        await client.close();
+        await connection.db?.dropDatabase();
+        await connection.close();
+        await disconnect();
     },
 };
 

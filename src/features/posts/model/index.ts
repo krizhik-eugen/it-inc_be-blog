@@ -1,7 +1,3 @@
-import {
-    postsCollection,
-    PostsDBSearchParams,
-    PostDBModel,
-} from './posts-model';
+import { PostsModel, PostsDBSearchParams, PostDBModel } from './posts-model';
 
-export { postsCollection, PostsDBSearchParams, PostDBModel };
+export { PostsModel, PostsDBSearchParams, PostDBModel };

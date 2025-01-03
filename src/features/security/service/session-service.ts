@@ -1,4 +1,4 @@
-import { sessionsRepository } from '../repository';
+import { sessionsQueryRepository, sessionsRepository } from '../repository';
 import { SessionViewModel } from '../types';
 import { TResult } from '../../../shared/types';
 import { authService } from '../../auth';
@@ -13,18 +13,12 @@ export const sessionService = {
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
-        const sessions = await sessionsRepository.getAllSessionDevices(
+        const sessions = await sessionsQueryRepository.getAllSessionDevices(
             validationResult.data.userId
         );
-        const mappedSessions = sessions.map((session) => ({
-            deviceId: session.deviceId,
-            ip: session.ip,
-            title: session.deviceName,
-            lastActiveDate: new Date(session.iat * 1000).toISOString(),
-        }));
         return {
             status: 'Success',
-            data: mappedSessions,
+            data: sessions!,
         };
     },
 
@@ -68,9 +62,7 @@ export const sessionService = {
                 errorsMessages: [createResponseError('You are not an owner')],
             };
         }
-        await sessionsRepository.revokeSession(
-            deviceId
-        );
+        await sessionsRepository.revokeSession(deviceId);
         return {
             status: 'Success',
             data: null,

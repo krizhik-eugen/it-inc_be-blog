@@ -1,7 +1,3 @@
-import {
-    blogsCollection,
-    BlogDBModel,
-    BlogsDBSearchParams,
-} from './blogs-model';
+import { BlogsModel, BlogDBModel, BlogsDBSearchParams } from './blogs-model';
 
-export { blogsCollection, BlogDBModel, BlogsDBSearchParams };
+export { BlogsModel, BlogDBModel, BlogsDBSearchParams };

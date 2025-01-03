@@ -1,45 +1,43 @@
-import { usersCollection, UserDBModel } from '../model';
+import { UserDBModel, UsersModel } from '../model';
 
 export const usersRepository = {
     async findUserByLoginOrEmail(loginOrEmail: string) {
-        return await usersCollection.findOne({
-            $or: [
-                { 'accountData.login': loginOrEmail },
-                { 'accountData.email': loginOrEmail },
-            ],
-        });
+        return await UsersModel.findOne().or([
+            { 'accountData.login': loginOrEmail },
+            { 'accountData.email': loginOrEmail },
+        ]);
     },
 
-    async findUserById(_id: UserDBModel['_id']) {
-        return await usersCollection.findOne({ _id });
+    async findUserById(id: string) {
+        return await UsersModel.findById(id);
     },
 
     async findUserByConfirmationCode(code: string) {
-        return await usersCollection.findOne({
+        return await UsersModel.findOne({
             'emailConfirmation.confirmationCode': code,
         });
     },
 
     async addNewUser(newUser: UserDBModel) {
-        const result = await usersCollection.insertOne(newUser);
-        return result.insertedId.toString();
+        const result = await UsersModel.create(newUser);
+        return result.id;
     },
 
-    async updateUser(updatedUser: Partial<UserDBModel>) {
-        const { _id, ...userToUpdate } = updatedUser;
-        const result = await usersCollection.updateOne(
-            { _id },
-            { $set: userToUpdate }
-        );
-        return result.modifiedCount > 0;
+    async updateUser(updatedUser: Partial<UserDBModel & { id: string }>) {
+        const { id, ...userToUpdate } = updatedUser;
+        const result = await UsersModel.findByIdAndUpdate(id, userToUpdate, {
+            new: true,
+        });
+        return result;
     },
 
-    async deleteUser(_id: UserDBModel['_id']) {
-        const result = await usersCollection.deleteOne({ _id });
-        return result.deletedCount > 0;
+    async deleteUser(id: string) {
+        const result = await UsersModel.findByIdAndDelete(id);
+        return result;
     },
 
     async clearUsers() {
-        await usersCollection.deleteMany({});
+        const result = await UsersModel.deleteMany({});
+        return result.deletedCount || 0;
     },
 };

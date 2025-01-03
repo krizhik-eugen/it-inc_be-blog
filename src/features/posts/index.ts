@@ -4,7 +4,7 @@ import {
     postsQuerySchema,
     postsBodySchema,
 } from './middlewares';
-import { PostDBModel, postsCollection, PostsDBSearchParams } from './model';
+import { PostDBModel, PostsModel, PostsDBSearchParams } from './model';
 import { postsRepository, postsQueryRepository } from './repository';
 import { postsRouter } from './router';
 import {
@@ -31,6 +31,6 @@ export {
     postsBodySchema,
     postsService,
     TGetAllPostCommentsRequest,
-    postsCollection,
+    PostsModel,
     TCreateNewPostCommentRequest,
 };

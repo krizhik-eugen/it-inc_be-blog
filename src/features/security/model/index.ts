@@ -1,3 +1,3 @@
-import { sessionsCollection } from './session-model';
+import { SessionsModel } from './session-model';
 
-export { sessionsCollection };
+export { SessionsModel };

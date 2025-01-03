@@ -2,7 +2,7 @@ import { blogsController } from './controller';
 import { blogsValidators, blogsQuerySchema } from './middlewares';
 import { blogsRepository } from './repository';
 import { blogsRouter } from './router';
-import { BlogDBModel, blogsCollection } from './model';
+import { BlogDBModel, BlogsModel } from './model';
 import {
     TGetAllBlogPostsRequest,
     BlogViewModel,
@@ -16,7 +16,7 @@ export {
     blogsValidators,
     blogsQuerySchema,
     BlogDBModel,
-    blogsCollection,
+    BlogsModel,
     TGetAllBlogPostsRequest,
     BlogViewModel,
     TCreateNewBlogPostRequest,

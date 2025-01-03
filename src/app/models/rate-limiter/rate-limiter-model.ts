@@ -1,11 +1,10 @@
-import { OptionalUnlessRequiredId } from 'mongodb';
-import { db } from '../../../db';
+import { model, Schema } from 'mongoose';
 
-export type RateLimiterDBModel = OptionalUnlessRequiredId<{
+export interface RateLimiterDBModel {
     ip: string;
     url: string;
     date: number;
-}>;
+}
 
 export type RateLimiterDBSearchParams = {
     ip: string;
@@ -13,5 +12,10 @@ export type RateLimiterDBSearchParams = {
     timeRange: number;
 };
 
-export const rateLimiterCollection =
-    db.collection<RateLimiterDBModel>('rate_limit');
+const RateLimiterSchema = new Schema<RateLimiterDBModel>({
+    ip: String,
+    url: String,
+    date: Number,
+});
+
+export const RateLimiterModel = model('rate_limiter', RateLimiterSchema);
