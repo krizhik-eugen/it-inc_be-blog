@@ -16,8 +16,10 @@ export const rateLimiterRepository = {
         const result = await RateLimiterModel.countDocuments({
             ip,
             url,
-            date: { $gte: startingTime, $lte: now },
-        });
+        })
+            .where('date')
+            .gte(startingTime)
+            .lte(now);
         return result;
     },
 

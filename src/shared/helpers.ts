@@ -144,3 +144,7 @@ export const getDeviceTitle = (userAgent = '') => {
     }
     return deviceTitle;
 };
+
+export const successReturn = () => {};
+
+export const errorReturn = () => {};
