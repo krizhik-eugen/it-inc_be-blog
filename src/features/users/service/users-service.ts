@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
 import { UserCreateRequestModel } from '../types';
 import { usersRepository } from '../repository';
 import { createResponseError } from '../../../shared/helpers';
@@ -38,9 +37,13 @@ export const usersService = {
                 passwordHash,
             },
             emailConfirmation: {
-                confirmationCode: uuidv4(),
-                expirationDate: null,
+                confirmationCode: '',
+                expirationDate: '',
                 isConfirmed: 'Confirmed',
+            },
+            passwordRecovery: {
+                recoveryCode: '',
+                expirationDate: '',
             },
             createdAt: new Date().toISOString(),
         };

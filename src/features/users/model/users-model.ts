@@ -7,9 +7,13 @@ export interface UserDBModel {
         passwordHash: string;
     };
     emailConfirmation: {
-        confirmationCode: string | null;
-        expirationDate: Date | null;
+        confirmationCode: string;
+        expirationDate: Date | '';
         isConfirmed: 'Confirmed' | 'NotConfirmed';
+    };
+    passwordRecovery: {
+        recoveryCode: string;
+        expirationDate: Date | '';
     };
     createdAt: string;
 }
@@ -33,6 +37,10 @@ const usersSchema = new Schema<UserDBModel>({
         confirmationCode: String,
         expirationDate: Date,
         isConfirmed: String,
+    },
+    passwordRecovery: {
+        recoveryCode: String,
+        expirationDate: Date,
     },
     createdAt: String,
 });

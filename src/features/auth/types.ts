@@ -26,6 +26,15 @@ export type ResendRegistrationEmailRequestModel = {
     email: string;
 };
 
+export type PasswordRecoveryRequestModel = {
+    email: string;
+};
+
+export type NewPasswordRequestModel = {
+    newPassword: string;
+    recoveryCode: string;
+};
+
 export type TMeResponse = TResponseWithError<MeViewModel>;
 
 export type TLoginRequest = Request<object, object, LoginRequestModel>;
@@ -33,6 +42,18 @@ export type TLoginRequest = Request<object, object, LoginRequestModel>;
 export type TLoginResponse = TResponseWithError<{ accessToken: string }>;
 
 export type TRegisterRequest = Request<object, object, RegisterRequestModel>;
+
+export type TPasswordRecoveryRequest = Request<
+    object,
+    object,
+    PasswordRecoveryRequestModel
+>;
+
+export type TNewPasswordRequest = Request<
+    object,
+    object,
+    NewPasswordRequestModel
+>;
 
 export type TConfirmationRequest = Request<
     object,

@@ -7,6 +7,8 @@ import {
     TResendRegistrationEmailRequest,
     TLoginResponse,
     TMeResponse,
+    TPasswordRecoveryRequest,
+    TNewPasswordRequest,
 } from '../types';
 import { authService } from '../service';
 import { usersQueryRepository } from '../../../features/users';
@@ -81,6 +83,36 @@ export const authController = {
     ) {
         const { email } = req.body;
         const result = await authService.resendConfirmationCode(email);
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
+    },
+
+    async passwordRecovery(
+        req: TPasswordRecoveryRequest,
+        res: TResponseWithError
+    ) {
+        const { email } = req.body;
+        const result = await authService.passwordRecovery({ email });
+        if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
+    },
+
+    async newPassword(req: TNewPasswordRequest, res: TResponseWithError) {
+        const { newPassword, recoveryCode } = req.body;
+        const result = await authService.newPassword({
+            newPassword,
+            recoveryCode,
+        });
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
                 errorsMessages: result.errorsMessages,

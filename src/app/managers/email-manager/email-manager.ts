@@ -1,4 +1,7 @@
-import { getEmailConfirmationTemplate } from '../../../shared/helpers';
+import {
+    getEmailConfirmationTemplate,
+    getPasswordRecoveryTemplate,
+} from '../../../shared/helpers';
 import { emailAdapter } from '../../adapters';
 
 export const emailManager = {
@@ -8,6 +11,15 @@ export const emailManager = {
     ) {
         const htmlTemplate = getEmailConfirmationTemplate(confirmationCode);
         const subject = 'Confirm your registration email';
+        emailAdapter(email, subject, htmlTemplate);
+    },
+
+    async sendEmailPasswordRecoveryMessage(
+        email: string,
+        confirmationCode: string
+    ) {
+        const htmlTemplate = getPasswordRecoveryTemplate(confirmationCode);
+        const subject = 'Confirm your password recovery email';
         emailAdapter(email, subject, htmlTemplate);
     },
 };

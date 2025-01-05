@@ -18,6 +18,8 @@ export const routersPaths = {
         resendEmail: '/registration-email-resending',
         refreshToken: '/refresh-token',
         logout: '/logout',
+        passwordRecovery: '/password-recovery',
+        newPassword: '/new-password',
     },
     blogs: {
         main: '/',

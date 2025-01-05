@@ -43,4 +43,20 @@ authRouter
     .route(routersPaths.auth.refreshToken)
     .post(authController.createNewSession);
 
+authRouter
+    .route(routersPaths.auth.passwordRecovery)
+    .post(
+        rateLimiter,
+        ...authValidators.passwordRecoveryRequest,
+        authController.passwordRecovery
+    );
+
+authRouter
+    .route(routersPaths.auth.newPassword)
+    .post(
+        rateLimiter,
+        ...authValidators.newPasswordRequest,
+        authController.newPassword
+    );
+
 authRouter.route(routersPaths.auth.logout).post(authController.logout);

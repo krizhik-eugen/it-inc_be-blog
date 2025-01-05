@@ -123,6 +123,50 @@ export const resendRegistrationBodySchema: Schema = {
     },
 };
 
+export const passwordRecoveryBodySchema: Schema = {
+    email: {
+        in: ['body'],
+        exists: {
+            errorMessage: 'Email is required',
+        },
+        isString: true,
+        trim: true,
+        notEmpty: {
+            errorMessage: 'Email is required',
+        },
+        matches: {
+            options: emailPattern,
+            errorMessage:
+                'Email should be a valid email address, example: example@example.com',
+        },
+    },
+};
+
+export const newPasswordBodySchema: Schema = {
+    password: {
+        in: ['body'],
+        exists: {
+            errorMessage: 'Password is required',
+        },
+        isString: true,
+        trim: true,
+        notEmpty: {
+            errorMessage: 'Password is required',
+        },
+    },
+    recoveryCode: {
+        in: ['body'],
+        exists: {
+            errorMessage: 'Recovery code is required',
+        },
+        isString: true,
+        trim: true,
+        notEmpty: {
+            errorMessage: 'Recovery code is required',
+        },
+    },
+};
+
 export const authValidators = {
     loginRequest: requestValidator({ bodySchema: loginBodySchema }),
     registrationRequest: requestValidator({
@@ -133,5 +177,11 @@ export const authValidators = {
     }),
     resendRegistrationRequest: requestValidator({
         bodySchema: resendRegistrationBodySchema,
+    }),
+    passwordRecoveryRequest: requestValidator({
+        bodySchema: passwordRecoveryBodySchema,
+    }),
+    newPasswordRequest: requestValidator({
+        bodySchema: newPasswordBodySchema,
     }),
 };

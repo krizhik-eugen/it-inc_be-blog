@@ -1,7 +1,13 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { usersRepository } from '../../users';
-import { LoginRequestModel, RegisterRequestModel, TTokens } from '../types';
+import {
+    LoginRequestModel,
+    NewPasswordRequestModel,
+    PasswordRecoveryRequestModel,
+    RegisterRequestModel,
+    TTokens,
+} from '../types';
 import { createResponseError } from '../../../shared/helpers';
 import { UserDBModel } from '../../users/model';
 import { emailManager } from '../../../app/managers';
@@ -93,6 +99,10 @@ export const authService = {
                 confirmationCode: uuidv4(),
                 expirationDate: getCodeExpirationDate(),
                 isConfirmed: 'NotConfirmed',
+            },
+            passwordRecovery: {
+                recoveryCode: '',
+                expirationDate: '',
             },
             createdAt: new Date().toISOString(),
         };
@@ -242,6 +252,82 @@ export const authService = {
             return validationResult;
         }
         await sessionsRepository.revokeSession(validationResult.data.deviceId);
+        return {
+            status: 'Success',
+            data: null,
+        };
+    },
+
+    async passwordRecovery({
+        email,
+    }: PasswordRecoveryRequestModel): Promise<TResult> {
+        const foundUserByEmail =
+            await usersRepository.findUserByLoginOrEmail(email);
+        if (!foundUserByEmail) {
+            return {
+                status: 'BadRequest',
+                errorsMessages: [
+                    createResponseError(
+                        'No user found with this email',
+                        'email'
+                    ),
+                ],
+            };
+        }
+
+        const passwordRecoveryCode = uuidv4();
+        const updatedUser: UserDBModel = {
+            ...foundUserByEmail,
+            passwordRecovery: {
+                recoveryCode: passwordRecoveryCode,
+                expirationDate: getCodeExpirationDate(),
+            },
+        };
+
+        await usersRepository.updateUser(updatedUser);
+        // try {
+        emailManager
+            .sendEmailPasswordRecoveryMessage(email, passwordRecoveryCode)
+            .catch((e) => console.log(e));
+        return {
+            status: 'Success',
+            data: null,
+        };
+        // }
+        // catch {
+        //     await usersRepository.deleteUser(addedUserId);
+        //     return {
+        //         status: 'InternalError',
+        //         errorsMessages: [createResponseError('Error sending email')],
+        //     };
+        // }
+    },
+
+    async newPassword({
+        newPassword,
+        recoveryCode,
+    }: NewPasswordRequestModel): Promise<TResult> {
+        const user = await usersRepository.findUserByRecoveryCode(recoveryCode);
+        if (!user) {
+            return {
+                status: 'BadRequest',
+                errorsMessages: [
+                    createResponseError('No user found for this recovery code'),
+                ],
+            };
+        }
+        if (
+            user.passwordRecovery.expirationDate &&
+            user.passwordRecovery.expirationDate < new Date()
+        ) {
+            return {
+                status: 'BadRequest',
+                errorsMessages: [createResponseError('Recovery code expired')],
+            };
+        }
+        user.passwordRecovery.recoveryCode = '';
+        user.accountData.passwordHash = await bcrypt.hash(newPassword, hashSaltRounds)
+        await usersRepository.updateUser(user);
         return {
             status: 'Success',
             data: null,

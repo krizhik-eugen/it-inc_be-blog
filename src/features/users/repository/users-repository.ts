@@ -18,6 +18,12 @@ export const usersRepository = {
         });
     },
 
+    async findUserByRecoveryCode(recoveryCode: string) {
+        return await UsersModel.findOne({
+            'passwordRecovery.recoveryCode': recoveryCode,
+        });
+    },
+
     async addNewUser(newUser: UserDBModel) {
         const result = await UsersModel.create(newUser);
         return result.id;
