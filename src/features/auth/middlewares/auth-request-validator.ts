@@ -143,15 +143,19 @@ export const passwordRecoveryBodySchema: Schema = {
 };
 
 export const newPasswordBodySchema: Schema = {
-    password: {
+    newPassword: {
         in: ['body'],
         exists: {
-            errorMessage: 'Password is required',
+            errorMessage: 'New password is required',
         },
         isString: true,
         trim: true,
         notEmpty: {
-            errorMessage: 'Password is required',
+            errorMessage: 'New password is required',
+        },
+        isLength: {
+            options: { min: passwordMinLength, max: passwordMaxLength },
+            errorMessage: `Password length should be min ${passwordMinLength} and max ${passwordMaxLength} characters`,
         },
     },
     recoveryCode: {
