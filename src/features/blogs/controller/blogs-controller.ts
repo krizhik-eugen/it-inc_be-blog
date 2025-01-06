@@ -131,10 +131,10 @@ export const blogsController = {
         const { name, description, websiteUrl } = req.body;
         const id = req.params.id;
         const result = await blogsService.updateBlog({
+            id,
             name,
             description,
             websiteUrl,
-            id,
         });
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

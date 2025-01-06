@@ -225,8 +225,6 @@ export const authService = {
         ip: string
     ): Promise<TResult<TTokens>> {
         const validationResult = await this.validateRefreshToken(refreshToken);
-        console.log('validationResult', validationResult);
-
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
@@ -270,30 +268,20 @@ export const authService = {
     }: PasswordRecoveryRequestModel): Promise<TResult> {
         const foundUserByEmail =
             await usersRepository.findUserByLoginOrEmail(email);
-        if (!foundUserByEmail) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError(
-                        'No user found with this email',
-                        'email'
-                    ),
-                ],
-            };
+        if (foundUserByEmail) {
+            const recoveryCode = uuidv4();
+            await usersRepository.updateUser({
+                id: foundUserByEmail._id.toString(),
+                passwordRecovery: {
+                    recoveryCode,
+                    expirationDate: getCodeExpirationDate(),
+                },
+            });
+            // try {
+            emailManager
+                .sendEmailPasswordRecoveryMessage(email, recoveryCode)
+                .catch((e) => console.log(e));
         }
-
-        const recoveryCode = uuidv4();
-        await usersRepository.updateUser({
-            id: foundUserByEmail._id.toString(),
-            passwordRecovery: {
-                recoveryCode,
-                expirationDate: getCodeExpirationDate(),
-            },
-        });
-        // try {
-        emailManager
-            .sendEmailPasswordRecoveryMessage(email, recoveryCode)
-            .catch((e) => console.log(e));
         return {
             status: 'Success',
             data: null,
