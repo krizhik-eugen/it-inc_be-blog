@@ -1,10 +1,5 @@
 import nodemailer from 'nodemailer';
-import {
-    accessTokenExpirationTime,
-    baseRoutes,
-    rateLimiterMaxRequests,
-    refreshTokenExpirationTime,
-} from '../../src/app/configs';
+import { baseRoutes, rateLimiterMaxRequests } from '../../src/app/configs';
 import {
     addNewUser,
     DBHandlers,
@@ -29,10 +24,6 @@ jest.mock('../../src/app/configs', () => ({
 
 describe('Auth Controller', () => {
     const testUser = getTestUser(1);
-    const loginCredentials = {
-        loginOrEmail: testUser.login,
-        password: testUser.password,
-    };
 
     beforeAll(async () => {
         await DBHandlers.connectToDB();

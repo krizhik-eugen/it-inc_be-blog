@@ -305,7 +305,10 @@ export const authService = {
             return {
                 status: 'BadRequest',
                 errorsMessages: [
-                    createResponseError('No user found for this recovery code'),
+                    createResponseError(
+                        'Recovery code is not correct',
+                        'recoveryCode'
+                    ),
                 ],
             };
         }
@@ -315,7 +318,12 @@ export const authService = {
         ) {
             return {
                 status: 'BadRequest',
-                errorsMessages: [createResponseError('Recovery code expired')],
+                errorsMessages: [
+                    createResponseError(
+                        'Recovery code expired',
+                        'recoveryCode'
+                    ),
+                ],
             };
         }
         const newPasswordHash = await bcrypt.hash(newPassword, hashSaltRounds);
