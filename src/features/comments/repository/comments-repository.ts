@@ -16,17 +16,17 @@ export const commentsRepository = {
             {
                 new: true,
             }
-        );
+        ).lean();
         return result;
     },
 
     async findCommentById(id: string) {
-        const result = await CommentsModel.findById(id);
+        const result = await CommentsModel.findById(id).lean();
         return result;
     },
 
     async deleteComment(id: string) {
-        const result = await CommentsModel.findByIdAndDelete(id);
+        const result = await CommentsModel.findByIdAndDelete(id).lean();
         return result;
     },
 

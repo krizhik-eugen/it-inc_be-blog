@@ -8,7 +8,7 @@ export const postsRepository = {
     },
 
     async findPostById(id: string) {
-        return await PostsModel.findById(id);
+        return await PostsModel.findById(id).lean();
     },
 
     async addNewPost(newPost: PostDBModel) {
@@ -20,12 +20,12 @@ export const postsRepository = {
         const { id, ...postToInsert } = updatedPost;
         const result = await PostsModel.findByIdAndUpdate(id, postToInsert, {
             new: true,
-        });
+        }).lean();
         return result;
     },
 
     async deletePost(id: string) {
-        const result = await PostsModel.findByIdAndDelete(id);
+        const result = await PostsModel.findByIdAndDelete(id).lean();
         return result;
     },
 

@@ -13,19 +13,19 @@ export const blogsRepository = {
     },
 
     async findBlogById(id: string) {
-        return await BlogsModel.findById(id);
+        return await BlogsModel.findById(id).lean();
     },
 
     async updateBlog(updatedBlog: Partial<BlogDBModel & { id: string }>) {
         const { id, ...blogToUpdate } = updatedBlog;
         const result = await BlogsModel.findByIdAndUpdate(id, blogToUpdate, {
             new: true,
-        });
+        }).lean();
         return result;
     },
 
     async deleteBlog(id: string) {
-        const result = await BlogsModel.findByIdAndDelete(id);
+        const result = await BlogsModel.findByIdAndDelete(id).lean();
         return result;
     },
 

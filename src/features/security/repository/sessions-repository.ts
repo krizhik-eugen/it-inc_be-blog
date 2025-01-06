@@ -34,12 +34,14 @@ export const sessionsRepository = {
                 exp,
                 ip,
             }
-        );
+        ).lean();
         return result;
     },
 
     async revokeSession(deviceId: string) {
-        const result = await SessionsModel.findOneAndDelete({ deviceId });
+        const result = await SessionsModel.findOneAndDelete({
+            deviceId,
+        }).lean();
         return result;
     },
 

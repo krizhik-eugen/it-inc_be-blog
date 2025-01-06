@@ -2,26 +2,28 @@ import { UserDBModel, UsersModel } from '../model';
 
 export const usersRepository = {
     async findUserByLoginOrEmail(loginOrEmail: string) {
-        return await UsersModel.findOne().or([
-            { 'accountData.login': loginOrEmail },
-            { 'accountData.email': loginOrEmail },
-        ]);
+        return await UsersModel.findOne()
+            .or([
+                { 'accountData.login': loginOrEmail },
+                { 'accountData.email': loginOrEmail },
+            ])
+            .lean();
     },
 
     async findUserById(id: string) {
-        return await UsersModel.findById(id);
+        return await UsersModel.findById(id).lean();
     },
 
     async findUserByConfirmationCode(code: string) {
         return await UsersModel.findOne({
             'emailConfirmation.confirmationCode': code,
-        });
+        }).lean();
     },
 
     async findUserByRecoveryCode(recoveryCode: string) {
         return await UsersModel.findOne({
             'passwordRecovery.recoveryCode': recoveryCode,
-        });
+        }).lean();
     },
 
     async addNewUser(newUser: UserDBModel) {
@@ -33,12 +35,12 @@ export const usersRepository = {
         const { id, ...userToUpdate } = updatedUser;
         const result = await UsersModel.findByIdAndUpdate(id, userToUpdate, {
             new: true,
-        });
+        }).lean();
         return result;
     },
 
     async deleteUser(id: string) {
-        const result = await UsersModel.findByIdAndDelete(id);
+        const result = await UsersModel.findByIdAndDelete(id).lean();
         return result;
     },
 

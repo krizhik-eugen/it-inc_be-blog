@@ -47,15 +47,15 @@ export const authService = {
                 errorsMessages: [createResponseError('Invalid credentials')],
             };
         }
-        const accessToken = jwtService.generateAccessToken(user.id);
+        const accessToken = jwtService.generateAccessToken(user._id.toString());
         const deviceId = uuidv4();
         const refreshToken = jwtService.generateRefreshToken(
-            user.id!,
+            user._id.toString(),
             deviceId
         );
         const decodedIssuedToken = jwtService.decodeToken(refreshToken);
         await sessionsRepository.createSession({
-            userId: user.id!,
+            userId: user._id.toString(),
             deviceId,
             ip,
             deviceName: deviceTitle,
@@ -159,8 +159,14 @@ export const authService = {
                 ],
             };
         }
-        user.emailConfirmation.isConfirmed = 'Confirmed';
-        await usersRepository.updateUser(user);
+
+        await usersRepository.updateUser({
+            id: user._id.toString(),
+            emailConfirmation: {
+                ...user.emailConfirmation,
+                isConfirmed: 'Confirmed',
+            },
+        });
         return {
             status: 'Success',
             data: null,
@@ -188,20 +194,19 @@ export const authService = {
                 ],
             };
         }
-
-        const updatedUser: UserDBModel = {
-            ...user,
+        const confirmationCode = uuidv4();
+        await usersRepository.updateUser({
+            id: user._id.toString(),
             emailConfirmation: {
                 isConfirmed: 'NotConfirmed',
-                confirmationCode: uuidv4(),
+                confirmationCode,
                 expirationDate: getCodeExpirationDate(),
             },
-        };
-        await usersRepository.updateUser(updatedUser);
+        });
         try {
             await emailManager.sendEmailConfirmationMessage(
                 user.accountData.email,
-                updatedUser.emailConfirmation.confirmationCode!
+                confirmationCode
             );
             return {
                 status: 'Success',
@@ -220,6 +225,8 @@ export const authService = {
         ip: string
     ): Promise<TResult<TTokens>> {
         const validationResult = await this.validateRefreshToken(refreshToken);
+        console.log('validationResult', validationResult);
+
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
@@ -275,19 +282,17 @@ export const authService = {
             };
         }
 
-        const passwordRecoveryCode = uuidv4();
-        const updatedUser: UserDBModel = {
-            ...foundUserByEmail,
+        const recoveryCode = uuidv4();
+        await usersRepository.updateUser({
+            id: foundUserByEmail._id.toString(),
             passwordRecovery: {
-                recoveryCode: passwordRecoveryCode,
+                recoveryCode,
                 expirationDate: getCodeExpirationDate(),
             },
-        };
-
-        await usersRepository.updateUser(updatedUser);
+        });
         // try {
         emailManager
-            .sendEmailPasswordRecoveryMessage(email, passwordRecoveryCode)
+            .sendEmailPasswordRecoveryMessage(email, recoveryCode)
             .catch((e) => console.log(e));
         return {
             status: 'Success',
@@ -325,9 +330,12 @@ export const authService = {
                 errorsMessages: [createResponseError('Recovery code expired')],
             };
         }
-        user.passwordRecovery.recoveryCode = '';
-        user.accountData.passwordHash = await bcrypt.hash(newPassword, hashSaltRounds)
-        await usersRepository.updateUser(user);
+        const newPasswordHash = await bcrypt.hash(newPassword, hashSaltRounds);
+        await usersRepository.updateUser({
+            id: user._id.toString(),
+            accountData: { ...user.accountData, passwordHash: newPasswordHash },
+            passwordRecovery: { recoveryCode: '', expirationDate: '' },
+        });
         return {
             status: 'Success',
             data: null,
