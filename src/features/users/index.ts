@@ -1,5 +1,9 @@
-import { usersController } from './controller';
-import { usersRepository, usersQueryRepository } from './repository';
+import {
+    usersController,
+    usersQueryRepository,
+    usersRepository,
+} from './composition-root';
+import { UsersQueryRepository, UsersRepository } from './repository';
 import { usersRouter } from './router';
 import { UserViewModel } from './types';
 
@@ -9,4 +13,6 @@ export {
     usersRouter,
     usersRepository,
     UserViewModel,
+    UsersRepository,
+    UsersQueryRepository,
 };

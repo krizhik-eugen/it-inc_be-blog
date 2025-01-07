@@ -1,3 +1,3 @@
-import { sessionService } from './session-service';
+import { SessionService } from './session-service';
 
-export { sessionService };
+export { SessionService };

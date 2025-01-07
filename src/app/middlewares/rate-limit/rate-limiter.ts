@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import { createResponseError } from '../../../shared/helpers';
-import { rateLimiterService } from '../../services';
 import { rateLimiterMaxRequests } from '../../configs';
+import { rateLimiterService } from '../../app-composition-root';
 
 export const rateLimiter = async (
     req: Request,

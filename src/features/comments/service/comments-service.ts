@@ -1,26 +1,32 @@
+import { CommentsRepository } from '../repository';
 import { CommentCreateRequestModel } from '../types';
-import { commentsRepository } from '../repository/comments-repository';
-import { postsRepository } from '../../../features/posts';
 import { CommentDBModel } from '../model';
-import { usersRepository } from '../../../features/users';
+import { UsersRepository } from '../../users';
+import { PostsRepository } from '../../posts';
 import { createResponseError } from '../../../shared/helpers';
 import { TResult } from '../../../shared/types';
 
-export const commentsService = {
+export class CommentsService {
+    constructor(
+        protected commentsRepository: CommentsRepository,
+        protected usersRepository: UsersRepository,
+        protected postsRepository: PostsRepository
+    ) {}
+
     async createNewCommentForPost(
         content: CommentCreateRequestModel['content'],
         id: string,
         userId: string
     ): Promise<TResult<{ id: string }>> {
         const postId = id;
-        const post = await postsRepository.findPostById(postId);
+        const post = await this.postsRepository.findPostById(postId);
         if (!post) {
             return {
                 status: 'NotFound',
                 errorsMessages: [createResponseError('Post is not found')],
             };
         }
-        const user = await usersRepository.findUserById(userId);
+        const user = await this.usersRepository.findUserById(userId);
         const newComment: CommentDBModel = {
             content,
             commentatorInfo: {
@@ -31,7 +37,7 @@ export const commentsService = {
             createdAt: new Date().toISOString(),
         };
         const createdCommentId =
-            await commentsRepository.addNewComment(newComment);
+            await this.commentsRepository.addNewComment(newComment);
         if (!createdCommentId) {
             return {
                 status: 'InternalError',
@@ -44,14 +50,14 @@ export const commentsService = {
             status: 'Success',
             data: { id: createdCommentId },
         };
-    },
+    }
 
     async updateComment(
         content: CommentCreateRequestModel['content'],
         id: string,
         userId: string
     ): Promise<TResult> {
-        const comment = await commentsRepository.findCommentById(id);
+        const comment = await this.commentsRepository.findCommentById(id);
         if (!comment) {
             return {
                 status: 'NotFound',
@@ -64,7 +70,7 @@ export const commentsService = {
                 errorsMessages: [createResponseError('You are not an owner')],
             };
         }
-        const isCommentUpdated = await commentsRepository.updateComment({
+        const isCommentUpdated = await this.commentsRepository.updateComment({
             id,
             content,
         });
@@ -78,10 +84,10 @@ export const commentsService = {
             status: 'Success',
             data: null,
         };
-    },
+    }
 
     async deleteComment(id: string, userId: string): Promise<TResult> {
-        const comment = await commentsRepository.findCommentById(id);
+        const comment = await this.commentsRepository.findCommentById(id);
         if (!comment) {
             return {
                 status: 'NotFound',
@@ -94,7 +100,8 @@ export const commentsService = {
                 errorsMessages: [createResponseError('You are not an owner')],
             };
         }
-        const isCommentDeleted = await commentsRepository.deleteComment(id);
+        const isCommentDeleted =
+            await this.commentsRepository.deleteComment(id);
         if (!isCommentDeleted) {
             return {
                 status: 'NotFound',
@@ -105,5 +112,5 @@ export const commentsService = {
             status: 'Success',
             data: null,
         };
-    },
-};
+    }
+}

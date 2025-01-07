@@ -1,3 +1,3 @@
-import { commentsService } from './comments-service';
+import { CommentsService } from './comments-service';
 
-export { commentsService };
+export { CommentsService };

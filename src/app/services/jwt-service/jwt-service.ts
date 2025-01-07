@@ -6,12 +6,12 @@ import {
 } from '../../configs';
 import { TDecodedToken, TJwtPayload } from './types';
 
-export const jwtService = {
+export class JwtService {
     generateAccessToken(userId: TJwtPayload['userId']) {
         return jwt.sign({ userId }, jwtSecret, {
             expiresIn: accessTokenExpirationTime,
         });
-    },
+    }
 
     generateRefreshToken(
         userId: TJwtPayload['userId'],
@@ -20,7 +20,7 @@ export const jwtService = {
         return jwt.sign({ userId, deviceId }, jwtSecret, {
             expiresIn: refreshTokenExpirationTime,
         });
-    },
+    }
 
     verifyToken(token: string) {
         try {
@@ -35,9 +35,9 @@ export const jwtService = {
                     e instanceof Error ? e.message : 'Token verification error',
             };
         }
-    },
+    }
 
     decodeToken(token: string) {
         return jwt.decode(token) as TDecodedToken;
-    },
-};
+    }
+}

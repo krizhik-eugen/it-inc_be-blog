@@ -1,3 +1,3 @@
-import { rateLimiterRepository } from './rate-limiter-repository';
+import { RateLimiterRepository } from './rate-limiter-repository';
 
-export { rateLimiterRepository };
+export { RateLimiterRepository };

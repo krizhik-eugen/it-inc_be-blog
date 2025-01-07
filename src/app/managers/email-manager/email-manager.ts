@@ -4,7 +4,7 @@ import {
 } from '../../../shared/helpers';
 import { emailAdapter } from '../../adapters';
 
-export const emailManager = {
+export class EmailManager {
     async sendEmailConfirmationMessage(
         email: string,
         confirmationCode: string
@@ -12,7 +12,7 @@ export const emailManager = {
         const htmlTemplate = getEmailConfirmationTemplate(confirmationCode);
         const subject = 'Confirm your registration email';
         emailAdapter(email, subject, htmlTemplate);
-    },
+    }
 
     async sendEmailPasswordRecoveryMessage(
         email: string,
@@ -21,5 +21,5 @@ export const emailManager = {
         const htmlTemplate = getPasswordRecoveryTemplate(confirmationCode);
         const subject = 'Confirm your password recovery email';
         emailAdapter(email, subject, htmlTemplate);
-    },
-};
+    }
+}

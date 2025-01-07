@@ -1,11 +1,13 @@
 import bcrypt from 'bcrypt';
 import { UserCreateRequestModel } from '../types';
-import { usersRepository } from '../repository';
+import { UsersRepository } from '../repository';
 import { createResponseError } from '../../../shared/helpers';
 import { UserDBModel } from '../model';
 import { TResult } from '../../../shared/types';
 
-export const usersService = {
+export class UsersService {
+    constructor(protected usersRepository: UsersRepository) {}
+
     async createNewUser({
         login,
         email,
@@ -16,9 +18,9 @@ export const usersService = {
         }>
     > {
         const foundUserByLogin =
-            await usersRepository.findUserByLoginOrEmail(login);
+            await this.usersRepository.findUserByLoginOrEmail(login);
         const foundUserByEmail =
-            await usersRepository.findUserByLoginOrEmail(email);
+            await this.usersRepository.findUserByLoginOrEmail(email);
         if (foundUserByLogin || foundUserByEmail) {
             return {
                 status: 'BadRequest',
@@ -47,7 +49,7 @@ export const usersService = {
             },
             createdAt: new Date().toISOString(),
         };
-        const addedUserId = await usersRepository.addNewUser(newUser);
+        const addedUserId = await this.usersRepository.addNewUser(newUser);
         if (!addedUserId) {
             return {
                 status: 'InternalError',
@@ -60,10 +62,10 @@ export const usersService = {
                 userId: addedUserId,
             },
         };
-    },
+    }
 
     async deleteUser(id: string): Promise<TResult> {
-        const isDeleted = await usersRepository.deleteUser(id);
+        const isDeleted = await this.usersRepository.deleteUser(id);
         if (!isDeleted) {
             return {
                 status: 'NotFound',
@@ -74,5 +76,5 @@ export const usersService = {
             status: 'Success',
             data: null,
         };
-    },
-};
+    }
+}

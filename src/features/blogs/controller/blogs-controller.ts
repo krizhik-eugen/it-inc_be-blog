@@ -1,4 +1,4 @@
-import { blogsQueryRepository } from '../repository';
+import { BlogsQueryRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
     TCreateNewBlogPostRequest,
@@ -14,31 +14,40 @@ import {
     TGetBlogResponse,
     TUpdateBlogRequest,
 } from '../types';
-import { blogsService } from '../service';
+import { BlogsService } from '../service';
 import {
     PostsDBSearchParams,
-    postsQueryRepository,
-    postsService,
+    PostsQueryRepository,
+    PostsService,
 } from '../../posts';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { BlogsDBSearchParams } from '../model';
 import { TResponseWithError } from '../../../shared/types';
 
-export const blogsController = {
+export class BlogsController {
+    constructor(
+        protected blogsQueryRepository: BlogsQueryRepository,
+        protected blogsService: BlogsService,
+        protected postsQueryRepository: PostsQueryRepository,
+        protected postsService: PostsService
+    ) {}
+
     async getBlogs(req: TGetAllBlogsRequest, res: TGetAllBlogsResponse) {
         const { searchNameTerm, ...restQueries } = req.query;
         const searchQueries =
             getSearchQueries<BlogsDBSearchParams['sortBy']>(restQueries);
 
-        const blogs = await blogsQueryRepository.getBlogs({
+        const blogs = await this.blogsQueryRepository.getBlogs({
             searchQueries,
             term: searchNameTerm,
         });
         res.status(HTTP_STATUS_CODES.OK).json(blogs);
-    },
+    }
 
     async getBlog(req: TGetBlogRequest, res: TGetBlogResponse) {
-        const foundBlog = await blogsQueryRepository.getBlog(req.params.id);
+        const foundBlog = await this.blogsQueryRepository.getBlog(
+            req.params.id
+        );
         if (!foundBlog) {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('Blog is not found')],
@@ -46,7 +55,7 @@ export const blogsController = {
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).json(foundBlog);
-    },
+    }
 
     async getBlogPosts(
         req: TGetAllBlogPostsRequest,
@@ -56,7 +65,7 @@ export const blogsController = {
         const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
             req.query
         );
-        const posts = await postsQueryRepository.getBlogPosts({
+        const posts = await this.postsQueryRepository.getBlogPosts({
             searchQueries,
             blogId: id,
         });
@@ -67,14 +76,14 @@ export const blogsController = {
             return;
         }
         res.status(HTTP_STATUS_CODES.OK).json(posts);
-    },
+    }
 
     async createNewBlog(
         req: TCreateNewBlogRequest,
         res: TCreateNewBlogResponse
     ) {
         const { name, description, websiteUrl } = req.body;
-        const result = await blogsService.createNewBlog({
+        const result = await this.blogsService.createNewBlog({
             name,
             description,
             websiteUrl,
@@ -85,7 +94,7 @@ export const blogsController = {
             });
             return;
         }
-        const createdBlog = await blogsQueryRepository.getBlog(
+        const createdBlog = await this.blogsQueryRepository.getBlog(
             result.data.blogId
         );
         if (!createdBlog) {
@@ -95,7 +104,7 @@ export const blogsController = {
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(createdBlog);
-    },
+    }
 
     async createNewPostForBlog(
         req: TCreateNewBlogPostRequest,
@@ -103,7 +112,7 @@ export const blogsController = {
     ) {
         const { title, shortDescription, content } = req.body;
         const id = req.params.id;
-        const result = await postsService.createNewPostForBlog({
+        const result = await this.postsService.createNewPostForBlog({
             title,
             shortDescription,
             content,
@@ -115,7 +124,7 @@ export const blogsController = {
             });
             return;
         }
-        const addedPost = await postsQueryRepository.getPost(
+        const addedPost = await this.postsQueryRepository.getPost(
             result.data.postId
         );
         if (!addedPost) {
@@ -125,12 +134,12 @@ export const blogsController = {
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(addedPost);
-    },
+    }
 
     async updateBlog(req: TUpdateBlogRequest, res: TResponseWithError) {
         const { name, description, websiteUrl } = req.body;
         const id = req.params.id;
-        const result = await blogsService.updateBlog({
+        const result = await this.blogsService.updateBlog({
             id,
             name,
             description,
@@ -143,10 +152,10 @@ export const blogsController = {
             return;
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
-    },
+    }
 
     async deleteBlog(req: TDeleteBlogRequest, res: TResponseWithError) {
-        const result = await blogsService.deleteBlog(req.params.id);
+        const result = await this.blogsService.deleteBlog(req.params.id);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
@@ -154,5 +163,5 @@ export const blogsController = {
             return;
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
-    },
-};
+    }
+}

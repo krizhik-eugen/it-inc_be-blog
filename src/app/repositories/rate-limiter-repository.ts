@@ -4,11 +4,11 @@ import {
     RateLimiterDBSearchParams,
 } from '../models/rate-limiter';
 
-export const rateLimiterRepository = {
+export class RateLimiterRepository {
     async registerRequest({ ip, url, date }: RateLimiterDBModel) {
         const result = await RateLimiterModel.create({ ip, url, date });
         return result.id;
-    },
+    }
 
     async getRequestsCount({ ip, url, timeRange }: RateLimiterDBSearchParams) {
         const now = Date.now();
@@ -21,10 +21,10 @@ export const rateLimiterRepository = {
             .gte(startingTime)
             .lte(now);
         return result;
-    },
+    }
 
     async clearRateLimiter() {
         const result = await RateLimiterModel.deleteMany({});
         return result.deletedCount || 0;
-    },
-};
+    }
+}

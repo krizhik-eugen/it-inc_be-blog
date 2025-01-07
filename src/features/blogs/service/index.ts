@@ -1,3 +1,3 @@
-import { blogsService } from './blogs-service';
+import { BlogsService } from './blogs-service';
 
-export { blogsService };
+export { BlogsService };

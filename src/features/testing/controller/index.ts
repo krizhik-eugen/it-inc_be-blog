@@ -1,3 +1,3 @@
-import { testingController } from './testing-controller';
+import { TestingController } from './testing-controller';
 
-export { testingController };
+export { TestingController };

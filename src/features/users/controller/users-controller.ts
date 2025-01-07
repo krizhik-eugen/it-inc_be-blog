@@ -1,4 +1,4 @@
-import { usersQueryRepository } from '../repository';
+import { UsersQueryRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
     TCreateNewUserRequest,
@@ -7,30 +7,35 @@ import {
     TGetAllUsersRequest,
     TGetAllUsersResponse,
 } from '../types';
-import { usersService } from '../service';
+import { UsersService } from '../service';
 import { UsersDBSearchParams } from '../model';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
 
-export const usersController = {
+export class UsersController {
+    constructor(
+        protected usersQueryRepository: UsersQueryRepository,
+        protected usersService: UsersService
+    ) {}
+
     async getAllUsers(req: TGetAllUsersRequest, res: TGetAllUsersResponse) {
         const { searchLoginTerm, searchEmailTerm, ...restQueries } = req.query;
         const searchQueries =
             getSearchQueries<UsersDBSearchParams['sortBy']>(restQueries);
-        const users = await usersQueryRepository.getUsers({
+        const users = await this.usersQueryRepository.getUsers({
             searchQueries,
             searchLoginTerm,
             searchEmailTerm,
         });
         res.status(HTTP_STATUS_CODES.OK).json(users);
-    },
+    }
 
     async createNewUser(
         req: TCreateNewUserRequest,
         res: TCreateNewUserResponse
     ) {
         const { login, email, password } = req.body;
-        const result = await usersService.createNewUser({
+        const result = await this.usersService.createNewUser({
             login,
             email,
             password,
@@ -41,7 +46,9 @@ export const usersController = {
             });
             return;
         }
-        const user = await usersQueryRepository.getUser(result.data.userId);
+        const user = await this.usersQueryRepository.getUser(
+            result.data.userId
+        );
         if (!user) {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('User is not found')],
@@ -49,10 +56,10 @@ export const usersController = {
             return;
         }
         res.status(HTTP_STATUS_CODES.CREATED).json(user);
-    },
+    }
 
     async deleteUser(req: TDeleteUserRequest, res: TResponseWithError) {
-        const result = await usersService.deleteUser(req.params.id);
+        const result = await this.usersService.deleteUser(req.params.id);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
@@ -60,5 +67,5 @@ export const usersController = {
             return;
         }
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
-    },
-};
+    }
+}

@@ -1,17 +1,21 @@
 import { Router } from 'express';
-import { securityController } from '../controller';
 import { routersPaths } from '../../../app/configs';
+import { securityController } from '../composition-root';
 
 export const securityRouter = Router();
 
 securityRouter
     .route(routersPaths.security.devices)
-    .get(securityController.getAllSessionDevices);
+    .get(securityController.getAllSessionDevices.bind(securityController));
 
 securityRouter
     .route(routersPaths.security.devices)
-    .delete(securityController.terminateAllSessionsExceptCurrent);
+    .delete(
+        securityController.terminateAllSessionsExceptCurrent.bind(
+            securityController
+        )
+    );
 
 securityRouter
     .route(routersPaths.security.devicesId)
-    .delete(securityController.terminateDeviceSession);
+    .delete(securityController.terminateDeviceSession.bind(securityController));

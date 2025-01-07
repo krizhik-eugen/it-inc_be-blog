@@ -3,8 +3,8 @@ import { baseRoutes, rateLimiterMaxRequests } from '../../src/app/configs';
 import { addNewUser, DBHandlers, req, getTestUser } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { routersPaths } from '../../src/app/configs';
-import { rateLimiterRepository } from '../../src/app/repositories';
 import { testingService } from '../../src/features/testing';
+import { rateLimiterRepository } from '../../src/app/app-composition-root';
 
 jest.mock('nodemailer');
 jest.mock('../../src/app/configs', () => ({

@@ -3,7 +3,7 @@ import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
 import { BlogsModel } from '../../../features/blogs';
 
-export const postsQueryRepository = {
+export class PostsQueryRepository {
     async getPosts({
         searchQueries,
     }: {
@@ -34,7 +34,7 @@ export const postsQueryRepository = {
             totalCount,
             items: mappedFoundPosts,
         };
-    },
+    }
 
     async getPost(id: string) {
         const foundPost = await PostsModel.findById(id);
@@ -48,7 +48,7 @@ export const postsQueryRepository = {
             blogName: foundPost.blogName,
             createdAt: foundPost.createdAt,
         };
-    },
+    }
 
     async getBlogPosts({
         searchQueries,
@@ -86,5 +86,5 @@ export const postsQueryRepository = {
             totalCount,
             items: mappedFoundPosts,
         };
-    },
-};
+    }
+}

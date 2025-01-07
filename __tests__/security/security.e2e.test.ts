@@ -8,9 +8,9 @@ import {
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { routersPaths } from '../../src/app/configs';
-import { rateLimiterRepository } from '../../src/app/repositories';
-import { sessionsRepository } from '../../src/features/security';
+import { rateLimiterRepository } from '../../src/app/app-composition-root';
 import { testingService } from '../../src/features/testing';
+import { sessionsRepository } from '../../src/features/security';
 
 jest.mock('nodemailer');
 jest.mock('../../src/app/configs', () => ({

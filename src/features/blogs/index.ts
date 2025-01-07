@@ -1,6 +1,5 @@
-import { blogsController } from './controller';
 import { blogsValidators, blogsQuerySchema } from './middlewares';
-import { blogsRepository } from './repository';
+import { BlogsRepository } from './repository';
 import { blogsRouter } from './router';
 import { BlogDBModel, BlogsModel } from './model';
 import {
@@ -8,6 +7,7 @@ import {
     BlogViewModel,
     TCreateNewBlogPostRequest,
 } from './types';
+import { blogsController, blogsRepository } from './composition-root';
 
 export {
     blogsController,
@@ -20,4 +20,5 @@ export {
     TGetAllBlogPostsRequest,
     BlogViewModel,
     TCreateNewBlogPostRequest,
+    BlogsRepository,
 };

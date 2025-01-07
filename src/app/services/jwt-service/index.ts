@@ -1,4 +1,4 @@
-import { jwtService } from './jwt-service';
+import { JwtService } from './jwt-service';
 import { TDecodedToken, TJwtPayload } from './types';
 
-export { jwtService, TDecodedToken, TJwtPayload };
+export { JwtService, TDecodedToken, TJwtPayload };

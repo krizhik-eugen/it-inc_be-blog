@@ -1,3 +1,3 @@
-import { usersService } from './users-service';
+import { UsersService } from './users-service';
 
-export { usersService };
+export { UsersService };

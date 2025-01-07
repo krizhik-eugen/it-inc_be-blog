@@ -1,3 +1,3 @@
-import { blogsController } from './blogs-controller';
+import { BlogsController } from './blogs-controller';
 
-export { blogsController };
+export { BlogsController };

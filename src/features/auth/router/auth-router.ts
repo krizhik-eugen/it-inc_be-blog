@@ -1,26 +1,29 @@
 import { Router } from 'express';
-import { authController } from '../controller';
 import { authValidators } from '../middlewares';
-import { userAuthValidator } from '../../../app/middlewares';
+import { userAuthValidator, rateLimiter } from '../../../app/middlewares';
 import { routersPaths } from '../../../app/configs';
-import { rateLimiter } from '../../../app/middlewares/rate-limit';
+import { authController } from '../composition-root';
 
 export const authRouter = Router();
 
 authRouter
     .route(routersPaths.auth.login)
-    .post(rateLimiter, ...authValidators.loginRequest, authController.login);
+    .post(
+        rateLimiter,
+        ...authValidators.loginRequest,
+        authController.login.bind(authController)
+    );
 
 authRouter
     .route(routersPaths.auth.me)
-    .get(userAuthValidator, authController.me);
+    .get(userAuthValidator, authController.me.bind(authController));
 
 authRouter
     .route(routersPaths.auth.registration)
     .post(
         rateLimiter,
         ...authValidators.registrationRequest,
-        authController.register
+        authController.register.bind(authController)
     );
 
 authRouter
@@ -28,7 +31,7 @@ authRouter
     .post(
         rateLimiter,
         ...authValidators.confirmationRequest,
-        authController.confirmRegistration
+        authController.confirmRegistration.bind(authController)
     );
 
 authRouter
@@ -36,19 +39,19 @@ authRouter
     .post(
         rateLimiter,
         ...authValidators.resendRegistrationRequest,
-        authController.resendRegistrationEmail
+        authController.resendRegistrationEmail.bind(authController)
     );
 
 authRouter
     .route(routersPaths.auth.refreshToken)
-    .post(authController.createNewSession);
+    .post(authController.createNewSession.bind(authController));
 
 authRouter
     .route(routersPaths.auth.passwordRecovery)
     .post(
         rateLimiter,
         ...authValidators.passwordRecoveryRequest,
-        authController.passwordRecovery
+        authController.passwordRecovery.bind(authController)
     );
 
 authRouter
@@ -56,7 +59,9 @@ authRouter
     .post(
         rateLimiter,
         ...authValidators.newPasswordRequest,
-        authController.newPassword
+        authController.newPassword.bind(authController)
     );
 
-authRouter.route(routersPaths.auth.logout).post(authController.logout);
+authRouter
+    .route(routersPaths.auth.logout)
+    .post(authController.logout.bind(authController));

@@ -1,3 +1,3 @@
-import { usersController } from './users-controller';
+import { UsersController } from './users-controller';
 
-export { usersController };
+export { UsersController };

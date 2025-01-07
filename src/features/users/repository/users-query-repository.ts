@@ -7,7 +7,7 @@ import {
     TMappedSearchQueryParams,
 } from '../../../shared/types';
 
-export const usersQueryRepository = {
+export class UsersQueryRepository {
     async getUsers({
         searchQueries,
         searchLoginTerm,
@@ -58,7 +58,7 @@ export const usersQueryRepository = {
             totalCount: totalCount,
             items: mappedFoundUsers,
         };
-    },
+    }
 
     async getUser(id: string): Promise<UserViewModel | null> {
         const user = await UsersModel.findById(id);
@@ -69,5 +69,5 @@ export const usersQueryRepository = {
             email: user.accountData.email,
             createdAt: user.createdAt,
         };
-    },
-};
+    }
+}

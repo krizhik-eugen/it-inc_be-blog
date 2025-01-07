@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import { usersRepository } from '../../../features/users';
-import { jwtService } from '../../services';
+import { jwtService } from '../../app-composition-root';
 
 export const userAuthValidator = async (
     req: Request,

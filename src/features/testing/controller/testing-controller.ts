@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
-import { testingService } from '../service';
+import { TestingService } from '../service';
 
-export const testingController = {
+export class TestingController {
+    constructor(protected testingService: TestingService) {}
+
     async deleteAllData(req: Request, res: Response) {
-        await testingService.deleteAllData();
+        await this.testingService.deleteAllData();
         res.sendStatus(204);
-    },
-};
+    }
+}

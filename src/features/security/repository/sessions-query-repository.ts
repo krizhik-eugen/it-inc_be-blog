@@ -1,7 +1,7 @@
 import { SessionsModel } from '../model';
 import { SessionViewModel } from '../types';
 
-export const sessionsQueryRepository = {
+export class SessionsQueryRepository {
     async getAllSessionDevices(
         userId: string
     ): Promise<SessionViewModel[] | null> {
@@ -13,5 +13,5 @@ export const sessionsQueryRepository = {
             lastActiveDate: new Date(session.iat * 1000).toISOString(),
         }));
         return mappedResult;
-    },
-};
+    }
+}

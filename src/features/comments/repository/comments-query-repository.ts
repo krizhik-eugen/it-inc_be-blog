@@ -3,7 +3,7 @@ import { PostsModel } from '../../../features/posts';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
 
-export const commentsQueryRepository = {
+export class CommentsQueryRepository {
     async getComment(id: string) {
         const foundComment = await CommentsModel.findById(id);
         if (!foundComment) return undefined;
@@ -16,7 +16,7 @@ export const commentsQueryRepository = {
             },
             createdAt: foundComment.createdAt,
         };
-    },
+    }
 
     async getPostComments({
         searchQueries,
@@ -56,5 +56,5 @@ export const commentsQueryRepository = {
             totalCount,
             items: mappedFoundComments,
         };
-    },
-};
+    }
+}

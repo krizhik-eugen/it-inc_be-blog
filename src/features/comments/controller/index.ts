@@ -1,3 +1,3 @@
-import { commentsController } from './comments-controller';
+import { CommentsController } from './comments-controller';
 
-export { commentsController };
+export { CommentsController };

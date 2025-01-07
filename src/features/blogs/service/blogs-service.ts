@@ -1,10 +1,12 @@
-import { blogsRepository } from '../repository';
 import { BlogCreateRequestModel, BlogViewModel } from '../types';
 import { BlogDBModel } from '../model';
 import { TResult } from '../../../shared/types';
 import { createResponseError } from '../../../shared/helpers';
+import { BlogsRepository } from '../repository';
 
-export const blogsService = {
+export class BlogsService {
+    constructor(protected blogsRepository: BlogsRepository) {}
+
     async createNewBlog({
         name,
         description,
@@ -17,7 +19,7 @@ export const blogsService = {
             createdAt: new Date().toISOString(),
             isMembership: false,
         };
-        const createdBlogId = await blogsRepository.addNewBlog(newBlog);
+        const createdBlogId = await this.blogsRepository.addNewBlog(newBlog);
 
         if (!createdBlogId) {
             return {
@@ -32,7 +34,7 @@ export const blogsService = {
             status: 'Success',
             data: { blogId: createdBlogId },
         };
-    },
+    }
 
     async updateBlog({
         id,
@@ -40,7 +42,7 @@ export const blogsService = {
         description,
         websiteUrl,
     }: Partial<BlogViewModel>): Promise<TResult> {
-        const isBlogUpdated = await blogsRepository.updateBlog({
+        const isBlogUpdated = await this.blogsRepository.updateBlog({
             id,
             name,
             description,
@@ -56,10 +58,10 @@ export const blogsService = {
             status: 'Success',
             data: null,
         };
-    },
+    }
 
     async deleteBlog(id: string): Promise<TResult> {
-        const isBlogDeleted = await blogsRepository.deleteBlog(id);
+        const isBlogDeleted = await this.blogsRepository.deleteBlog(id);
         if (!isBlogDeleted) {
             return {
                 status: 'NotFound',
@@ -70,5 +72,5 @@ export const blogsService = {
             status: 'Success',
             data: null,
         };
-    },
-};
+    }
+}

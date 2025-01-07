@@ -1,11 +1,9 @@
-import { postsController } from './controller';
 import {
     postsValidators,
     postsQuerySchema,
     postsBodySchema,
 } from './middlewares';
 import { PostDBModel, PostsModel, PostsDBSearchParams } from './model';
-import { postsRepository, postsQueryRepository } from './repository';
 import { postsRouter } from './router';
 import {
     PostViewModel,
@@ -14,7 +12,14 @@ import {
     TGetAllPostCommentsRequest,
     TCreateNewPostCommentRequest,
 } from './types';
-import { postsService } from './service';
+import { PostsService } from './service';
+import {
+    postsController,
+    postsQueryRepository,
+    postsRepository,
+    postsService,
+} from './composition-root';
+import { PostsQueryRepository, PostsRepository } from './repository';
 
 export {
     postsController,
@@ -33,4 +38,7 @@ export {
     TGetAllPostCommentsRequest,
     PostsModel,
     TCreateNewPostCommentRequest,
+    PostsService,
+    PostsQueryRepository,
+    PostsRepository,
 };

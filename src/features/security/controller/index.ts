@@ -1,3 +1,3 @@
-import { securityController } from './security-controller';
+import { SecurityController } from './security-controller';
 
-export { securityController };
+export { SecurityController };

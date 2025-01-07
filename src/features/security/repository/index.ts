@@ -1,4 +1,4 @@
-import { sessionsQueryRepository } from './sessions-query-repository';
-import { sessionsRepository } from './sessions-repository';
+import { SessionsQueryRepository } from './sessions-query-repository';
+import { SessionsRepository } from './sessions-repository';
 
-export { sessionsRepository, sessionsQueryRepository };
+export { SessionsRepository, SessionsQueryRepository };

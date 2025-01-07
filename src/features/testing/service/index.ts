@@ -1,3 +1,3 @@
-import { testingService } from './testing-service';
+import { TestingService } from './testing-service';
 
-export { testingService };
+export { TestingService };

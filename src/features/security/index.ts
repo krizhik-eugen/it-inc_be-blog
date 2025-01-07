@@ -1,8 +1,13 @@
-import { securityController } from './controller';
+import {
+    securityController,
+    sessionService,
+    sessionsQueryRepository,
+    sessionsRepository,
+} from './composition-root';
 import { SessionsModel } from './model';
-import { sessionsQueryRepository, sessionsRepository } from './repository';
+import { SessionsRepository } from './repository';
+
 import { securityRouter } from './router';
-import { sessionService } from './service';
 
 export {
     SessionsModel,
@@ -11,4 +16,5 @@ export {
     securityController,
     sessionService,
     securityRouter,
+    SessionsRepository,
 };

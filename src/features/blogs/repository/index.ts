@@ -1,4 +1,4 @@
-import { blogsRepository } from './blogs-repository';
-import { blogsQueryRepository } from './blogs-query-repository';
+import { BlogsRepository } from './blogs-repository';
+import { BlogsQueryRepository } from './blogs-query-repository';
 
-export { blogsRepository, blogsQueryRepository };
+export { BlogsRepository, BlogsQueryRepository };

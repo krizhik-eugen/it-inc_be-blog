@@ -1,39 +1,48 @@
 import { Router } from 'express';
-import { blogsController } from '../controller';
 import { adminAuthValidator } from '../../../app/middlewares';
 import { blogsValidators } from '../middlewares';
 import { routersPaths } from '../../../app/configs';
+import { blogsController } from '../composition-root';
 
 export const blogsRouter = Router();
 
 blogsRouter
     .route(routersPaths.blogs.main)
-    .get(...blogsValidators.getBlogsRequest, blogsController.getBlogs)
+    .get(
+        ...blogsValidators.getBlogsRequest,
+        blogsController.getBlogs.bind(blogsController)
+    )
     .post(
         ...adminAuthValidator,
         ...blogsValidators.createNewBlogRequest,
-        blogsController.createNewBlog
+        blogsController.createNewBlog.bind(blogsController)
     );
 
 blogsRouter
     .route(routersPaths.blogs.id)
-    .get(...blogsValidators.getBlogRequest, blogsController.getBlog)
+    .get(
+        ...blogsValidators.getBlogRequest,
+        blogsController.getBlog.bind(blogsController)
+    )
     .put(
         ...adminAuthValidator,
         ...blogsValidators.updateBlogRequest,
-        blogsController.updateBlog
+        blogsController.updateBlog.bind(blogsController)
     )
     .delete(
         ...adminAuthValidator,
         ...blogsValidators.deleteBlogRequest,
-        blogsController.deleteBlog
+        blogsController.deleteBlog.bind(blogsController)
     );
 
 blogsRouter
     .route(routersPaths.blogs.idPosts)
-    .get(...blogsValidators.getBlogPostsRequest, blogsController.getBlogPosts)
+    .get(
+        ...blogsValidators.getBlogPostsRequest,
+        blogsController.getBlogPosts.bind(blogsController)
+    )
     .post(
         ...adminAuthValidator,
         ...blogsValidators.createNewPostForBlogRequest,
-        blogsController.createNewPostForBlog
+        blogsController.createNewPostForBlog.bind(blogsController)
     );

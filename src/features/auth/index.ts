@@ -1,6 +1,5 @@
-import { authController } from './controller';
+import { authController, authService } from './composition-root';
 import { authValidators } from './middlewares';
 import { authRouter } from './router';
-import { authService } from './service';
 
 export { authController, authRouter, authService, authValidators };

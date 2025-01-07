@@ -1,3 +1,3 @@
-import { emailManager } from './email-manager';
+import { EmailManager } from './email-manager';
 
-export { emailManager };
+export { EmailManager };

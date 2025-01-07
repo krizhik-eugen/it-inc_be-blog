@@ -6,7 +6,7 @@ import {
 } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
 
-export const blogsQueryRepository = {
+export class BlogsQueryRepository {
     async getBlogs({
         searchQueries,
         term,
@@ -42,7 +42,7 @@ export const blogsQueryRepository = {
             totalCount,
             items: mappedFoundBlogs,
         };
-    },
+    }
 
     async getBlog(id: string): Promise<BlogViewModel | undefined> {
         const foundBlog = await BlogsModel.findById(id);
@@ -55,5 +55,5 @@ export const blogsQueryRepository = {
             createdAt: foundBlog.createdAt,
             isMembership: foundBlog.isMembership,
         };
-    },
-};
+    }
+}

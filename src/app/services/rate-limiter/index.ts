@@ -1,3 +1,3 @@
-import { rateLimiterService } from './rate-limiter-service';
+import { RateLimiterService } from './rate-limiter-service';
 
-export { rateLimiterService };
+export { RateLimiterService };

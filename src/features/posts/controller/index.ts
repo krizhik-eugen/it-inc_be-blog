@@ -1,3 +1,3 @@
-import { postsController } from './posts-controller';
+import { PostsController } from './posts-controller';
 
-export { postsController };
+export { PostsController };

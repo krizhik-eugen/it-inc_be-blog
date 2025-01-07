@@ -1,18 +1,21 @@
 import { Router } from 'express';
 import { routersPaths } from '../../../app/configs';
-import { adminAuthValidator } from '../../../app/middlewares';
-import { usersController } from '../controller';
 import { usersValidators } from '../middlewares';
+import { usersController } from '../composition-root';
+import { adminAuthValidator } from '../../../app/middlewares/auth';
 
 export const usersRouter = Router();
 
 usersRouter
     .route(routersPaths.users.main)
     .all(...adminAuthValidator)
-    .get(...usersValidators.getUsersRequest, usersController.getAllUsers)
+    .get(
+        ...usersValidators.getUsersRequest,
+        usersController.getAllUsers.bind(usersController)
+    )
     .post(
         ...usersValidators.createNewUserRequest,
-        usersController.createNewUser
+        usersController.createNewUser.bind(usersController)
     );
 
 usersRouter
@@ -20,5 +23,5 @@ usersRouter
     .delete(
         ...adminAuthValidator,
         ...usersValidators.deleteUserRequest,
-        usersController.deleteUser
+        usersController.deleteUser.bind(usersController)
     );

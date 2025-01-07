@@ -1,45 +1,51 @@
 import { Router } from 'express';
-import { postsController } from '../controller';
 import {
     adminAuthValidator,
     userAuthValidator,
 } from '../../../app/middlewares';
 import { postsValidators } from '../middlewares';
 import { routersPaths } from '../../../app/configs';
+import { postsController } from '../composition-root';
 
 export const postsRouter = Router();
 
 postsRouter
     .route(routersPaths.posts.main)
-    .get(...postsValidators.getPostsRequest, postsController.getAllPosts)
+    .get(
+        ...postsValidators.getPostsRequest,
+        postsController.getAllPosts.bind(postsController)
+    )
     .post(
         ...adminAuthValidator,
         ...postsValidators.createNewPostRequest,
-        postsController.createNewPost
+        postsController.createNewPost.bind(postsController)
     );
 
 postsRouter
     .route(routersPaths.posts.id)
-    .get(...postsValidators.getPostRequest, postsController.getPost)
+    .get(
+        ...postsValidators.getPostRequest,
+        postsController.getPost.bind(postsController)
+    )
     .put(
         ...adminAuthValidator,
         ...postsValidators.updatePostRequest,
-        postsController.updatePost
+        postsController.updatePost.bind(postsController)
     )
     .delete(
         ...adminAuthValidator,
         ...postsValidators.deletePostRequest,
-        postsController.deletePost
+        postsController.deletePost.bind(postsController)
     );
 
 postsRouter
     .route(routersPaths.posts.idComments)
     .get(
         ...postsValidators.getPostCommentsRequest,
-        postsController.getPostComments
+        postsController.getPostComments.bind(postsController)
     )
     .post(
         userAuthValidator,
         ...postsValidators.createNewCommentForPostRequest,
-        postsController.createNewCommentForPost
+        postsController.createNewCommentForPost.bind(postsController)
     );
