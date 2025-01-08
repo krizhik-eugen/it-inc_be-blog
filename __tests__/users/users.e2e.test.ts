@@ -15,10 +15,28 @@ import {
     invalidEmailFormat,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { usersRepository, UserViewModel } from '../../src/features/users';
-import { testingService } from '../../src/features/testing';
+import { UsersRepository, UserViewModel } from '../../src/features/users';
+import { TestingService } from '../../src/features/testing';
+import { CommentsRepository } from '../../src/features/comments';
+import { PostsRepository } from '../../src/features/posts';
+import { SessionsRepository } from '../../src/features/security';
+import { BlogsRepository } from '../../src/features/blogs';
 
 describe('Users Controller', () => {
+    const commentsRepository = new CommentsRepository();
+    const postsRepository = new PostsRepository();
+    const sessionsRepository = new SessionsRepository();
+    const usersRepository = new UsersRepository();
+    const blogsRepository = new BlogsRepository();
+
+    const testingService = new TestingService(
+        blogsRepository,
+        postsRepository,
+        usersRepository,
+        commentsRepository,
+        sessionsRepository
+    );
+
     const setTestUsers = async () => {
         for (let i = 1; i < 10; i++) {
             const user = getTestUser(i);

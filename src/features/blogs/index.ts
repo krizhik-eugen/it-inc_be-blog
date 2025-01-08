@@ -7,11 +7,8 @@ import {
     BlogViewModel,
     TCreateNewBlogPostRequest,
 } from './types';
-import { blogsController, blogsRepository } from './composition-root';
 
 export {
-    blogsController,
-    blogsRepository,
     blogsRouter,
     blogsValidators,
     blogsQuerySchema,

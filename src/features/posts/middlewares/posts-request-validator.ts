@@ -1,11 +1,13 @@
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../../shared/helpers';
-import { blogsRepository } from '../../../features/blogs';
+import { BlogsRepository } from '../../../features/blogs/repository';
 import { commentsBodySchema, commentsQuerySchema } from '../../comments';
 
 const titleLength = 30;
 const shortDescriptionLength = 100;
 const contentLength = 1000;
+
+const blogsRepository = new BlogsRepository();
 
 const paramSchema: Schema = {
     id: {

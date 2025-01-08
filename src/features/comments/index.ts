@@ -8,15 +8,8 @@ import { commentsRouter } from './router';
 import { CommentViewModel, CommentCreateRequestModel } from './types';
 import { CommentsService } from './service';
 import { CommentsQueryRepository, CommentsRepository } from './repository';
-import {
-    commentsController,
-    commentsQueryRepository,
-    commentsRepository,
-    commentsService,
-} from './composition-root';
 
 export {
-    commentsController,
     CommentsRepository,
     commentsRouter,
     commentsValidators,
@@ -28,7 +21,4 @@ export {
     CommentsQueryRepository,
     commentsBodySchema,
     CommentsService,
-    commentsQueryRepository,
-    commentsService,
-    commentsRepository,
 };

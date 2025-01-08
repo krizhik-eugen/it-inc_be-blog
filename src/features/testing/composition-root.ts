@@ -1,12 +1,18 @@
-import { blogsRepository } from '../blogs';
-import { commentsRepository } from '../comments';
-import { postsRepository } from '../posts';
-import { sessionsRepository } from '../security';
-import { usersRepository } from '../users';
+import { BlogsRepository } from '../blogs';
+import { CommentsRepository } from '../comments';
+import { PostsRepository } from '../posts';
+import { SessionsRepository } from '../security';
+import { UsersRepository } from '../users';
 import { TestingController } from './controller';
 import { TestingService } from './service';
 
-export const testingService = new TestingService(
+const commentsRepository = new CommentsRepository();
+const postsRepository = new PostsRepository();
+const sessionsRepository = new SessionsRepository();
+const usersRepository = new UsersRepository();
+const blogsRepository = new BlogsRepository();
+
+const testingService = new TestingService(
     blogsRepository,
     postsRepository,
     usersRepository,

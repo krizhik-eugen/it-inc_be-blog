@@ -1,4 +1,4 @@
-import { testingController, testingService } from './composition-root';
 import { testingRouter } from './router';
+import { TestingService } from './service';
 
-export { testingController, testingService, testingRouter };
+export { testingRouter, TestingService };

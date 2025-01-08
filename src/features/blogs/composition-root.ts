@@ -1,12 +1,15 @@
-import { postsQueryRepository, postsService } from '../posts';
+import { PostsQueryRepository, PostsRepository, PostsService } from '../posts';
 import { BlogsController } from './controller';
 import { BlogsQueryRepository, BlogsRepository } from './repository';
 import { BlogsService } from './service';
 
-export const blogsQueryRepository = new BlogsQueryRepository();
-export const blogsRepository = new BlogsRepository();
+const blogsQueryRepository = new BlogsQueryRepository();
+const blogsRepository = new BlogsRepository();
+const postsQueryRepository = new PostsQueryRepository();
+const postsRepository = new PostsRepository();
 
-export const blogsService = new BlogsService(blogsRepository);
+const postsService = new PostsService(postsRepository, blogsRepository);
+const blogsService = new BlogsService(blogsRepository);
 
 export const blogsController = new BlogsController(
     blogsQueryRepository,
