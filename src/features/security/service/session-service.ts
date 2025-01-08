@@ -1,20 +1,21 @@
 import { SessionsQueryRepository, SessionsRepository } from '../repository';
 import { SessionViewModel } from '../types';
 import { TResult } from '../../../shared/types';
-import { authService } from '../../auth';
+import { AuthService } from '../../auth';
 import { createResponseError } from '../../../shared/helpers';
 
 export class SessionService {
     constructor(
         protected sessionsQueryRepository: SessionsQueryRepository,
-        protected sessionsRepository: SessionsRepository
+        protected sessionsRepository: SessionsRepository,
+        protected authService: AuthService
     ) {}
 
     async getAllSessionDevices(
         refreshToken: string
     ): Promise<TResult<SessionViewModel[]>> {
         const validationResult =
-            await authService.validateRefreshToken(refreshToken);
+            await this.authService.validateRefreshToken(refreshToken);
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
@@ -32,7 +33,7 @@ export class SessionService {
         refreshToken: string
     ): Promise<TResult> {
         const validationResult =
-            await authService.validateRefreshToken(refreshToken);
+            await this.authService.validateRefreshToken(refreshToken);
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
@@ -51,7 +52,7 @@ export class SessionService {
         deviceId: string
     ): Promise<TResult> {
         const validationResult =
-            await authService.validateRefreshToken(refreshToken);
+            await this.authService.validateRefreshToken(refreshToken);
         if (validationResult.status !== 'Success') {
             return validationResult;
         }

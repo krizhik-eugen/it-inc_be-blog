@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { routersPaths } from '../../../app/configs';
 import { usersValidators } from '../middlewares';
 import { usersController } from '../composition-root';
-import { adminAuthValidator } from '../../../app/middlewares/auth';
+import { adminAuthValidator } from '../../../app/middlewares';
 
 export const usersRouter = Router();
 
