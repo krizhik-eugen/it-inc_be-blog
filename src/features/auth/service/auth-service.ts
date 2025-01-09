@@ -7,7 +7,14 @@ import {
     RegisterRequestModel,
     TTokens,
 } from '../types';
-import { createResponseError } from '../../../shared/helpers';
+import {
+    badRequestErrorResult,
+    createResponseError,
+    internalErrorResult,
+    notFoundErrorResult,
+    successResult,
+    unauthorizedErrorResult,
+} from '../../../shared/helpers';
 import { UserDBModel } from '../../users/model';
 import { EmailManager } from '../../../app/managers';
 import { TResult } from '../../../shared/types';
@@ -32,28 +39,17 @@ export class AuthService {
         const user =
             await this.usersRepository.findUserByLoginOrEmail(loginOrEmail);
         if (!user) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('User not found')],
-            };
+            return notFoundErrorResult('User not found');
         }
         if (user.emailConfirmation.isConfirmed === 'NotConfirmed') {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError('This email has not been confirmed'),
-                ],
-            };
+            return badRequestErrorResult('This email has not been confirmed');
         }
         const isCredentialsValid = await bcrypt.compare(
             password,
             user.accountData.passwordHash
         );
         if (!isCredentialsValid) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [createResponseError('Invalid credentials')],
-            };
+            return badRequestErrorResult('Invalid credentials');
         }
         const accessToken = this.jwtService.generateAccessToken(
             user._id.toString()
@@ -72,10 +68,7 @@ export class AuthService {
             iat: decodedIssuedToken.iat!,
             exp: decodedIssuedToken.exp!,
         });
-        return {
-            status: 'Success',
-            data: { accessToken, refreshToken },
-        };
+        return successResult({ accessToken, refreshToken });
     }
 
     async createUser({
@@ -88,15 +81,10 @@ export class AuthService {
         const foundUserByEmail =
             await this.usersRepository.findUserByLoginOrEmail(email);
         if (foundUserByLogin || foundUserByEmail) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError(
-                        'User with this login or email already exists',
-                        foundUserByLogin ? 'login' : 'email'
-                    ),
-                ],
-            };
+            return badRequestErrorResult(
+                'User with this login or email already exists',
+                foundUserByLogin ? 'login' : 'email'
+            );
         }
         const passwordHash = await bcrypt.hash(password, hashSaltRounds);
         const newUser: UserDBModel = {
@@ -124,17 +112,11 @@ export class AuthService {
                 newUser.emailConfirmation.confirmationCode!
             )
             .catch((e: unknown) => console.log(e));
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
         // }
         // catch {
         //     await usersRepository.deleteUser(addedUserId);
-        //     return {
-        //         status: 'InternalError',
-        //         errorsMessages: [createResponseError('Error sending email')],
-        //     };
+        //     return internalErrorResult('Error sending email')
         // }
     }
 
@@ -142,33 +124,18 @@ export class AuthService {
         const user =
             await this.usersRepository.findUserByConfirmationCode(code);
         if (!user) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError(
-                        'No user found for this confirmation code'
-                    ),
-                ],
-            };
+            return badRequestErrorResult(
+                'No user found for this confirmation code'
+            );
         }
         if (user.emailConfirmation.isConfirmed === 'Confirmed') {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError('Code already confirmed', 'code'),
-                ],
-            };
+            return badRequestErrorResult('Code already confirmed', 'code');
         }
         if (
             user.emailConfirmation.expirationDate &&
             user.emailConfirmation.expirationDate < new Date()
         ) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError('Confirmation code expired'),
-                ],
-            };
+            return badRequestErrorResult('Confirmation code expired');
         }
 
         await this.usersRepository.updateUser({
@@ -178,32 +145,19 @@ export class AuthService {
                 isConfirmed: 'Confirmed',
             },
         });
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 
     async resendConfirmationCode(email: string): Promise<TResult> {
         const user = await this.usersRepository.findUserByLoginOrEmail(email);
         if (!user) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError(
-                        'No user found with this email',
-                        'email'
-                    ),
-                ],
-            };
+            return badRequestErrorResult(
+                'No user found with this email',
+                'email'
+            );
         }
         if (user.emailConfirmation.isConfirmed === 'Confirmed') {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError('Email already confirmed', 'email'),
-                ],
-            };
+            return badRequestErrorResult('Email already confirmed', 'email');
         }
         const confirmationCode = uuidv4();
         await this.usersRepository.updateUser({
@@ -219,15 +173,9 @@ export class AuthService {
                 user.accountData.email,
                 confirmationCode
             );
-            return {
-                status: 'Success',
-                data: null,
-            };
+            return successResult(null);
         } catch {
-            return {
-                status: 'InternalError',
-                errorsMessages: [createResponseError('Error sending email')],
-            };
+            return internalErrorResult('Error sending email');
         }
     }
 
@@ -254,13 +202,10 @@ export class AuthService {
             exp: decodedIssuedToken.exp!,
             ip,
         });
-        return {
-            status: 'Success',
-            data: {
-                accessToken: updatedAccessToken,
-                refreshToken: updatedRefreshToken,
-            },
-        };
+        return successResult({
+            accessToken: updatedAccessToken,
+            refreshToken: updatedRefreshToken,
+        });
     }
 
     async logout(refreshToken: string): Promise<TResult> {
@@ -271,10 +216,7 @@ export class AuthService {
         await this.sessionsRepository.revokeSession(
             validationResult.data.deviceId
         );
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 
     async passwordRecovery({
@@ -296,17 +238,11 @@ export class AuthService {
                 .sendEmailPasswordRecoveryMessage(email, recoveryCode)
                 .catch((e: unknown) => console.log(e));
         }
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
         // }
         // catch {
         //     await usersRepository.deleteUser(addedUserId);
-        //     return {
-        //         status: 'InternalError',
-        //         errorsMessages: [createResponseError('Error sending email')],
-        //     };
+        //     return internalErrorResult('Error sending email')
         // }
     }
 
@@ -317,29 +253,19 @@ export class AuthService {
         const user =
             await this.usersRepository.findUserByRecoveryCode(recoveryCode);
         if (!user) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError(
-                        'Recovery code is not correct',
-                        'recoveryCode'
-                    ),
-                ],
-            };
+            return badRequestErrorResult(
+                'Recovery code is not correct',
+                'recoveryCode'
+            );
         }
         if (
             user.passwordRecovery.expirationDate &&
             user.passwordRecovery.expirationDate < new Date()
         ) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError(
-                        'Recovery code expired',
-                        'recoveryCode'
-                    ),
-                ],
-            };
+            return badRequestErrorResult(
+                'Recovery code expired',
+                'recoveryCode'
+            );
         }
         const newPasswordHash = await bcrypt.hash(newPassword, hashSaltRounds);
         await this.usersRepository.updateUser({
@@ -347,10 +273,7 @@ export class AuthService {
             accountData: { ...user.accountData, passwordHash: newPasswordHash },
             passwordRecovery: { recoveryCode: '', expirationDate: '' },
         });
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 
     async validateRefreshToken(
@@ -363,40 +286,23 @@ export class AuthService {
                     result.data.deviceId
                 );
             }
-            return {
-                status: 'Unauthorized',
-                errorsMessages: [
-                    createResponseError('Refresh token verification error'),
-                ],
-            };
+            return unauthorizedErrorResult('Refresh token verification error');
         }
         const user = await this.usersRepository.findUserById(
             result.data.userId
         );
         if (!user) {
-            return {
-                status: 'Unauthorized',
-                errorsMessages: [createResponseError('User not found')],
-            };
+            return unauthorizedErrorResult('User not found');
         }
         const session = await this.sessionsRepository.findSession(
             result.data.deviceId
         );
         if (!session) {
-            return {
-                status: 'Unauthorized',
-                errorsMessages: [createResponseError('Session not found')],
-            };
+            return unauthorizedErrorResult('Session not found');
         }
         if (session.iat !== result.data.iat) {
-            return {
-                status: 'Unauthorized',
-                errorsMessages: [createResponseError('Invalid token')],
-            };
+            return unauthorizedErrorResult('Invalid token');
         }
-        return {
-            status: 'Success',
-            data: result.data,
-        };
+        return successResult(result.data);
     }
 }

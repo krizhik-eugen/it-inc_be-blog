@@ -1,7 +1,13 @@
 import bcrypt from 'bcrypt';
 import { UserCreateRequestModel } from '../types';
 import { UsersRepository } from '../repository';
-import { createResponseError } from '../../../shared/helpers';
+import {
+    badRequestErrorResult,
+    createResponseError,
+    internalErrorResult,
+    notFoundErrorResult,
+    successResult,
+} from '../../../shared/helpers';
 import { UserDBModel } from '../model';
 import { TResult } from '../../../shared/types';
 
@@ -22,14 +28,9 @@ export class UsersService {
         const foundUserByEmail =
             await this.usersRepository.findUserByLoginOrEmail(email);
         if (foundUserByLogin || foundUserByEmail) {
-            return {
-                status: 'BadRequest',
-                errorsMessages: [
-                    createResponseError(
-                        'User with this login or email already exists'
-                    ),
-                ],
-            };
+            return badRequestErrorResult(
+                'User with this login or email already exists'
+            );
         }
         const passwordHash = await bcrypt.hash(password, 10);
         const newUser: UserDBModel = {
@@ -51,30 +52,18 @@ export class UsersService {
         };
         const addedUserId = await this.usersRepository.addNewUser(newUser);
         if (!addedUserId) {
-            return {
-                status: 'InternalError',
-                errorsMessages: [createResponseError('Error creating user')],
-            };
+            return internalErrorResult('Error creating user');
         }
-        return {
-            status: 'Success',
-            data: {
-                userId: addedUserId,
-            },
-        };
+        return successResult({
+            userId: addedUserId,
+        });
     }
 
     async deleteUser(id: string): Promise<TResult> {
         const isDeleted = await this.usersRepository.deleteUser(id);
         if (!isDeleted) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('User is not found')],
-            };
+            return notFoundErrorResult('User is not found');
         }
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 }

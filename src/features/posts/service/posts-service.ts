@@ -2,7 +2,12 @@ import { PostCreateRequestModel } from '../types';
 import { PostsRepository } from '../repository';
 import { PostDBModel } from '../model';
 import { TResult } from '../../../shared/types';
-import { createResponseError } from '../../../shared/helpers';
+import {
+    createResponseError,
+    internalErrorResult,
+    notFoundErrorResult,
+    successResult,
+} from '../../../shared/helpers';
 import { BlogsRepository } from '../../blogs';
 
 export class PostsService {
@@ -19,10 +24,7 @@ export class PostsService {
     }: PostCreateRequestModel): Promise<TResult<{ id: string }>> {
         const blog = await this.blogsRepository.findBlogById(blogId);
         if (!blog) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Blog is not found')],
-            };
+            return notFoundErrorResult('Blog is not found');
         }
         const newPost: PostDBModel = {
             blogId,
@@ -34,17 +36,9 @@ export class PostsService {
         };
         const createdPostId = await this.postsRepository.addNewPost(newPost);
         if (!createdPostId) {
-            return {
-                status: 'InternalError',
-                errorsMessages: [
-                    createResponseError('Error occurred during creation'),
-                ],
-            };
+            return internalErrorResult('Error occurred during creation');
         }
-        return {
-            status: 'Success',
-            data: { id: createdPostId },
-        };
+        return successResult({ id: createdPostId });
     }
 
     async createNewPostForBlog({
@@ -57,10 +51,7 @@ export class PostsService {
     > {
         const blog = await this.blogsRepository.findBlogById(id);
         if (!blog) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Blog is not found')],
-            };
+            return notFoundErrorResult('Blog is not found');
         }
         const newPost: PostDBModel = {
             title,
@@ -72,15 +63,9 @@ export class PostsService {
         };
         const createdPostId = await this.postsRepository.addNewPost(newPost);
         if (!createdPostId) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Post is not found')],
-            };
+            return notFoundErrorResult('Post is not found');
         }
-        return {
-            status: 'Success',
-            data: { postId: createdPostId },
-        };
+        return successResult({ postId: createdPostId });
     }
 
     async updatePost(
@@ -98,28 +83,16 @@ export class PostsService {
             blogId,
         });
         if (!isPostUpdated) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Post is not found')],
-            };
+            return notFoundErrorResult('Post is not found');
         }
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 
     async deletePost(id: string): Promise<TResult> {
         const isPostDeleted = await this.postsRepository.deletePost(id);
         if (!isPostDeleted) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Post is not found')],
-            };
+            return notFoundErrorResult('Post is not found');
         }
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 }

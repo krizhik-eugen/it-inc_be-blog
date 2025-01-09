@@ -1,7 +1,12 @@
 import { BlogCreateRequestModel, BlogViewModel } from '../types';
 import { BlogDBModel } from '../model';
 import { TResult } from '../../../shared/types';
-import { createResponseError } from '../../../shared/helpers';
+import {
+    createResponseError,
+    internalErrorResult,
+    notFoundErrorResult,
+    successResult,
+} from '../../../shared/helpers';
 import { BlogsRepository } from '../repository';
 
 export class BlogsService {
@@ -22,18 +27,10 @@ export class BlogsService {
         const createdBlogId = await this.blogsRepository.addNewBlog(newBlog);
 
         if (!createdBlogId) {
-            return {
-                status: 'InternalError',
-                errorsMessages: [
-                    createResponseError('The error occurred during creation'),
-                ],
-            };
+            return internalErrorResult('The error occurred during creation');
         }
 
-        return {
-            status: 'Success',
-            data: { blogId: createdBlogId },
-        };
+        return successResult({ blogId: createdBlogId });
     }
 
     async updateBlog({
@@ -49,28 +46,16 @@ export class BlogsService {
             websiteUrl,
         });
         if (!isBlogUpdated) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Blog is not found')],
-            };
+            return notFoundErrorResult('Blog is not found');
         }
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 
     async deleteBlog(id: string): Promise<TResult> {
         const isBlogDeleted = await this.blogsRepository.deleteBlog(id);
         if (!isBlogDeleted) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Blog is not found')],
-            };
+            return notFoundErrorResult('Blog is not found');
         }
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 }

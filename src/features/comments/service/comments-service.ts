@@ -3,7 +3,13 @@ import { CommentCreateRequestModel } from '../types';
 import { CommentDBModel } from '../model';
 import { UsersRepository } from '../../users';
 import { PostsRepository } from '../../posts';
-import { createResponseError } from '../../../shared/helpers';
+import {
+    createResponseError,
+    forbiddenErrorResult,
+    internalErrorResult,
+    notFoundErrorResult,
+    successResult,
+} from '../../../shared/helpers';
 import { TResult } from '../../../shared/types';
 
 export class CommentsService {
@@ -21,10 +27,7 @@ export class CommentsService {
         const postId = id;
         const post = await this.postsRepository.findPostById(postId);
         if (!post) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Post is not found')],
-            };
+            return notFoundErrorResult('Post is not found');
         }
         const user = await this.usersRepository.findUserById(userId);
         const newComment: CommentDBModel = {
@@ -39,17 +42,9 @@ export class CommentsService {
         const createdCommentId =
             await this.commentsRepository.addNewComment(newComment);
         if (!createdCommentId) {
-            return {
-                status: 'InternalError',
-                errorsMessages: [
-                    createResponseError('The error occurred during creation'),
-                ],
-            };
+            return internalErrorResult('The error occurred during creation');
         }
-        return {
-            status: 'Success',
-            data: { id: createdCommentId },
-        };
+        return successResult({ id: createdCommentId });
     }
 
     async updateComment(
@@ -59,58 +54,34 @@ export class CommentsService {
     ): Promise<TResult> {
         const comment = await this.commentsRepository.findCommentById(id);
         if (!comment) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Comment is not found')],
-            };
+            return notFoundErrorResult('Comment is not found');
         }
         if (userId !== comment.commentatorInfo.userId) {
-            return {
-                status: 'Forbidden',
-                errorsMessages: [createResponseError('You are not an owner')],
-            };
+            return forbiddenErrorResult('You are not an owner');
         }
         const isCommentUpdated = await this.commentsRepository.updateComment({
             id,
             content,
         });
         if (!isCommentUpdated) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Comment is not found')],
-            };
+            return notFoundErrorResult('Comment is not found');
         }
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 
     async deleteComment(id: string, userId: string): Promise<TResult> {
         const comment = await this.commentsRepository.findCommentById(id);
         if (!comment) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Comment is not found')],
-            };
+            return notFoundErrorResult('Comment is not found');
         }
         if (userId !== comment.commentatorInfo.userId) {
-            return {
-                status: 'Forbidden',
-                errorsMessages: [createResponseError('You are not an owner')],
-            };
+            return forbiddenErrorResult('You are not an owner');
         }
         const isCommentDeleted =
             await this.commentsRepository.deleteComment(id);
         if (!isCommentDeleted) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Comment is not found')],
-            };
+            return notFoundErrorResult('Comment is not found');
         }
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 }

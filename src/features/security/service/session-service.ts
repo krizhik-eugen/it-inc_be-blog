@@ -2,7 +2,12 @@ import { SessionsQueryRepository, SessionsRepository } from '../repository';
 import { SessionViewModel } from '../types';
 import { TResult } from '../../../shared/types';
 import { AuthService } from '../../auth';
-import { createResponseError } from '../../../shared/helpers';
+import {
+    createResponseError,
+    forbiddenErrorResult,
+    notFoundErrorResult,
+    successResult,
+} from '../../../shared/helpers';
 
 export class SessionService {
     constructor(
@@ -23,10 +28,7 @@ export class SessionService {
             await this.sessionsQueryRepository.getAllSessionDevices(
                 validationResult.data.userId
             );
-        return {
-            status: 'Success',
-            data: sessions!,
-        };
+        return successResult(sessions!);
     }
 
     async terminateAllSessionsExceptCurrent(
@@ -41,10 +43,7 @@ export class SessionService {
             validationResult.data.userId,
             validationResult.data.deviceId
         );
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 
     async terminateDeviceSession(
@@ -58,21 +57,12 @@ export class SessionService {
         }
         const session = await this.sessionsRepository.findSession(deviceId);
         if (!session) {
-            return {
-                status: 'NotFound',
-                errorsMessages: [createResponseError('Session is not found')],
-            };
+            return notFoundErrorResult('Session is not found');
         }
         if (session.userId !== validationResult.data.userId) {
-            return {
-                status: 'Forbidden',
-                errorsMessages: [createResponseError('You are not an owner')],
-            };
+            return forbiddenErrorResult('You are not an owner');
         }
         await this.sessionsRepository.revokeSession(deviceId);
-        return {
-            status: 'Success',
-            data: null,
-        };
+        return successResult(null);
     }
 }

@@ -5,6 +5,7 @@ import { DEFAULT_SEARCH_PARAMS, HTTP_STATUS_CODES } from '../constants';
 import {
     TErrorType,
     TMappedSearchQueryParams,
+    TResult,
     TSearchQueryParams,
 } from './types';
 
@@ -198,6 +199,47 @@ export const getDeviceTitle = (userAgent = '') => {
     return deviceTitle;
 };
 
-export const successReturn = () => {};
+export const successResult = <T>(data: T): TResult<T> => ({
+    status: 'Success',
+    data,
+});
 
-export const errorReturn = () => {};
+export const notFoundErrorResult = <T>(
+    message: string,
+    field = ''
+): TResult<T> => ({
+    status: 'NotFound',
+    errorsMessages: [createResponseError(message, field)],
+});
+
+export const badRequestErrorResult = <T>(
+    message: string,
+    field = ''
+): TResult<T> => ({
+    status: 'BadRequest',
+    errorsMessages: [createResponseError(message, field)],
+});
+
+export const unauthorizedErrorResult = <T>(
+    message: string,
+    field = ''
+): TResult<T> => ({
+    status: 'Unauthorized',
+    errorsMessages: [createResponseError(message, field)],
+});
+
+export const forbiddenErrorResult = <T>(
+    message: string,
+    field = ''
+): TResult<T> => ({
+    status: 'Forbidden',
+    errorsMessages: [createResponseError(message, field)],
+});
+
+export const internalErrorResult = <T>(
+    message: string,
+    field = ''
+): TResult<T> => ({
+    status: 'InternalError',
+    errorsMessages: [createResponseError(message, field)],
+});
