@@ -1,8 +1,8 @@
-import { BlogsRepository } from '../blogs';
-import { CommentsRepository } from '../comments';
-import { PostsRepository } from '../posts';
-import { SessionsRepository } from '../security';
-import { UsersRepository } from '../users';
+import { BlogsRepository } from '../blogs/repository';
+import { CommentsRepository } from '../comments/repository';
+import { PostsRepository } from '../posts/repository';
+import { SessionsRepository } from '../security/repository';
+import { UsersRepository } from '../users/repository';
 import { TestingController } from './controller';
 import { TestingService } from './service';
 

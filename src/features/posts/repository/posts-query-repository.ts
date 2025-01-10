@@ -1,7 +1,7 @@
 import { PostsModel, PostsDBSearchParams } from '../model';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
-import { BlogsModel } from '../../../features/blogs';
+import { BlogsModel } from '../../../features/blogs/model';
 
 export class PostsQueryRepository {
     async getPosts({

@@ -13,13 +13,13 @@ import {
 import { AuthService } from '../service';
 import { getDeviceTitle } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
-import { UsersQueryRepository } from '../../users';
+import { UsersQueryRepository } from '../../users/repository';
 
 export class AuthController {
     constructor(
         protected usersQueryRepository: UsersQueryRepository,
         protected authService: AuthService
-    ) {}
+    ) { }
 
     async login(req: TLoginRequest, res: TLoginResponse) {
         const { loginOrEmail, password } = req.body;

@@ -1,7 +1,7 @@
 import { EmailManager } from '../../app/managers';
 import { JwtService } from '../../app/services';
-import { AuthService } from '../auth';
-import { UsersRepository } from '../users';
+import { AuthService } from '../auth/service';
+import { UsersRepository } from '../users/repository';
 import { SecurityController } from './controller';
 import { SessionsQueryRepository, SessionsRepository } from './repository';
 import { SessionService } from './service';

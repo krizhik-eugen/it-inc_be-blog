@@ -9,11 +9,11 @@ import {
     textWithLengthGraterThan10,
     invalidEmailFormat,
     emailWithLengthGraterThan100,
+    clearAllCollections,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { routersPaths } from '../../src/app/configs';
-import { testingService } from '../../src/features/testing';
-import { rateLimiterRepository } from '../../src/app/app-composition-root';
+import { RateLimiterModel } from '../../src/app/models/rate-limiter';
 
 jest.mock('nodemailer');
 jest.mock('../../src/app/configs', () => ({
@@ -31,12 +31,12 @@ describe('Auth Controller', () => {
     });
 
     afterAll(async () => {
-        await testingService.deleteAllData();
+        await clearAllCollections();
         await DBHandlers.closeDB();
     });
 
     afterEach(async () => {
-        await rateLimiterRepository.clearRateLimiter();
+        await RateLimiterModel.deleteMany({});
     });
 
     describe('POST /registration', () => {

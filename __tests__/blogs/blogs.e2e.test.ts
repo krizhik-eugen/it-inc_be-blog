@@ -1,9 +1,10 @@
 import { baseRoutes } from '../../src/app/configs';
-import { blogsRepository, BlogViewModel } from '../../src/features/blogs';
+import { BlogViewModel } from '../../src/features/blogs/types';
 import {
     addNewBlog,
     addNewPost,
     blogsValidationErrorMessages,
+    clearAllCollections,
     DBHandlers,
     emailWithLengthGraterThan100,
     getTestBlog,
@@ -23,13 +24,11 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import {
-    PostCreateRequestModel,
-    postsRepository,
-} from '../../src/features/posts';
-import { testingService } from '../../src/features/testing';
+import { PostCreateRequestModel } from '../../src/features/posts/types';
+import { PostsRepository } from '../../src/features/posts/repository';
 
 describe('Blogs Controller', () => {
+    const postsRepository = new PostsRepository();
     let createdTestBlog: BlogViewModel;
     const setTestBlogs = async () => {
         for (let i = 1; i < 20; i++) {
@@ -47,13 +46,12 @@ describe('Blogs Controller', () => {
 
     beforeAll(async () => {
         await DBHandlers.connectToDB();
-        await blogsRepository.clearBlogs();
         await setTestBlogs();
         await setTestPosts(createdTestBlog.id);
     }, 10000);
 
     afterAll(async () => {
-        await testingService.deleteAllData();
+        await clearAllCollections();
         await DBHandlers.closeDB();
     });
 

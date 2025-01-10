@@ -5,12 +5,12 @@ import {
     req,
     getTestUser,
     mockUserAgents,
+    clearAllCollections,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { routersPaths } from '../../src/app/configs';
-import { rateLimiterRepository } from '../../src/app/app-composition-root';
-import { testingService } from '../../src/features/testing';
-import { sessionsRepository } from '../../src/features/security';
+import { SessionsModel } from '../../src/features/security/model';
+import { RateLimiterModel } from '../../src/app/models/rate-limiter';
 
 jest.mock('nodemailer');
 jest.mock('../../src/app/configs', () => ({
@@ -67,7 +67,7 @@ describe('Security Controller', () => {
     });
 
     afterAll(async () => {
-        await testingService.deleteAllData();
+        await clearAllCollections();
         await DBHandlers.closeDB();
     });
 
@@ -86,8 +86,8 @@ describe('Security Controller', () => {
         });
 
         afterAll(async () => {
-            await rateLimiterRepository.clearRateLimiter();
-            await sessionsRepository.clearSessions();
+            await RateLimiterModel.deleteMany({});
+            await SessionsModel.deleteMany({});
             await new Promise((resolve) =>
                 setTimeout(resolve, refreshTokenExpirationTime * 1000)
             );
@@ -158,8 +158,8 @@ describe('Security Controller', () => {
         });
 
         afterAll(async () => {
-            await rateLimiterRepository.clearRateLimiter();
-            await sessionsRepository.clearSessions();
+            await RateLimiterModel.deleteMany({});
+            await SessionsModel.deleteMany({});
             await new Promise((resolve) =>
                 setTimeout(resolve, refreshTokenExpirationTime * 1000)
             );
@@ -232,8 +232,8 @@ describe('Security Controller', () => {
         });
 
         afterAll(async () => {
-            await rateLimiterRepository.clearRateLimiter();
-            await sessionsRepository.clearSessions();
+            await RateLimiterModel.deleteMany({});
+            await SessionsModel.deleteMany({});
             await new Promise((resolve) =>
                 setTimeout(resolve, refreshTokenExpirationTime * 1000)
             );

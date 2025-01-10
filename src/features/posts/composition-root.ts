@@ -1,10 +1,10 @@
-import { BlogsRepository } from '../blogs';
+import { BlogsRepository } from '../blogs/repository';
 import {
     CommentsQueryRepository,
     CommentsRepository,
-    CommentsService,
-} from '../comments';
-import { UsersRepository } from '../users';
+} from '../comments/repository';
+import { CommentsService } from '../comments/service';
+import { UsersRepository } from '../users/repository';
 import { PostsController } from './controller';
 
 import { PostsQueryRepository, PostsRepository } from './repository';

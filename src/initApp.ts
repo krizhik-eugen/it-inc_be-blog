@@ -1,14 +1,14 @@
 import express from 'express';
-import { baseRoutes } from './app/configs';
-import { testingRouter } from './features/testing';
-import { postsRouter } from './features/posts';
-import { blogsRouter } from './features/blogs';
-import { usersRouter } from './features/users';
-import { authRouter } from './features/auth';
-import { commentsRouter } from './features/comments';
-import cookieParser from 'cookie-parser';
-import { securityRouter } from './features/security';
 // import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { baseRoutes } from './app/configs';
+import { testingRouter } from './features/testing/router';
+import { postsRouter } from './features/posts/router';
+import { blogsRouter } from './features/blogs/router';
+import { usersRouter } from './features/users/router';
+import { authRouter } from './features/auth/router';
+import { commentsRouter } from './features/comments/router';
+import { securityRouter } from './features/security/router';
 
 export const app = express();
 

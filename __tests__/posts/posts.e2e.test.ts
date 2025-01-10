@@ -2,12 +2,13 @@ import { baseRoutes } from '../../src/app/configs';
 import {
     PostCreateRequestModel,
     PostViewModel,
-} from '../../src/features/posts';
-import { BlogViewModel } from '../../src/features/blogs';
+} from '../../src/features/posts/types';
+import { BlogViewModel } from '../../src/features/blogs/types';
 import {
     addNewBlog,
     addNewPost,
     addNewUser,
+    clearAllCollections,
     DBHandlers,
     getTestBlog,
     getTestComment,
@@ -27,11 +28,12 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { commentsRepository } from '../../src/features/comments';
 import { routersPaths } from '../../src/app/configs';
-import { testingService } from '../../src/features/testing';
+import { CommentsRepository } from '../../src/features/comments/repository/comments-repository';
 
 describe('Posts Controller', () => {
+    const commentsRepository = new CommentsRepository();
+
     let createdTestBlog: BlogViewModel;
     let createdTestPost: PostViewModel;
     let createdTestPost_2: PostViewModel;
@@ -60,7 +62,7 @@ describe('Posts Controller', () => {
     }, 15000);
 
     afterAll(async () => {
-        await testingService.deleteAllData();
+        await clearAllCollections();
         await DBHandlers.closeDB();
     });
 

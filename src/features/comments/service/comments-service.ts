@@ -1,10 +1,9 @@
 import { CommentsRepository } from '../repository';
 import { CommentCreateRequestModel } from '../types';
 import { CommentDBModel } from '../model';
-import { UsersRepository } from '../../users';
-import { PostsRepository } from '../../posts';
+import { UsersRepository } from '../../users/repository';
+import { PostsRepository } from '../../posts/repository';
 import {
-    createResponseError,
     forbiddenErrorResult,
     internalErrorResult,
     notFoundErrorResult,

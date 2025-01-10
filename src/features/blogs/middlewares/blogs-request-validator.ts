@@ -1,6 +1,6 @@
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../../shared/helpers';
-import { postsBodySchema, postsQuerySchema } from '../../posts';
+import { postsBodySchema, postsQuerySchema } from '../../posts/middlewares';
 
 const nameLength = 15;
 const descriptionLength = 500;

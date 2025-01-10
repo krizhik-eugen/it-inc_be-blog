@@ -1,9 +1,8 @@
 import { SessionsQueryRepository, SessionsRepository } from '../repository';
 import { SessionViewModel } from '../types';
 import { TResult } from '../../../shared/types';
-import { AuthService } from '../../auth';
+import { AuthService } from '../../auth/service';
 import {
-    createResponseError,
     forbiddenErrorResult,
     notFoundErrorResult,
     successResult,
@@ -14,7 +13,7 @@ export class SessionService {
         protected sessionsQueryRepository: SessionsQueryRepository,
         protected sessionsRepository: SessionsRepository,
         protected authService: AuthService
-    ) {}
+    ) { }
 
     async getAllSessionDevices(
         refreshToken: string

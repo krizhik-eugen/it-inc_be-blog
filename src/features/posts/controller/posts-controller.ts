@@ -15,11 +15,9 @@ import {
 } from '../types';
 import { PostsService } from '../service';
 import { PostsQueryRepository } from '../repository';
-import {
-    CommentsDBSearchParams,
-    CommentsQueryRepository,
-    CommentsService,
-} from '../../comments';
+import { CommentsDBSearchParams } from '../../comments/model';
+import { CommentsQueryRepository } from '../../comments/repository';
+import { CommentsService } from '../../comments/service';
 import { PostsDBSearchParams } from '../model';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
@@ -30,7 +28,7 @@ export class PostsController {
         protected postsService: PostsService,
         protected commentsQueryRepository: CommentsQueryRepository,
         protected commentsService: CommentsService
-    ) {}
+    ) { }
 
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {
         const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(

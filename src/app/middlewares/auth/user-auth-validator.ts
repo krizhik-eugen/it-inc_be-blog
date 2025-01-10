@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
-import { UsersRepository } from '../../../features/users';
+import { UsersRepository } from '../../../features/users/repository';
 import { JwtService } from '../../services';
 
 const usersRepository = new UsersRepository();

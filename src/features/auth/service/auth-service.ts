@@ -9,7 +9,6 @@ import {
 } from '../types';
 import {
     badRequestErrorResult,
-    createResponseError,
     internalErrorResult,
     notFoundErrorResult,
     successResult,
@@ -20,8 +19,8 @@ import { EmailManager } from '../../../app/managers';
 import { TResult } from '../../../shared/types';
 import { JwtService, TDecodedToken } from '../../../app/services';
 import { getCodeExpirationDate, hashSaltRounds } from '../../../app/configs';
-import { SessionsRepository } from '../../security';
-import { UsersRepository } from '../../users';
+import { SessionsRepository } from '../../security/repository';
+import { UsersRepository } from '../../users/repository';
 
 export class AuthService {
     constructor(
@@ -29,7 +28,7 @@ export class AuthService {
         protected sessionsRepository: SessionsRepository,
         protected jwtService: JwtService,
         protected emailManager: EmailManager
-    ) {}
+    ) { }
 
     async login(
         { loginOrEmail, password }: LoginRequestModel,

@@ -1,7 +1,7 @@
 import { CommentsQueryRepository, CommentsRepository } from './repository';
 import { CommentsService } from './service';
 import { CommentsController } from './controller';
-import { UsersRepository } from '../users';
+import { UsersRepository } from '../users/repository';
 import { PostsRepository } from '../posts/repository';
 
 const commentsQueryRepository = new CommentsQueryRepository();

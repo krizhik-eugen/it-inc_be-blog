@@ -3,18 +3,17 @@ import { PostsRepository } from '../repository';
 import { PostDBModel } from '../model';
 import { TResult } from '../../../shared/types';
 import {
-    createResponseError,
     internalErrorResult,
     notFoundErrorResult,
     successResult,
 } from '../../../shared/helpers';
-import { BlogsRepository } from '../../blogs';
+import { BlogsRepository } from '../../blogs/repository';
 
 export class PostsService {
     constructor(
         protected postsRepository: PostsRepository,
         protected blogsRepository: BlogsRepository
-    ) {}
+    ) { }
 
     async createNewPost({
         title,

@@ -2,10 +2,16 @@ import { connection, disconnect } from 'mongoose';
 import { agent } from 'supertest';
 import { app } from '../src/initApp';
 import { connectToDB } from '../src/db';
-import { BlogViewModel } from '../src/features/blogs';
-import { PostViewModel } from '../src/features/posts';
+import { BlogViewModel } from '../src/features/blogs/types';
+import { PostViewModel } from '../src/features/posts/types';
 import { baseRoutes } from '../src/app/configs';
-import { UserViewModel } from '../src/features/users';
+import { UserViewModel } from '../src/features/users/types';
+import { BlogsModel } from '../src/features/blogs/model';
+import { PostsModel } from '../src/features/posts/model';
+import { CommentsModel } from '../src/features/comments/model';
+import { UsersModel } from '../src/features/users/model';
+import { SessionsModel } from '../src/features/security/model';
+import { RateLimiterModel } from '../src/app/models/rate-limiter';
 
 export const req = agent(app);
 
@@ -150,4 +156,13 @@ export const mockUserAgents = {
         'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:118.0) Gecko/20100101 Firefox/118.0',
     chromeAndroid:
         'Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36',
+};
+
+export const clearAllCollections = async () => {
+    await BlogsModel.deleteMany({});
+    await PostsModel.deleteMany({});
+    await CommentsModel.deleteMany({});
+    await UsersModel.deleteMany({});
+    await SessionsModel.deleteMany({});
+    await RateLimiterModel.deleteMany({});
 };

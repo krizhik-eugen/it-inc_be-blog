@@ -1,7 +1,10 @@
 import { Schema } from 'express-validator';
 import { requestValidator } from '../../../shared/helpers';
 import { BlogsRepository } from '../../../features/blogs/repository';
-import { commentsBodySchema, commentsQuerySchema } from '../../comments';
+import {
+    commentsBodySchema,
+    commentsQuerySchema,
+} from '../../comments/middlewares';
 
 const titleLength = 30;
 const shortDescriptionLength = 100;

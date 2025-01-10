@@ -1,5 +1,5 @@
 import { CommentsModel, CommentsDBSearchParams } from '../model';
-import { PostsModel } from '../../../features/posts';
+import { PostsModel } from '../../../features/posts/model';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
 

@@ -13,30 +13,13 @@ import {
     textWithLengthGraterThan30,
     textWithLengthGraterThan20,
     invalidEmailFormat,
+    clearAllCollections,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { UsersRepository, UserViewModel } from '../../src/features/users';
-import { TestingService } from '../../src/features/testing';
-import { CommentsRepository } from '../../src/features/comments';
-import { PostsRepository } from '../../src/features/posts';
-import { SessionsRepository } from '../../src/features/security';
-import { BlogsRepository } from '../../src/features/blogs';
+import { UserViewModel } from '../../src/features/users/types';
+import { UsersModel } from '../../src/features/users/model';
 
 describe('Users Controller', () => {
-    const commentsRepository = new CommentsRepository();
-    const postsRepository = new PostsRepository();
-    const sessionsRepository = new SessionsRepository();
-    const usersRepository = new UsersRepository();
-    const blogsRepository = new BlogsRepository();
-
-    const testingService = new TestingService(
-        blogsRepository,
-        postsRepository,
-        usersRepository,
-        commentsRepository,
-        sessionsRepository
-    );
-
     const setTestUsers = async () => {
         for (let i = 1; i < 10; i++) {
             const user = getTestUser(i);
@@ -46,12 +29,11 @@ describe('Users Controller', () => {
 
     beforeAll(async () => {
         await DBHandlers.connectToDB();
-        await usersRepository.clearUsers();
         await setTestUsers();
     }, 10000);
 
     afterAll(async () => {
-        await testingService.deleteAllData();
+        await clearAllCollections();
         await DBHandlers.closeDB();
     });
 
@@ -260,7 +242,7 @@ describe('Users Controller', () => {
         });
 
         it('returns a list of users with the email and login matching the search term', async () => {
-            await usersRepository.clearUsers();
+            await UsersModel.deleteMany({});
             await setTestUsers();
             await addNewUser({
                 login: 'login10',
