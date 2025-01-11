@@ -9,6 +9,7 @@ import { CommentsService } from '../service';
 import { CommentsQueryRepository } from '../repository';
 import { createResponseError } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
+import { TUpdateLikeStatusRequest } from '../../likes/types';
 
 export class CommentsController {
     constructor(
@@ -35,6 +36,34 @@ export class CommentsController {
         const { content } = req.body;
         const result = await this.commentsService.updateComment(
             content,
+            commentId,
+            userId
+        );
+        if (result.status === 'Forbidden') {
+            res.status(HTTP_STATUS_CODES.FORBIDDEN).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        if (result.status === 'NotFound') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
+    }
+
+    async updateCommentLikeStatus(
+        req: TUpdateLikeStatusRequest,
+        res: TResponseWithError
+    ) {
+        const commentId = req.params.id;
+        const userId = req.userId!;
+        const { likeStatus } = req.body;
+
+        const result = await this.commentsService.updateCommentLikeStatus(
+            likeStatus,
             commentId,
             userId
         );

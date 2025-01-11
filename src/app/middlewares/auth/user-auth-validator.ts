@@ -16,7 +16,7 @@ export const userAuthValidator = async (
         return;
     }
     const token = req.headers.authorization.split(' ')[1];
-    try {
+    
         const result = jwtService.verifyToken(token);
         if (result.error) {
             res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
@@ -32,8 +32,4 @@ export const userAuthValidator = async (
             next();
             return;
         }
-    } catch {
-        res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
-        return;
-    }
 };

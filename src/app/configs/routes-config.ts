@@ -35,6 +35,7 @@ export const routersPaths = {
     comments: {
         main: '/',
         id: '/:id',
+        likeStatus: '/:id/like-status',
     },
     users: {
         main: '/',

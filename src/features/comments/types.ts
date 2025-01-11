@@ -1,5 +1,6 @@
 import { Request } from 'express';
 import { TIDParam, TResponseWithError } from '../../shared/types';
+import { LikesViewModel } from '../likes/types';
 
 export type TCommentatorInfo = {
     userId: string;
@@ -11,6 +12,7 @@ export type CommentViewModel = {
     content: string;
     commentatorInfo: TCommentatorInfo;
     createdAt: string;
+    likesInfo: LikesViewModel;
 };
 
 export type CommentCreateRequestModel = {

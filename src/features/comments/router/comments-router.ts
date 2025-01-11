@@ -22,3 +22,11 @@ commentsRouter
         ...commentsValidators.deleteCommentRequest,
         commentsController.deleteComment.bind(commentsController)
     );
+
+commentsRouter
+    .route(routersPaths.comments.likeStatus)
+    .put(
+        userAuthValidator,
+        ...commentsValidators.updateLikeStatusRequest,
+        commentsController.updateCommentLikeStatus.bind(commentsController)
+    );

@@ -6,7 +6,7 @@ export interface BlogDBModel {
     websiteUrl: string;
     isMembership: boolean;
     createdAt: string;
-}
+};
 
 export type BlogsDBSearchParams = {
     searchNameTerm?: string;

@@ -2,11 +2,20 @@ import { CommentsModel, CommentsDBSearchParams } from '../model';
 import { PostsModel } from '../../../features/posts/model';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
+import { LikesQueryRepository } from '../../likes/repository';
+import { CommentViewModel } from '../types';
 
 export class CommentsQueryRepository {
+    constructor(protected likesQueryRepository: LikesQueryRepository) {}
+
     async getComment(id: string) {
         const foundComment = await CommentsModel.findById(id);
         if (!foundComment) return undefined;
+        const likeStatus =
+            await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
+                foundComment.commentatorInfo.userId,
+                id
+            );
         return {
             id: foundComment.id,
             content: foundComment.content,
@@ -15,6 +24,11 @@ export class CommentsQueryRepository {
                 userLogin: foundComment.commentatorInfo.userLogin,
             },
             createdAt: foundComment.createdAt,
+            likesInfo: {
+                likesCount: foundComment.likesCount,
+                dislikesCount: foundComment.dislikesCount,
+                myStatus: likeStatus.myStatus,
+            },
         };
     }
 
@@ -34,21 +48,28 @@ export class CommentsQueryRepository {
         const dbSearchQueries =
             getDBSearchQueries<CommentsDBSearchParams['sortBy']>(searchQueries);
         const totalCount = await CommentsModel.countDocuments({ postId });
-        const foundPosts = await CommentsModel.find({ postId })
+        const foundComments = await CommentsModel.find({ postId })
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit);
-        const mappedFoundComments = foundPosts.map((comment) => {
-            return {
-                id: comment.id,
-                commentatorInfo: {
-                    userId: comment.commentatorInfo.userId,
-                    userLogin: comment.commentatorInfo.userLogin,
-                },
-                content: comment.content,
-                createdAt: comment.createdAt,
-            };
-        });
+        const mappedFoundComments: CommentViewModel[] = foundComments.map(
+            (comment) => {
+                return {
+                    id: comment.id,
+                    commentatorInfo: {
+                        userId: comment.commentatorInfo.userId,
+                        userLogin: comment.commentatorInfo.userLogin,
+                    },
+                    content: comment.content,
+                    createdAt: comment.createdAt,
+                    likesInfo: {
+                        likesCount: 0,
+                        dislikesCount: 0,
+                        myStatus: 'None',
+                    },
+                };
+            }
+        );
         return {
             pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
             page: searchQueries.pageNumber,

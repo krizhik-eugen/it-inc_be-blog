@@ -8,6 +8,8 @@ export interface CommentDBModel {
     };
     createdAt: string;
     postId: string;
+    likesCount: number;
+    dislikesCount: number;
 }
 
 export type CommentsDBSearchParams = {
@@ -25,6 +27,8 @@ const commentsSchema = new Schema<CommentDBModel>({
     },
     createdAt: String,
     postId: String,
+    likesCount: Number,
+    dislikesCount: Number,
 });
 
 export const CommentsModel = model('comments', commentsSchema);
