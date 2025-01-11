@@ -6,11 +6,8 @@ import {
     TSearchQueryParams,
 } from '../../shared/types';
 import { PostsDBSearchParams } from './model/posts-model';
-import {
-    CommentCreateRequestModel,
-    CommentsDBSearchParams,
-    CommentViewModel,
-} from '../comments';
+import { CommentsDBSearchParams } from '../comments/model';
+import { CommentCreateRequestModel, CommentViewModel } from '../comments/types';
 
 export type PostViewModel = {
     id: string;

@@ -7,10 +7,10 @@ import {
 } from '../../shared/types';
 import { BlogsDBSearchParams } from './model';
 import {
-    PostViewModel,
     TGetAllPostsRequestQueries,
     PostCreateRequestModel,
-} from '../posts';
+    PostViewModel,
+} from '../posts/types';
 
 export type BlogViewModel = {
     id: string;
