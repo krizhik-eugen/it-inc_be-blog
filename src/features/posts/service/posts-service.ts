@@ -94,7 +94,7 @@ export class PostsService {
         return successResult(null);
     }
 
-    async updateCommentLikeStatus(
+    async updatePostLikeStatus(
         likeStatus: TLikeStatus,
         id: string,
         userId: string

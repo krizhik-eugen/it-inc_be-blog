@@ -10,8 +10,8 @@ export class LikesRepository {
         return result._id;
     }
 
-    async updateLikeStatus(updatedUser: Partial<LikeDBModel>) {
-        const { userId, parentId, status } = updatedUser;
+    async updateLikeStatus(updatedLike: Partial<LikeDBModel>) {
+        const { userId, parentId, status } = updatedLike;
         const result = await LikesModel.findOneAndUpdate(
             { userId, parentId },
             { status },

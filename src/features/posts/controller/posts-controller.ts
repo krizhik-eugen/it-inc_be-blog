@@ -172,7 +172,7 @@ export class PostsController {
         const userId = req.userId!;
         const { likeStatus } = req.body;
 
-        const result = await this.postsService.updateCommentLikeStatus(
+        const result = await this.postsService.updatePostLikeStatus(
             likeStatus,
             postId,
             userId
