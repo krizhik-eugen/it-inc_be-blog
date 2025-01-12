@@ -59,6 +59,7 @@ export class BlogsController {
         req: TGetAllBlogPostsRequest,
         res: TGetAllBlogPostsResponse
     ) {
+        const userId = req.userId;
         const id = req.params.id;
         const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
             req.query
@@ -66,6 +67,7 @@ export class BlogsController {
         const posts = await this.postsQueryRepository.getBlogPosts({
             searchQueries,
             blogId: id,
+            userId,
         });
         if (!posts) {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

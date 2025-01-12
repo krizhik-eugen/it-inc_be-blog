@@ -35,7 +35,6 @@ describe('Comments Controller', () => {
     let addedComment_2: CommentViewModel;
     let addedUserId_1 = '';
     let addedUserId_2 = '';
-    let addedUserId_3 = '';
     const inValidToken = 'qw123' + accessToken_1;
 
     beforeAll(async () => {

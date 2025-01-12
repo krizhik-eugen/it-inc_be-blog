@@ -7,6 +7,8 @@ export interface PostDBModel {
     createdAt: string;
     shortDescription: string;
     title: string;
+    likesCount: number;
+    dislikesCount: number;
 }
 
 export type PostsDBSearchParams = {
@@ -23,6 +25,8 @@ const postsSchema = new Schema<PostDBModel>({
     createdAt: String,
     shortDescription: String,
     title: String,
+    likesCount: Number,
+    dislikesCount: Number,
 });
 
 export const PostsModel = model('posts', postsSchema);

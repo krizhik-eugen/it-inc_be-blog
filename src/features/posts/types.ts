@@ -8,6 +8,7 @@ import {
 import { PostsDBSearchParams } from './model/posts-model';
 import { CommentsDBSearchParams } from '../comments/model';
 import { CommentCreateRequestModel, CommentViewModel } from '../comments/types';
+import { NewestLikesViewModel, TLikeStatus } from '../likes/types';
 
 export type PostViewModel = {
     id: string;
@@ -17,6 +18,12 @@ export type PostViewModel = {
     createdAt: string;
     blogId: string;
     blogName: string;
+    extendedLikesInfo: {
+        likesCount: number;
+        dislikesCount: number;
+        myStatus: TLikeStatus;
+        newestLikes: NewestLikesViewModel;
+    };
 };
 
 export type PostCreateRequestModel = {

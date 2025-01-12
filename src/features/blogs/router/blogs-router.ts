@@ -3,6 +3,7 @@ import { adminAuthValidator } from '../../../app/middlewares';
 import { blogsValidators } from '../middlewares';
 import { routersPaths } from '../../../app/configs';
 import { blogsController } from '../composition-root';
+import { userAuthIdentifier } from '../../../app/middlewares/auth';
 
 export const blogsRouter = Router();
 
@@ -38,6 +39,7 @@ blogsRouter
 blogsRouter
     .route(routersPaths.blogs.idPosts)
     .get(
+        userAuthIdentifier,
         ...blogsValidators.getBlogPostsRequest,
         blogsController.getBlogPosts.bind(blogsController)
     )

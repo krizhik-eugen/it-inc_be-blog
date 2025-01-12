@@ -13,6 +13,7 @@ export const postsRouter = Router();
 postsRouter
     .route(routersPaths.posts.main)
     .get(
+        userAuthIdentifier,
         ...postsValidators.getPostsRequest,
         postsController.getAllPosts.bind(postsController)
     )
@@ -25,6 +26,7 @@ postsRouter
 postsRouter
     .route(routersPaths.posts.id)
     .get(
+        userAuthIdentifier,
         ...postsValidators.getPostRequest,
         postsController.getPost.bind(postsController)
     )
@@ -50,4 +52,12 @@ postsRouter
         userAuthValidator,
         ...postsValidators.createNewCommentForPostRequest,
         postsController.createNewCommentForPost.bind(postsController)
+    );
+
+postsRouter
+    .route(routersPaths.posts.likeStatus)
+    .put(
+        userAuthValidator,
+        ...postsValidators.updateLikeStatusRequest,
+        postsController.updatePostLikeStatus.bind(postsController)
     );

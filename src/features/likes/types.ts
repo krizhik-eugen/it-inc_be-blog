@@ -9,6 +9,12 @@ export type LikesViewModel = {
     myStatus: TLikeStatus;
 };
 
+export type NewestLikesViewModel = {
+    addedAt: string;
+    userId: string;
+    login: string;
+}[];
+
 export type LikeStatusRequestModel = {
     likeStatus: TLikeStatus;
 };

@@ -8,11 +8,14 @@ import {
     successResult,
 } from '../../../shared/helpers';
 import { BlogsRepository } from '../../blogs/repository';
+import { TLikeStatus } from '../../likes/types';
+import { LikesRepository } from '../../likes/repository';
 
 export class PostsService {
     constructor(
         protected postsRepository: PostsRepository,
-        protected blogsRepository: BlogsRepository
+        protected blogsRepository: BlogsRepository,
+        protected likesRepository: LikesRepository
     ) {}
 
     async createNewPost({
@@ -32,6 +35,8 @@ export class PostsService {
             content,
             blogName: blog.name,
             createdAt: new Date().toISOString(),
+            likesCount: 0,
+            dislikesCount: 0,
         };
         const createdPostId = await this.postsRepository.addNewPost(newPost);
         if (!createdPostId) {
@@ -59,6 +64,8 @@ export class PostsService {
             blogId: blog._id.toString(),
             blogName: blog.name,
             createdAt: new Date().toISOString(),
+            likesCount: 0,
+            dislikesCount: 0,
         };
         const createdPostId = await this.postsRepository.addNewPost(newPost);
         if (!createdPostId) {
@@ -87,11 +94,50 @@ export class PostsService {
         return successResult(null);
     }
 
+    async updateCommentLikeStatus(
+        likeStatus: TLikeStatus,
+        id: string,
+        userId: string
+    ): Promise<TResult> {
+        const post = await this.postsRepository.findPostById(id);
+        if (!post) {
+            return notFoundErrorResult('Comment is not found');
+        }
+        const foundLike =
+            await this.likesRepository.findLikeByUserIdAndParentId(userId, id);
+        if (!foundLike) {
+            await this.likesRepository.addLike({
+                userId,
+                parentId: id,
+                status: likeStatus,
+                createdAt: new Date().toISOString(),
+            });
+        }
+        if (foundLike) {
+            await this.likesRepository.updateLikeStatus({
+                userId,
+                parentId: id,
+                status: likeStatus,
+            });
+        }
+        const likesCount =
+            await this.likesRepository.getLikesCountByParentId(id);
+        const dislikesCount =
+            await this.likesRepository.getDislikesCountByParentId(id);
+        await this.postsRepository.updatePost({
+            id,
+            likesCount,
+            dislikesCount,
+        });
+        return successResult(null);
+    }
+
     async deletePost(id: string): Promise<TResult> {
         const isPostDeleted = await this.postsRepository.deletePost(id);
         if (!isPostDeleted) {
             return notFoundErrorResult('Post is not found');
         }
+        await this.likesRepository.deleteLikesByParentId(id);
         return successResult(null);
     }
 }

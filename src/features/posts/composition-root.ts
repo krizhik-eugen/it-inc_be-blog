@@ -5,24 +5,29 @@ import {
 } from '../comments/repository';
 import { CommentsService } from '../comments/service';
 import { LikesQueryRepository, LikesRepository } from '../likes/repository';
-import { UsersRepository } from '../users/repository';
+import { UsersQueryRepository, UsersRepository } from '../users/repository';
 import { PostsController } from './controller';
 
 import { PostsQueryRepository, PostsRepository } from './repository';
 import { PostsService } from './service';
 
-const postsQueryRepository = new PostsQueryRepository();
+const usersRepository = new UsersRepository();
+const usersQueryRepository = new UsersQueryRepository();
+const likesQueryRepository = new LikesQueryRepository(usersQueryRepository);
+const likesRepository = new LikesRepository();
 const postsRepository = new PostsRepository();
 const blogsRepository = new BlogsRepository();
-const likesQueryRepository = new LikesQueryRepository();
-const likesRepository = new LikesRepository();
+const postsQueryRepository = new PostsQueryRepository(likesQueryRepository);
 const commentsQueryRepository = new CommentsQueryRepository(
     likesQueryRepository
 );
 const commentsRepository = new CommentsRepository();
-const usersRepository = new UsersRepository();
 
-const postsService = new PostsService(postsRepository, blogsRepository);
+const postsService = new PostsService(
+    postsRepository,
+    blogsRepository,
+    likesRepository
+);
 const commentsService = new CommentsService(
     commentsRepository,
     usersRepository,

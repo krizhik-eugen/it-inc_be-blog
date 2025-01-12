@@ -21,6 +21,8 @@ import { CommentsService } from '../../comments/service';
 import { PostsDBSearchParams } from '../model';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
+import { TUpdateLikeStatusRequest } from '../../likes/types';
+import { PostsRepository } from '../repository/posts-repository';
 
 export class PostsController {
     constructor(
@@ -41,7 +43,11 @@ export class PostsController {
     }
 
     async getPost(req: TGetPostRequest, res: TGetPostResponse) {
-        const post = await this.postsQueryRepository.getPost(req.params.id);
+        const userId = req.userId;
+        const post = await this.postsQueryRepository.getPost(
+            req.params.id,
+            userId
+        );
         if (!post) {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: [createResponseError('Post is not found')],
@@ -146,6 +152,34 @@ export class PostsController {
             blogId
         );
         if (result.status !== 'Success') {
+            res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
+    }
+
+    async updatePostLikeStatus(
+        req: TUpdateLikeStatusRequest,
+        res: TResponseWithError
+    ) {
+        const postId = req.params.id;
+        const userId = req.userId!;
+        const { likeStatus } = req.body;
+
+        const result = await this.postsService.updateCommentLikeStatus(
+            likeStatus,
+            postId,
+            userId
+        );
+        if (result.status === 'Forbidden') {
+            res.status(HTTP_STATUS_CODES.FORBIDDEN).json({
+                errorsMessages: result.errorsMessages,
+            });
+            return;
+        }
+        if (result.status === 'NotFound') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
             });

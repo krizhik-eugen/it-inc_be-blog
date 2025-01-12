@@ -130,6 +130,25 @@ export const postsQuerySchema: Schema = {
     },
 };
 
+export const likeStatusBodySchema: Schema = {
+    likeStatus: {
+        in: ['body'],
+        exists: {
+            errorMessage: 'Like status is required',
+        },
+        isString: true,
+        trim: true,
+        notEmpty: {
+            errorMessage: 'Like status is required',
+        },
+        isIn: {
+            options: [['Like', 'Dislike', 'None']],
+            errorMessage:
+                'Like status must be one of the following: Like, Dislike, None',
+        },
+    },
+};
+
 export const postsValidators = {
     getPostRequest: requestValidator({ paramSchema }),
     getPostsRequest: requestValidator({ querySchema: postsQuerySchema }),
@@ -145,6 +164,10 @@ export const postsValidators = {
     updatePostRequest: requestValidator({
         bodySchema: postsBodySchema,
         paramSchema,
+    }),
+    updateLikeStatusRequest: requestValidator({
+        paramSchema,
+        bodySchema: likeStatusBodySchema,
     }),
     deletePostRequest: requestValidator({ paramSchema }),
 };
