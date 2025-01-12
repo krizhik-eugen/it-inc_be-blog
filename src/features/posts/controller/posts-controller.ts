@@ -59,10 +59,12 @@ export class PostsController {
             CommentsDBSearchParams['sortBy']
         >(req.query);
         const id = req.params.id;
+        const userId = req.userId;
         const postComments = await this.commentsQueryRepository.getPostComments(
             {
                 searchQueries,
                 postId: id,
+                userId,
             }
         );
         if (!postComments) {

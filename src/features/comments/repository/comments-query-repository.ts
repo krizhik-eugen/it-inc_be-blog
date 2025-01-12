@@ -38,11 +38,13 @@ export class CommentsQueryRepository {
     async getPostComments({
         searchQueries,
         postId,
+        userId,
     }: {
         searchQueries: TMappedSearchQueryParams<
             CommentsDBSearchParams['sortBy']
         >;
         postId: string;
+        userId: string | null;
     }) {
         const post = await PostsModel.findById(postId);
         if (!post) {
@@ -66,13 +68,22 @@ export class CommentsQueryRepository {
                     content: comment.content,
                     createdAt: comment.createdAt,
                     likesInfo: {
-                        likesCount: 0,
-                        dislikesCount: 0,
+                        likesCount: comment.likesCount,
+                        dislikesCount: comment.dislikesCount,
                         myStatus: 'None',
                     },
                 };
             }
         );
+        if (userId) {
+            for (const comment of mappedFoundComments) {
+                comment.likesInfo.myStatus =
+                    await this.likesQueryRepository.getLikeStatus(
+                        comment.id,
+                        userId
+                    );
+            }
+        }
         return {
             pagesCount: Math.ceil(totalCount / searchQueries.pageSize),
             page: searchQueries.pageNumber,
