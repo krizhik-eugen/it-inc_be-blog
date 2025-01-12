@@ -30,10 +30,12 @@ describe('Comments Controller', () => {
     let createdPost: PostViewModel;
     let accessToken_1 = '';
     let accessToken_2 = '';
+    let accessToken_3 = '';
     let addedComment_1: CommentViewModel;
     let addedComment_2: CommentViewModel;
     let addedUserId_1 = '';
     let addedUserId_2 = '';
+    let addedUserId_3 = '';
     const inValidToken = 'qw123' + accessToken_1;
 
     beforeAll(async () => {
@@ -44,6 +46,7 @@ describe('Comments Controller', () => {
         createdPost = await addNewPost(testPost);
         addedUserId_1 = (await addNewUser(getTestUser(1))).id;
         addedUserId_2 = (await addNewUser(getTestUser(2))).id;
+        addedUserId_3 = (await addNewUser(getTestUser(3))).id;
         const loginCredentials_1 = {
             loginOrEmail: getTestUser(1).login,
             password: getTestUser(1).password,
@@ -52,16 +55,24 @@ describe('Comments Controller', () => {
             loginOrEmail: getTestUser(2).login,
             password: getTestUser(2).password,
         };
+        const loginCredentials_3 = {
+            loginOrEmail: getTestUser(3).login,
+            password: getTestUser(3).password,
+        };
         accessToken_1 = (
             await req
                 .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                 .send(loginCredentials_1)
         ).body.accessToken;
-
         accessToken_2 = (
             await req
                 .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
                 .send(loginCredentials_2)
+        ).body.accessToken;
+        accessToken_3 = (
+            await req
+                .post(`${baseRoutes.auth}${routersPaths.auth.login}`)
+                .send(loginCredentials_3)
         ).body.accessToken;
         addedComment_1 = (
             await req
@@ -100,7 +111,7 @@ describe('Comments Controller', () => {
             expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
         });
 
-        it('returns a post by id', async () => {
+        it('returns a comment by id', async () => {
             const response_1 = await req.get(
                 `${baseRoutes.comments}/${addedComment_1.id}`
             );
@@ -198,6 +209,140 @@ describe('Comments Controller', () => {
                 .auth(...getUserAuthData(accessToken_1))
                 .send(updatedComment);
             expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+        });
+    });
+
+    describe('PUT /comments/:id/like-status', () => {
+        it('can not update a like status of comment without authorization', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'Like',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${addedComment_1.id}/like-status`)
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('can not update a like status of comment if auth data is invalid', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'Like',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${addedComment_1.id}/like-status`)
+                .auth(...getUserAuthData(inValidToken))
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.UNAUTHORIZED);
+        });
+
+        it('return an error if comment not found', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'Like',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${validObjectId}/like-status`)
+                .auth(...getUserAuthData(accessToken_1))
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NOT_FOUND);
+        });
+
+        it('can not update a a like status of comment if passed status is invalid', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'SuperLike',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${addedComment_1.id}/like-status`)
+                .auth(...getUserAuthData(accessToken_1))
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.BAD_REQUEST);
+        });
+
+        it('update a like status of comment if user is not author', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'Like',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${addedComment_1.id}/like-status`)
+                .auth(...getUserAuthData(accessToken_2))
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+        });
+
+        it('update a like status of comment', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'Like',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${addedComment_1.id}/like-status`)
+                .auth(...getUserAuthData(accessToken_1))
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+        });
+
+        it('get comment with likes and for not authorized user', async () => {
+            // consider previous tests
+            const response = await req
+                .get(`${baseRoutes.comments}/${addedComment_1.id}`)
+                .expect(HTTP_STATUS_CODES.OK);
+            expect(response.body.likesInfo.likesCount).toBe(2);
+            expect(response.body.likesInfo.dislikesCount).toBe(0);
+            expect(response.body.likesInfo.myStatus).toBe('None');
+        });
+
+        it('update a like status of comment for third user and check likes and dislikes count', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'Dislike',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${addedComment_1.id}/like-status`)
+                .auth(...getUserAuthData(accessToken_3))
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+
+            const response_1 = await req
+                .get(`${baseRoutes.comments}/${addedComment_1.id}`)
+                .auth(...getUserAuthData(accessToken_3))
+                .expect(HTTP_STATUS_CODES.OK);
+            expect(response_1.body.likesInfo.likesCount).toBe(2);
+            expect(response_1.body.likesInfo.dislikesCount).toBe(1);
+            expect(response_1.body.likesInfo.myStatus).toBe('Dislike');
+        });
+
+        it('update a like status of comment for third user and check likes and dislikes count', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'Like',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${addedComment_1.id}/like-status`)
+                .auth(...getUserAuthData(accessToken_3))
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+
+            const response_1 = await req
+                .get(`${baseRoutes.comments}/${addedComment_1.id}`)
+                .auth(...getUserAuthData(accessToken_3))
+                .expect(HTTP_STATUS_CODES.OK);
+            expect(response_1.body.likesInfo.likesCount).toBe(3);
+            expect(response_1.body.likesInfo.dislikesCount).toBe(0);
+            expect(response_1.body.likesInfo.myStatus).toBe('Like');
+        });
+
+        it('update a like status of comment for third user and check likes and dislikes count', async () => {
+            const updateLikeStatus = {
+                likeStatus: 'None',
+            };
+            const response = await req
+                .put(`${baseRoutes.comments}/${addedComment_1.id}/like-status`)
+                .auth(...getUserAuthData(accessToken_3))
+                .send(updateLikeStatus);
+            expect(response.status).toBe(HTTP_STATUS_CODES.NO_CONTENT);
+
+            const response_1 = await req
+                .get(`${baseRoutes.comments}/${addedComment_1.id}`)
+                .auth(...getUserAuthData(accessToken_3))
+                .expect(HTTP_STATUS_CODES.OK);
+            expect(response_1.body.likesInfo.likesCount).toBe(2);
+            expect(response_1.body.likesInfo.dislikesCount).toBe(0);
+            expect(response_1.body.likesInfo.myStatus).toBe('None');
         });
     });
 
