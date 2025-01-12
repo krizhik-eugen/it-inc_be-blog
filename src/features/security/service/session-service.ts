@@ -13,7 +13,7 @@ export class SessionService {
         protected sessionsQueryRepository: SessionsQueryRepository,
         protected sessionsRepository: SessionsRepository,
         protected authService: AuthService
-    ) { }
+    ) {}
 
     async getAllSessionDevices(
         refreshToken: string

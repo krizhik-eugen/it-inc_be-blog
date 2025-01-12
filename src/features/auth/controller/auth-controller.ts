@@ -19,7 +19,7 @@ export class AuthController {
     constructor(
         protected usersQueryRepository: UsersQueryRepository,
         protected authService: AuthService
-    ) { }
+    ) {}
 
     async login(req: TLoginRequest, res: TLoginResponse) {
         const { loginOrEmail, password } = req.body;

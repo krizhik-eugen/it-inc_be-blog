@@ -16,20 +16,20 @@ export const userAuthValidator = async (
         return;
     }
     const token = req.headers.authorization.split(' ')[1];
-    
-        const result = jwtService.verifyToken(token);
-        if (result.error) {
+
+    const result = jwtService.verifyToken(token);
+    if (result.error) {
+        res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
+        return;
+    }
+    if (result.data.userId) {
+        const user = await usersRepository.findUserById(result.data.userId);
+        if (!user) {
             res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
             return;
         }
-        if (result.data.userId) {
-            const user = await usersRepository.findUserById(result.data.userId);
-            if (!user) {
-                res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED);
-                return;
-            }
-            req.userId = result.data.userId;
-            next();
-            return;
-        }
+        req.userId = result.data.userId;
+        next();
+        return;
+    }
 };

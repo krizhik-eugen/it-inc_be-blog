@@ -28,7 +28,7 @@ export class AuthService {
         protected sessionsRepository: SessionsRepository,
         protected jwtService: JwtService,
         protected emailManager: EmailManager
-    ) { }
+    ) {}
 
     async login(
         { loginOrEmail, password }: LoginRequestModel,

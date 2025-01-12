@@ -13,7 +13,7 @@ export class PostsService {
     constructor(
         protected postsRepository: PostsRepository,
         protected blogsRepository: BlogsRepository
-    ) { }
+    ) {}
 
     async createNewPost({
         title,

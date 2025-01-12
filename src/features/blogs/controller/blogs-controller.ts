@@ -16,7 +16,7 @@ import {
 } from '../types';
 import { BlogsService } from '../service';
 import { PostsDBSearchParams } from '../../posts/model';
-import { PostsService, } from '../../posts/service';
+import { PostsService } from '../../posts/service';
 import { PostsQueryRepository } from '../../posts/repository';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { BlogsDBSearchParams } from '../model';
@@ -28,7 +28,7 @@ export class BlogsController {
         protected blogsService: BlogsService,
         protected postsQueryRepository: PostsQueryRepository,
         protected postsService: PostsService
-    ) { }
+    ) {}
 
     async getBlogs(req: TGetAllBlogsRequest, res: TGetAllBlogsResponse) {
         const { searchNameTerm, ...restQueries } = req.query;
