@@ -9,6 +9,7 @@ import { usersRouter } from './features/users/router';
 import { authRouter } from './features/auth/router';
 import { commentsRouter } from './features/comments/router';
 import { securityRouter } from './features/security/router';
+import { userAuthIdentifier } from './app/middlewares/auth';
 
 export const app = express();
 
@@ -17,6 +18,7 @@ app.use(cookieParser());
 // app.use(cors());
 app.set('trust proxy', true);
 
+app.use(userAuthIdentifier);
 app.use(baseRoutes.auth, authRouter);
 app.use(baseRoutes.blogs, blogsRouter);
 app.use(baseRoutes.comments, commentsRouter);

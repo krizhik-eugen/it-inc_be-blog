@@ -6,6 +6,7 @@ import {
 import { postsValidators } from '../middlewares';
 import { routersPaths } from '../../../app/configs';
 import { postsController } from '../composition-root';
+import { userAuthIdentifier } from '../../../app/middlewares/auth';
 
 export const postsRouter = Router();
 
