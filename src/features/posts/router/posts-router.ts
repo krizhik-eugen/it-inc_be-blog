@@ -42,6 +42,7 @@ postsRouter
 postsRouter
     .route(routersPaths.posts.idComments)
     .get(
+        userAuthIdentifier,
         ...postsValidators.getPostCommentsRequest,
         postsController.getPostComments.bind(postsController)
     )
