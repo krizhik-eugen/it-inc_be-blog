@@ -112,6 +112,7 @@ export class BlogsController {
     ) {
         const { title, shortDescription, content } = req.body;
         const id = req.params.id;
+        const userId = req.userId;
         const result = await this.postsService.createNewPostForBlog({
             title,
             shortDescription,
@@ -125,7 +126,8 @@ export class BlogsController {
             return;
         }
         const addedPost = await this.postsQueryRepository.getPost(
-            result.data.postId
+            result.data.postId,
+            userId
         );
         if (!addedPost) {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

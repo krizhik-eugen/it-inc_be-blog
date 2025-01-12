@@ -45,7 +45,7 @@ describe('Comments Controller', () => {
         createdPost = await addNewPost(testPost);
         addedUserId_1 = (await addNewUser(getTestUser(1))).id;
         addedUserId_2 = (await addNewUser(getTestUser(2))).id;
-        addedUserId_3 = (await addNewUser(getTestUser(3))).id;
+        await addNewUser(getTestUser(3));
         const loginCredentials_1 = {
             loginOrEmail: getTestUser(1).login,
             password: getTestUser(1).password,

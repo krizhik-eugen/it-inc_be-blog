@@ -33,11 +33,13 @@ export class PostsController {
     ) {}
 
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {
+        const userId = req.userId;
         const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
             req.query
         );
         const posts = await this.postsQueryRepository.getPosts({
             searchQueries,
+            userId,
         });
         res.status(HTTP_STATUS_CODES.OK).json(posts);
     }
@@ -86,6 +88,7 @@ export class PostsController {
         req: TCreateNewPostRequest,
         res: TCreateNewPostResponse
     ) {
+        const userId = req.userId;
         const { title, shortDescription, content, blogId } = req.body;
         const result = await this.postsService.createNewPost({
             title,
@@ -100,7 +103,8 @@ export class PostsController {
             return;
         }
         const createdPost = await this.postsQueryRepository.getPost(
-            result.data.id
+            result.data.id,
+            userId
         );
         if (!createdPost) {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

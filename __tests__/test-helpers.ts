@@ -128,7 +128,10 @@ export const addNewBlog = async (
 };
 
 export const addNewPost = async (
-    post: Omit<PostViewModel, 'id' | 'blogName' | 'createdAt'>
+    post: Omit<
+        PostViewModel,
+        'id' | 'blogName' | 'createdAt' | 'extendedLikesInfo'
+    >
 ) => {
     const { body } = await req
         .post(baseRoutes.posts)
