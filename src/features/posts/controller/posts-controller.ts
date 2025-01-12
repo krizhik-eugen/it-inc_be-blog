@@ -28,7 +28,7 @@ export class PostsController {
         protected postsService: PostsService,
         protected commentsQueryRepository: CommentsQueryRepository,
         protected commentsService: CommentsService
-    ) { }
+    ) {}
 
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {
         const searchQueries = getSearchQueries<PostsDBSearchParams['sortBy']>(
@@ -121,7 +121,8 @@ export class PostsController {
             return;
         }
         const createdComment = await this.commentsQueryRepository.getComment(
-            result.data.id
+            result.data.id,
+            req.userId
         );
         if (!createdComment) {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
