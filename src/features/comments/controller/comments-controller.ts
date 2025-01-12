@@ -18,8 +18,10 @@ export class CommentsController {
     ) {}
 
     async getComment(req: TGetCommentRequest, res: TGetCommentResponse) {
+        const userId = req.userId;
         const comment = await this.commentsQueryRepository.getComment(
-            req.params.id
+            req.params.id,
+            userId
         );
         if (!comment) {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({

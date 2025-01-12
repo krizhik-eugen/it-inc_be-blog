@@ -1,8 +1,8 @@
 import { LikesModel } from '../model/likes-model';
 
 export class LikesQueryRepository {
-    async getLikeStatusByUserIdAndParentId(userId: string, parentId: string) {
-        const foundLike = await LikesModel.findOne({ userId, parentId }).lean();
-        return { myStatus: foundLike ? foundLike.status : 'None' };
+    async getLikeStatus(parentId: string, userId: string) {
+        const foundLike = await LikesModel.findOne({ parentId, userId });
+        return foundLike ? foundLike.status : 'None';
     }
 }

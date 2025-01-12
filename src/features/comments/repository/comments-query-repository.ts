@@ -4,18 +4,21 @@ import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
 import { LikesQueryRepository } from '../../likes/repository';
 import { CommentViewModel } from '../types';
+import { TLikeStatus } from '../../likes/types';
 
 export class CommentsQueryRepository {
     constructor(protected likesQueryRepository: LikesQueryRepository) {}
 
-    async getComment(id: string) {
+    async getComment(id: string, userId: string | null) {
         const foundComment = await CommentsModel.findById(id);
         if (!foundComment) return undefined;
-        const likeStatus =
-            await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
-                foundComment.commentatorInfo.userId,
-                id
+        let likeStatus: TLikeStatus = 'None';
+        if (userId) {
+            likeStatus = await this.likesQueryRepository.getLikeStatus(
+                id,
+                userId
             );
+        }
         return {
             id: foundComment.id,
             content: foundComment.content,
@@ -27,7 +30,7 @@ export class CommentsQueryRepository {
             likesInfo: {
                 likesCount: foundComment.likesCount,
                 dislikesCount: foundComment.dislikesCount,
-                myStatus: likeStatus.myStatus,
+                myStatus: likeStatus,
             },
         };
     }
