@@ -1,9 +1,11 @@
+import { injectable } from 'inversify';
 import {
     RateLimiterModel,
     RateLimiterDBModel,
     RateLimiterDBSearchParams,
 } from '../models/rate-limiter';
 
+@injectable()
 export class RateLimiterRepository {
     async registerRequest({ ip, url, date }: RateLimiterDBModel) {
         const result = await RateLimiterModel.create({ ip, url, date });

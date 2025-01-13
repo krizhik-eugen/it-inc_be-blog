@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { UsersQueryRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
@@ -12,10 +13,12 @@ import { UsersDBSearchParams } from '../model';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
 
+@injectable()
 export class UsersController {
     constructor(
+        @inject(UsersQueryRepository)
         protected usersQueryRepository: UsersQueryRepository,
-        protected usersService: UsersService
+        @inject(UsersService) protected usersService: UsersService
     ) {}
 
     async getAllUsers(req: TGetAllUsersRequest, res: TGetAllUsersResponse) {

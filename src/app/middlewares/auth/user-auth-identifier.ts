@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { UsersRepository } from '../../../features/users/repository';
+import { container } from '../../../app-composition-root';
 import { JwtService } from '../../services';
+import { UsersRepository } from '../../../features/users/repository';
 
-const usersRepository = new UsersRepository();
-const jwtService = new JwtService();
+const jwtService = container.get(JwtService);
+const usersRepository = container.get(UsersRepository);
 
 export const userAuthIdentifier = async (
     req: Request,

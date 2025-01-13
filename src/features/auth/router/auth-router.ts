@@ -2,9 +2,12 @@ import { Router } from 'express';
 import { authValidators } from '../middlewares';
 import { userAuthValidator, rateLimiter } from '../../../app/middlewares';
 import { routersPaths } from '../../../app/configs';
-import { authController } from '../composition-root';
+import { container } from '../../../app-composition-root';
+import { AuthController } from '../controller';
 
 export const authRouter = Router();
+
+const authController = container.get(AuthController);
 
 authRouter
     .route(routersPaths.auth.login)

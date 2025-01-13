@@ -2,10 +2,13 @@ import { Router } from 'express';
 import { adminAuthValidator } from '../../../app/middlewares';
 import { blogsValidators } from '../middlewares';
 import { routersPaths } from '../../../app/configs';
-import { blogsController } from '../composition-root';
 import { userAuthIdentifier } from '../../../app/middlewares/auth';
+import { BlogsController } from '../controller';
+import { container } from '../../../app-composition-root';
 
 export const blogsRouter = Router();
+
+const blogsController = container.get(BlogsController);
 
 blogsRouter
     .route(routersPaths.blogs.main)

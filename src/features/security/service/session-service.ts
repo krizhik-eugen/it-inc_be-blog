@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { SessionsQueryRepository, SessionsRepository } from '../repository';
 import { SessionViewModel } from '../types';
 import { TResult } from '../../../shared/types';
@@ -8,11 +9,14 @@ import {
     successResult,
 } from '../../../shared/helpers';
 
+@injectable()
 export class SessionService {
     constructor(
+        @inject(SessionsQueryRepository)
         protected sessionsQueryRepository: SessionsQueryRepository,
+        @inject(SessionsRepository)
         protected sessionsRepository: SessionsRepository,
-        protected authService: AuthService
+        @inject(AuthService) protected authService: AuthService
     ) {}
 
     async getAllSessionDevices(

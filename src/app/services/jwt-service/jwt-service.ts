@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 import jwt from 'jsonwebtoken';
 import {
     accessTokenExpirationTime,
@@ -6,6 +7,7 @@ import {
 } from '../../configs';
 import { TDecodedToken, TJwtPayload } from './types';
 
+@injectable()
 export class JwtService {
     generateAccessToken(userId: TJwtPayload['userId']) {
         return jwt.sign({ userId }, jwtSecret, {

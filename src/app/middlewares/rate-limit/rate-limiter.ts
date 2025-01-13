@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import { createResponseError } from '../../../shared/helpers';
 import { rateLimiterMaxRequests } from '../../configs';
-import { rateLimiterService } from '../../app-composition-root';
+import { container } from '../../../app-composition-root';
+import { RateLimiterService } from '../../services';
+
+const rateLimiterService = container.get(RateLimiterService);
 
 export const rateLimiter = async (
     req: Request,
@@ -11,6 +14,7 @@ export const rateLimiter = async (
 ) => {
     const ip = req.ip!;
     const url = req.originalUrl;
+
     await rateLimiterService.registerRequest(ip, url);
     const requestsCount = await rateLimiterService.getRequestsCount(ip, url);
     if (requestsCount > rateLimiterMaxRequests) {

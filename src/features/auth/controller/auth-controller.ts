@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { Request } from 'express';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
@@ -15,10 +16,12 @@ import { getDeviceTitle } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
 import { UsersQueryRepository } from '../../users/repository';
 
+@injectable()
 export class AuthController {
     constructor(
+        @inject(UsersQueryRepository)
         protected usersQueryRepository: UsersQueryRepository,
-        protected authService: AuthService
+        @inject(AuthService) protected authService: AuthService
     ) {}
 
     async login(req: TLoginRequest, res: TLoginResponse) {

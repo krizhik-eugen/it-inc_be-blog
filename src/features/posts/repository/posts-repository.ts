@@ -1,5 +1,7 @@
+import { injectable } from 'inversify';
 import { PostsModel, PostDBModel } from '../model';
 
+@injectable()
 export class PostsRepository {
     async getPostsCount(blogId = '') {
         return await PostsModel.countDocuments({

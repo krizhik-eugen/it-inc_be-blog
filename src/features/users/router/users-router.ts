@@ -1,10 +1,13 @@
 import { Router } from 'express';
 import { routersPaths } from '../../../app/configs';
 import { usersValidators } from '../middlewares';
-import { usersController } from '../composition-root';
 import { adminAuthValidator } from '../../../app/middlewares';
+import { UsersController } from '../controller';
+import { container } from '../../../app-composition-root';
 
 export const usersRouter = Router();
+
+const usersController = container.get(UsersController);
 
 usersRouter
     .route(routersPaths.users.main)

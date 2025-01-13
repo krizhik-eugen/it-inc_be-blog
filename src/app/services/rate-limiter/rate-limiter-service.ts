@@ -1,6 +1,8 @@
+import { injectable } from 'inversify';
 import { rateLimiterTimeWindow } from '../../configs';
 import { RateLimiterRepository } from '../../repositories';
 
+@injectable()
 export class RateLimiterService {
     constructor(protected rateLimiterRepository: RateLimiterRepository) {}
 

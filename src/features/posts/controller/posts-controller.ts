@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
     TCreateNewPostCommentRequest,
@@ -22,14 +23,16 @@ import { PostsDBSearchParams } from '../model';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
 import { TUpdateLikeStatusRequest } from '../../likes/types';
-import { PostsRepository } from '../repository/posts-repository';
 
+@injectable()
 export class PostsController {
     constructor(
+        @inject(PostsQueryRepository)
         protected postsQueryRepository: PostsQueryRepository,
-        protected postsService: PostsService,
+        @inject(PostsService) protected postsService: PostsService,
+        @inject(CommentsQueryRepository)
         protected commentsQueryRepository: CommentsQueryRepository,
-        protected commentsService: CommentsService
+        @inject(CommentsService) protected commentsService: CommentsService
     ) {}
 
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {

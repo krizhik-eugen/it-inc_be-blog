@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 import { FilterQuery } from 'mongoose';
 import { getDBSearchQueries } from '../../../shared/helpers';
 import { UsersModel, UserDBModel, UsersDBSearchParams } from '../model';
@@ -7,6 +8,7 @@ import {
     TMappedSearchQueryParams,
 } from '../../../shared/types';
 
+@injectable()
 export class UsersQueryRepository {
     async getUsers({
         searchQueries,

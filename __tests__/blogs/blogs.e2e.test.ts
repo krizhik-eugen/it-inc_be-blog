@@ -25,10 +25,8 @@ import {
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { PostCreateRequestModel } from '../../src/features/posts/types';
-import { PostsRepository } from '../../src/features/posts/repository';
 
 describe('Blogs Controller', () => {
-    const postsRepository = new PostsRepository();
     let createdTestBlog: BlogViewModel;
     const setTestBlogs = async () => {
         for (let i = 1; i < 20; i++) {
@@ -205,7 +203,9 @@ describe('Blogs Controller', () => {
 
         afterAll(async () => {
             if (createdPostId) {
-                await postsRepository.deletePost(createdPostId);
+                await req
+                    .delete(`${baseRoutes.posts}/${createdPostId}`)
+                    .auth(...validAuthData);
             }
         });
 

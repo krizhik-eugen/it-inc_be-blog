@@ -1,9 +1,14 @@
+import { inject, injectable } from 'inversify';
 import { UsersQueryRepository } from '../../users/repository';
 import { LikesModel } from '../model/likes-model';
 import { NewestLikesViewModel } from '../types';
 
+@injectable()
 export class LikesQueryRepository {
-    constructor(protected usersQueryRepository: UsersQueryRepository) {}
+    constructor(
+        @inject(UsersQueryRepository)
+        protected usersQueryRepository: UsersQueryRepository
+    ) {}
     async getLikeStatus(parentId: string, userId: string) {
         const foundLike = await LikesModel.findOne({ parentId, userId });
         return foundLike ? foundLike.status : 'None';

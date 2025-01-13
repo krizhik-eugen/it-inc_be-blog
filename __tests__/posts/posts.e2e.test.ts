@@ -29,11 +29,8 @@ import {
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { routersPaths } from '../../src/app/configs';
-import { CommentsRepository } from '../../src/features/comments/repository/comments-repository';
 
 describe('Posts Controller', () => {
-    const commentsRepository = new CommentsRepository();
-
     let createdTestBlog: BlogViewModel;
     let createdTestPost: PostViewModel;
     let createdTestPost_2: PostViewModel;
@@ -51,7 +48,6 @@ describe('Posts Controller', () => {
         createdTestBlog = await addNewBlog(getTestBlog(1));
         testPost = getTestPost(100, createdTestBlog.id);
         await setTestPosts(createdTestBlog.id);
-        commentsRepository.clearComments();
         testUser_1 = getTestUser(1);
         testUser_2 = getTestUser(2);
         testUser_3 = getTestUser(3);

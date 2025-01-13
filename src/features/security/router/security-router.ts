@@ -1,8 +1,11 @@
 import { Router } from 'express';
 import { routersPaths } from '../../../app/configs';
-import { securityController } from '../composition-root';
+import { SecurityController } from '../controller';
+import { container } from '../../../app-composition-root';
 
 export const securityRouter = Router();
+
+const securityController = container.get(SecurityController);
 
 securityRouter
     .route(routersPaths.security.devices)

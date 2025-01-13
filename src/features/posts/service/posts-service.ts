@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { PostCreateRequestModel } from '../types';
 import { PostsRepository } from '../repository';
 import { PostDBModel } from '../model';
@@ -11,11 +12,12 @@ import { BlogsRepository } from '../../blogs/repository';
 import { TLikeStatus } from '../../likes/types';
 import { LikesRepository } from '../../likes/repository';
 
+@injectable()
 export class PostsService {
     constructor(
-        protected postsRepository: PostsRepository,
-        protected blogsRepository: BlogsRepository,
-        protected likesRepository: LikesRepository
+        @inject(PostsRepository) protected postsRepository: PostsRepository,
+        @inject(BlogsRepository) protected blogsRepository: BlogsRepository,
+        @inject(LikesRepository) protected likesRepository: LikesRepository
     ) {}
 
     async createNewPost({

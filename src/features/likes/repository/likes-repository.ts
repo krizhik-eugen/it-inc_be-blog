@@ -1,5 +1,7 @@
+import { injectable } from 'inversify';
 import { LikeDBModel, LikesModel } from '../model/likes-model';
 
+@injectable()
 export class LikesRepository {
     async findLikeByUserIdAndParentId(userId: string, parentId: string) {
         return await LikesModel.findOne({ userId, parentId }).lean();

@@ -1,6 +1,8 @@
+import { injectable } from 'inversify';
 import { SessionsModel } from '../model';
 import { SessionViewModel } from '../types';
 
+@injectable()
 export class SessionsQueryRepository {
     async getAllSessionDevices(
         userId: string

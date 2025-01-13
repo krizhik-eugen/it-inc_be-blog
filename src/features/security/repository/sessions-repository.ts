@@ -1,6 +1,8 @@
+import { injectable } from 'inversify';
 import { SessionsModel } from '../model';
 import { SessionDBModel } from '../model/session-model';
 
+@injectable()
 export class SessionsRepository {
     async findSession(deviceId: string) {
         const result = await SessionsModel.findOne({ deviceId });

@@ -1,5 +1,7 @@
+import { injectable } from 'inversify';
 import { UserDBModel, UsersModel } from '../model';
 
+@injectable()
 export class UsersRepository {
     async findUserByLoginOrEmail(loginOrEmail: string) {
         return await UsersModel.findOne()

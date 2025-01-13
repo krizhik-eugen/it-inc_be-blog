@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -22,12 +23,14 @@ import { getCodeExpirationDate, hashSaltRounds } from '../../../app/configs';
 import { SessionsRepository } from '../../security/repository';
 import { UsersRepository } from '../../users/repository';
 
+@injectable()
 export class AuthService {
     constructor(
-        protected usersRepository: UsersRepository,
+        @inject(UsersRepository) protected usersRepository: UsersRepository,
+        @inject(SessionsRepository)
         protected sessionsRepository: SessionsRepository,
-        protected jwtService: JwtService,
-        protected emailManager: EmailManager
+        @inject(JwtService) protected jwtService: JwtService,
+        @inject(EmailManager) protected emailManager: EmailManager
     ) {}
 
     async login(

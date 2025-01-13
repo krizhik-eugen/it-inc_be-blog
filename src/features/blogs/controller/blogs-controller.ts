@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { BlogsQueryRepository } from '../repository';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
@@ -22,12 +23,15 @@ import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { BlogsDBSearchParams } from '../model';
 import { TResponseWithError } from '../../../shared/types';
 
+@injectable()
 export class BlogsController {
     constructor(
+        @inject(BlogsQueryRepository)
         protected blogsQueryRepository: BlogsQueryRepository,
-        protected blogsService: BlogsService,
+        @inject(BlogsService) protected blogsService: BlogsService,
+        @inject(PostsQueryRepository)
         protected postsQueryRepository: PostsQueryRepository,
-        protected postsService: PostsService
+        @inject(PostsService) protected postsService: PostsService
     ) {}
 
     async getBlogs(req: TGetAllBlogsRequest, res: TGetAllBlogsResponse) {

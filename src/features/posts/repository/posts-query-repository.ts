@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { PostsModel, PostsDBSearchParams } from '../model';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
@@ -6,8 +7,12 @@ import { PostViewModel } from '../types';
 import { TLikeStatus } from '../../likes/types';
 import { LikesQueryRepository } from '../../likes/repository';
 
+@injectable()
 export class PostsQueryRepository {
-    constructor(private readonly likesQueryRepository: LikesQueryRepository) {}
+    constructor(
+        @inject(LikesQueryRepository)
+        protected likesQueryRepository: LikesQueryRepository
+    ) {}
 
     async getPosts({
         searchQueries,

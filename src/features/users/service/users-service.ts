@@ -3,16 +3,19 @@ import { UserCreateRequestModel } from '../types';
 import { UsersRepository } from '../repository';
 import {
     badRequestErrorResult,
-    createResponseError,
     internalErrorResult,
     notFoundErrorResult,
     successResult,
 } from '../../../shared/helpers';
 import { UserDBModel } from '../model';
 import { TResult } from '../../../shared/types';
+import { inject, injectable } from 'inversify';
 
+@injectable()
 export class UsersService {
-    constructor(protected usersRepository: UsersRepository) {}
+    constructor(
+        @inject(UsersRepository) protected usersRepository: UsersRepository
+    ) {}
 
     async createNewUser({
         login,

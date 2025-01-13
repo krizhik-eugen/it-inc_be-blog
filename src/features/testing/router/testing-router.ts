@@ -1,7 +1,10 @@
 import { Router } from 'express';
-import { testingController } from '../composition-root';
+import { TestingController } from '../controller';
+import { container } from '../../../app-composition-root';
 
 export const testingRouter = Router();
+
+const testingController = container.get(TestingController);
 
 testingRouter.delete(
     '/',

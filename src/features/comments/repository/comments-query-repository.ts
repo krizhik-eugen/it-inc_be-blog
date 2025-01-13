@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { CommentsModel, CommentsDBSearchParams } from '../model';
 import { PostsModel } from '../../../features/posts/model';
 import { TMappedSearchQueryParams } from '../../../shared/types';
@@ -6,8 +7,12 @@ import { LikesQueryRepository } from '../../likes/repository';
 import { CommentViewModel } from '../types';
 import { TLikeStatus } from '../../likes/types';
 
+@injectable()
 export class CommentsQueryRepository {
-    constructor(protected likesQueryRepository: LikesQueryRepository) {}
+    constructor(
+        @inject(LikesQueryRepository)
+        protected likesQueryRepository: LikesQueryRepository
+    ) {}
 
     async getComment(id: string, userId: string | null) {
         const foundComment = await CommentsModel.findById(id);

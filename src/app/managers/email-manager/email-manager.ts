@@ -1,9 +1,11 @@
+import { injectable } from 'inversify';
+import { emailAdapter } from '../../adapters';
 import {
     getEmailConfirmationTemplate,
     getPasswordRecoveryTemplate,
 } from '../../../shared/helpers';
-import { emailAdapter } from '../../adapters';
 
+@injectable()
 export class EmailManager {
     async sendEmailConfirmationMessage(
         email: string,

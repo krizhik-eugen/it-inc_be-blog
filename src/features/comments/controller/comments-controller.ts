@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import {
     TDeleteCommentRequest,
@@ -11,10 +12,12 @@ import { createResponseError } from '../../../shared/helpers';
 import { TResponseWithError } from '../../../shared/types';
 import { TUpdateLikeStatusRequest } from '../../likes/types';
 
+@injectable()
 export class CommentsController {
     constructor(
+        @inject(CommentsQueryRepository)
         protected commentsQueryRepository: CommentsQueryRepository,
-        protected commentsService: CommentsService
+        @inject(CommentsService) protected commentsService: CommentsService
     ) {}
 
     async getComment(req: TGetCommentRequest, res: TGetCommentResponse) {

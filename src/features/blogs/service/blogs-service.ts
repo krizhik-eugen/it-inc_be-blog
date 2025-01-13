@@ -1,16 +1,19 @@
+import { inject, injectable } from 'inversify';
 import { BlogCreateRequestModel, BlogViewModel } from '../types';
 import { BlogDBModel } from '../model';
 import { TResult } from '../../../shared/types';
 import {
-    createResponseError,
     internalErrorResult,
     notFoundErrorResult,
     successResult,
 } from '../../../shared/helpers';
 import { BlogsRepository } from '../repository';
 
+@injectable()
 export class BlogsService {
-    constructor(protected blogsRepository: BlogsRepository) {}
+    constructor(
+        @inject(BlogsRepository) protected blogsRepository: BlogsRepository
+    ) {}
 
     async createNewBlog({
         name,

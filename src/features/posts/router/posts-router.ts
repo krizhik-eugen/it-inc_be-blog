@@ -5,10 +5,13 @@ import {
 } from '../../../app/middlewares';
 import { postsValidators } from '../middlewares';
 import { routersPaths } from '../../../app/configs';
-import { postsController } from '../composition-root';
 import { userAuthIdentifier } from '../../../app/middlewares/auth';
+import { PostsController } from '../controller';
+import { container } from '../../../app-composition-root';
 
 export const postsRouter = Router();
+
+const postsController = container.get(PostsController);
 
 postsRouter
     .route(routersPaths.posts.main)

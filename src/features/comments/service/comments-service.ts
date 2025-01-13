@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { CommentsRepository } from '../repository';
 import { CommentCreateRequestModel } from '../types';
 import { CommentDBModel } from '../model';
@@ -13,12 +14,14 @@ import { TResult } from '../../../shared/types';
 import { TLikeStatus } from '../../likes/types';
 import { LikesRepository } from '../../likes/repository/likes-repository';
 
+@injectable()
 export class CommentsService {
     constructor(
+        @inject(CommentsRepository)
         protected commentsRepository: CommentsRepository,
-        protected usersRepository: UsersRepository,
-        protected postsRepository: PostsRepository,
-        protected likesRepository: LikesRepository
+        @inject(UsersRepository) protected usersRepository: UsersRepository,
+        @inject(PostsRepository) protected postsRepository: PostsRepository,
+        @inject(LikesRepository) protected likesRepository: LikesRepository
     ) {}
 
     async createNewCommentForPost(

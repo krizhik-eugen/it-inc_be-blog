@@ -1,11 +1,15 @@
+import { inject, injectable } from 'inversify';
 import { Request } from 'express';
 import { SessionService } from '../service';
 import { TGetAllSessionDevicesResponse } from '../types';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import { TResponseWithError } from '../../../shared/types';
 
+@injectable()
 export class SecurityController {
-    constructor(protected sessionService: SessionService) {}
+    constructor(
+        @inject(SessionService) protected sessionService: SessionService
+    ) {}
 
     async getAllSessionDevices(
         req: Request,

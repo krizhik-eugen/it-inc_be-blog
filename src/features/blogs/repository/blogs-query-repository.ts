@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 import { BlogsModel, BlogsDBSearchParams } from '../model';
 import { BlogViewModel } from '../types';
 import {
@@ -6,6 +7,7 @@ import {
 } from '../../../shared/types';
 import { getDBSearchQueries } from '../../../shared/helpers';
 
+@injectable()
 export class BlogsQueryRepository {
     async getBlogs({
         searchQueries,
