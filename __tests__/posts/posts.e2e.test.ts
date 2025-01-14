@@ -637,7 +637,7 @@ describe('Posts Controller', () => {
         });
     });
 
-    describe.only('PUT /posts/:id/like-status', () => {
+    describe('PUT /posts/:id/like-status', () => {
         it('can not update a  like status of post without authorization', async () => {
             const updateLikeStatus = {
                 likeStatus: 'Like',
