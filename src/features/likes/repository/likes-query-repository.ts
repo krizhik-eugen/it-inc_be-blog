@@ -15,9 +15,10 @@ export class LikesQueryRepository {
         return foundLike ? foundLike.status : 'None';
     }
 
-    async getLikesArray(parentIdsArray: string[]) {
+    async getLikesArray(parentIdsArray: string[], userId: string) {
         const foundLikes = await LikesModel.find({
             parentId: { $in: parentIdsArray },
+            userId,
         }).lean();
         return foundLikes;
     }

@@ -84,7 +84,10 @@ export class CommentsQueryRepository {
         );
         if (userId) {
             const likesForComments =
-                await this.likesQueryRepository.getLikesArray(commentsIds);
+                await this.likesQueryRepository.getLikesArray(
+                    commentsIds,
+                    userId
+                );
             mappedFoundComments.forEach((comment) => {
                 const like = likesForComments.find(
                     (like) => like.parentId === comment.id
