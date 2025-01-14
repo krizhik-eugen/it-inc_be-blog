@@ -9,9 +9,17 @@ export class LikesQueryRepository {
         @inject(UsersQueryRepository)
         protected usersQueryRepository: UsersQueryRepository
     ) {}
+
     async getLikeStatus(parentId: string, userId: string) {
         const foundLike = await LikesModel.findOne({ parentId, userId });
         return foundLike ? foundLike.status : 'None';
+    }
+
+    async getLikesArray(parentIdsArray: string[]) {
+        const foundLikes = await LikesModel.find({
+            $in: parentIdsArray,
+        }).lean();
+        return foundLikes;
     }
 
     async getLastThreeLikes(parentId: string) {

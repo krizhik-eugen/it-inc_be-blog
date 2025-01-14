@@ -62,8 +62,10 @@ export class CommentsQueryRepository {
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit);
+        const commentsIds: string[] = [];
         const mappedFoundComments: CommentViewModel[] = foundComments.map(
             (comment) => {
+                commentsIds.push(comment.id);
                 return {
                     id: comment.id,
                     commentatorInfo: {
@@ -81,13 +83,14 @@ export class CommentsQueryRepository {
             }
         );
         if (userId) {
-            for (const comment of mappedFoundComments) {
-                comment.likesInfo.myStatus =
-                    await this.likesQueryRepository.getLikeStatus(
-                        comment.id,
-                        userId
-                    );
-            }
+            const likesForComments =
+                await this.likesQueryRepository.getLikesArray(commentsIds);
+            mappedFoundComments.forEach((comment) => {
+                const like = likesForComments.find(
+                    (like) => like.parentId === comment.id
+                );
+                comment.likesInfo.myStatus = like?.status ?? 'None';
+            });
         }
         return {
             pagesCount: Math.ceil(totalCount / searchQueries.pageSize),

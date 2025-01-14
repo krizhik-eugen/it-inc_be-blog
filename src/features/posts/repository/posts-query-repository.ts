@@ -117,7 +117,9 @@ export class PostsQueryRepository {
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit);
+        const postsIds: string[] = [];
         const mappedFoundPosts: PostViewModel[] = foundPosts.map((post) => {
+            postsIds.push(post.id);
             return {
                 id: post.id,
                 title: post.title,
@@ -135,13 +137,14 @@ export class PostsQueryRepository {
             };
         });
         if (userId) {
-            for (const post of mappedFoundPosts) {
-                post.extendedLikesInfo.myStatus =
-                    await this.likesQueryRepository.getLikeStatus(
-                        post.id,
-                        userId
-                    );
-            }
+            const likesForComments =
+                await this.likesQueryRepository.getLikesArray(postsIds);
+            mappedFoundPosts.forEach((post) => {
+                const like = likesForComments.find(
+                    (like) => like.parentId === post.id
+                );
+                post.extendedLikesInfo.myStatus = like?.status ?? 'None';
+            });
         }
         for (const post of mappedFoundPosts) {
             post.extendedLikesInfo.newestLikes =
