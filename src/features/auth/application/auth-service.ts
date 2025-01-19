@@ -11,7 +11,7 @@ import {
 } from '../../../shared/helpers';
 import { TResult } from '../../../shared/types';
 import { UsersRepository } from '../../users/infrastructure/users-repository';
-import { SessionsRepository } from '../../security/sessions-repository';
+import { SessionsRepository } from '../../security/infrastructure/sessions-repository';
 import {
     LoginRequestModel,
     NewPasswordRequestModel,
@@ -21,6 +21,7 @@ import {
 } from '../api/types';
 import { hashSaltRounds } from '../../../app/configs/app-config';
 import { UserModel } from '../../users/domain/user-entity';
+import { SessionModel } from '../../security/domain/session-entity';
 
 @injectable()
 export class AuthService {
@@ -43,7 +44,7 @@ export class AuthService {
             return notFoundErrorResult('User not found');
         }
         if (!foundUser.emailConfirmation.isConfirmed) {
-            return badRequestErrorResult('This email has not been confirmed');
+            return badRequestErrorResult('The email has not been confirmed');
         }
 
         const isCredentialsValid = await bcrypt.compare(
@@ -62,7 +63,7 @@ export class AuthService {
         );
         const decodedIssuedToken = this.jwtService.decodeToken(refreshToken);
 
-        await this.sessionsRepository.createSession({
+        const newSession = SessionModel.createSession({
             userId: foundUser.id,
             deviceId,
             ip,
@@ -70,6 +71,8 @@ export class AuthService {
             iat: decodedIssuedToken.iat!,
             exp: decodedIssuedToken.exp!,
         });
+
+        await this.sessionsRepository.save(newSession);
 
         return successResult({ accessToken, refreshToken });
     }
@@ -163,6 +166,15 @@ export class AuthService {
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
+
+        const foundSession =
+            await this.sessionsRepository.findSessionByDeviceId(
+                validationResult.data.deviceId
+            );
+        if (!foundSession) {
+            return notFoundErrorResult('Session not found');
+        }
+
         const updatedAccessToken = this.jwtService.generateAccessToken(
             validationResult.data.userId
         );
@@ -172,12 +184,13 @@ export class AuthService {
         );
         const decodedIssuedToken =
             this.jwtService.decodeToken(updatedRefreshToken);
-        await this.sessionsRepository.updateSession({
-            deviceId: validationResult.data.deviceId,
-            iat: decodedIssuedToken.iat!,
-            exp: decodedIssuedToken.exp!,
-            ip,
-        });
+
+        foundSession.ip = ip;
+        foundSession.iat = decodedIssuedToken.iat!;
+        foundSession.exp = decodedIssuedToken.exp!;
+
+        await this.sessionsRepository.save(foundSession);
+
         return successResult({
             accessToken: updatedAccessToken,
             refreshToken: updatedRefreshToken,
@@ -189,7 +202,7 @@ export class AuthService {
         if (validationResult.status !== 'Success') {
             return validationResult;
         }
-        await this.sessionsRepository.revokeSession(
+        await this.sessionsRepository.deleteSessionByDeviceId(
             validationResult.data.deviceId
         );
         return successResult(null);
@@ -248,7 +261,7 @@ export class AuthService {
         const result = this.jwtService.verifyToken(refreshToken);
         if (result.error) {
             if (result.data) {
-                await this.sessionsRepository.revokeSession(
+                await this.sessionsRepository.deleteSessionByDeviceId(
                     result.data.deviceId
                 );
             }
@@ -260,7 +273,7 @@ export class AuthService {
         if (!foundUser) {
             return unauthorizedErrorResult('User not found');
         }
-        const session = await this.sessionsRepository.findSession(
+        const session = await this.sessionsRepository.findSessionByDeviceId(
             result.data.deviceId
         );
         if (!session) {

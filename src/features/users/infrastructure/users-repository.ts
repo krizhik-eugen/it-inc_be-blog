@@ -27,8 +27,8 @@ export class UsersRepository {
         });
     }
 
-    async save(newUser: UserDocument) {
-        return await newUser.save();
+    async save(user: UserDocument) {
+        return await user.save();
     }
 
     async deleteUserById(id: string) {

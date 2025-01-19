@@ -4,7 +4,7 @@ import { TCreateUserDTO, TUser, TUserModel, UserDocument } from './types';
 import { userEmailValidation, userLoginValidation } from './settings';
 import { getCodeExpirationDate } from '../../../app/configs/app-config';
 
-const usersSchema = new Schema<TUser>({
+const userSchema = new Schema<TUser>({
     accountData: {
         login: {
             type: String,
@@ -140,7 +140,7 @@ export const userMethods = {
     },
 };
 
-usersSchema.statics = userStatics;
-usersSchema.methods = userMethods;
+userSchema.statics = userStatics;
+userSchema.methods = userMethods;
 
-export const UserModel = model<TUser, TUserModel>('users', usersSchema);
+export const UserModel = model<TUser, TUserModel>('users', userSchema);

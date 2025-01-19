@@ -10,8 +10,8 @@ import { BlogsModel } from '../src/features/blogs/blogs-model';
 import { PostsModel } from '../src/features/posts/posts-model';
 import { CommentsModel } from '../src/features/comments/comments-model';
 import { UserModel } from '../src/features/users/domain/user-entity';
-import { SessionsModel } from '../src/features/security/session-model';
 import { RateLimiterModel } from '../src/app/models/rate-limiter-model';
+import { SessionModel } from '../src/features/security/domain/session-entity';
 
 export const req = agent(app);
 
@@ -166,6 +166,6 @@ export const clearAllCollections = async () => {
     await PostsModel.deleteMany({});
     await CommentsModel.deleteMany({});
     await UserModel.deleteMany({});
-    await SessionsModel.deleteMany({});
+    await SessionModel.deleteMany({});
     await RateLimiterModel.deleteMany({});
 };

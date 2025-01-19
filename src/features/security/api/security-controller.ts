@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify';
 import { Request } from 'express';
-import { SessionService } from './session-service';
-import { TGetAllSessionDevicesResponse } from './types';
-import { HTTP_STATUS_CODES } from '../../constants';
-import { TResponseWithError } from '../../shared/types';
+import { SessionService } from '../application/session-service';
+import { TGetAllSessionDevicesResponse } from '../types';
+import { HTTP_STATUS_CODES } from '../../../constants';
+import { TResponseWithError } from '../../../shared/types';
 
 @injectable()
 export class SecurityController {

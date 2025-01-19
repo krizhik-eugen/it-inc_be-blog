@@ -1,13 +1,13 @@
 import { injectable } from 'inversify';
-import { SessionViewModel } from './types';
-import { SessionsModel } from './session-model';
+import { SessionViewModel } from '../types';
+import { SessionModel } from '../domain/session-entity';
 
 @injectable()
 export class SessionsQueryRepository {
     async getAllSessionDevices(
         userId: string
     ): Promise<SessionViewModel[] | null> {
-        const result = await SessionsModel.find({ userId }).lean();
+        const result = await SessionModel.find({ userId }).lean();
         const mappedResult = result.map((session) => ({
             deviceId: session.deviceId,
             ip: session.ip,

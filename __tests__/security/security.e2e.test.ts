@@ -9,8 +9,8 @@ import {
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { baseRoutes, routersPaths } from '../../src/app/configs/routes-config';
 import { RateLimiterModel } from '../../src/app/models/rate-limiter-model';
-import { SessionsModel } from '../../src/features/security/session-model';
 import { refreshTokenExpirationTime } from '../../src/app/configs/app-config';
+import { SessionModel } from '../../src/features/security/domain/session-entity';
 
 jest.mock('nodemailer');
 jest.mock('../../src/app/configs/app-config', () => ({
@@ -87,7 +87,7 @@ describe('Security Controller', () => {
 
         afterAll(async () => {
             await RateLimiterModel.deleteMany({});
-            await SessionsModel.deleteMany({});
+            await SessionModel.deleteMany({});
             await new Promise((resolve) =>
                 setTimeout(resolve, refreshTokenExpirationTime * 1000)
             );
@@ -159,7 +159,7 @@ describe('Security Controller', () => {
 
         afterAll(async () => {
             await RateLimiterModel.deleteMany({});
-            await SessionsModel.deleteMany({});
+            await SessionModel.deleteMany({});
             await new Promise((resolve) =>
                 setTimeout(resolve, refreshTokenExpirationTime * 1000)
             );
@@ -233,7 +233,7 @@ describe('Security Controller', () => {
 
         afterAll(async () => {
             await RateLimiterModel.deleteMany({});
-            await SessionsModel.deleteMany({});
+            await SessionModel.deleteMany({});
             await new Promise((resolve) =>
                 setTimeout(resolve, refreshTokenExpirationTime * 1000)
             );

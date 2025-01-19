@@ -8,7 +8,7 @@ import { commentsRouter } from './features/comments/comments-router';
 import { postsRouter } from './features/posts/posts-router';
 import { testingRouter } from './features/testing/testing-router';
 import { usersRouter } from './features/users/api/users-router';
-import { securityRouter } from './features/security/security-router';
+import { securityRouter } from './features/security/api/security-router';
 
 export const app = express();
 

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { container } from '../../app-composition-root';
+import { container } from '../../../app-composition-root';
 import { SecurityController } from './security-controller';
-import { routersPaths } from '../../app/configs/routes-config';
+import { routersPaths } from '../../../app/configs/routes-config';
 
 export const securityRouter = Router();
 

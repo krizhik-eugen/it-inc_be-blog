@@ -3,7 +3,7 @@ import { BlogsRepository } from '../blogs/blogs-repository';
 import { PostsRepository } from '../posts/posts-repository';
 import { UsersRepository } from '../users/infrastructure/users-repository';
 import { CommentsRepository } from '../comments/comments-repository';
-import { SessionsRepository } from '../security/sessions-repository';
+import { SessionsRepository } from '../security/infrastructure/sessions-repository';
 
 @injectable()
 export class TestingService {
@@ -22,6 +22,6 @@ export class TestingService {
         await this.postsRepository.clearPosts();
         await this.usersRepository.deleteAllUsers();
         await this.commentsRepository.clearComments();
-        await this.sessionsRepository.clearSessions();
+        await this.sessionsRepository.deleteAllSessions();
     }
 }
