@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
-import { PostsQueryRepository } from './posts-query-repository';
-import { PostsService } from './posts-service';
-import { CommentsQueryRepository } from '../comments/comments-query-repository';
-import { CommentsService } from '../comments/comments-service';
+import { PostsQueryRepository } from '../infrastructure/posts-query-repository';
+import { PostsService } from '../application/posts-service';
+import { CommentsQueryRepository } from '../../comments/comments-query-repository';
+import { CommentsService } from '../../comments/comments-service';
 import {
     TCreateNewPostCommentRequest,
     TCreateNewPostCommentResponse,
@@ -17,12 +17,12 @@ import {
     TGetPostResponse,
     TUpdatePostRequest,
 } from './types';
-import { PostsDBSearchParams } from './posts-model';
-import { createResponseError, getSearchQueries } from '../../shared/helpers';
-import { HTTP_STATUS_CODES } from '../../constants';
-import { CommentsDBSearchParams } from '../comments/comments-model';
-import { TResponseWithError } from '../../shared/types';
-import { TUpdateLikeStatusRequest } from '../likes/types';
+import { createResponseError, getSearchQueries } from '../../../shared/helpers';
+import { HTTP_STATUS_CODES } from '../../../constants';
+import { CommentsDBSearchParams } from '../../comments/comments-model';
+import { TResponseWithError } from '../../../shared/types';
+import { TUpdateLikeStatusRequest } from '../../likes/types';
+import { PostsDBSearchParams } from '../domain/types';
 
 @injectable()
 export class PostsController {
@@ -149,14 +149,13 @@ export class PostsController {
     }
 
     async updatePost(req: TUpdatePostRequest, res: TResponseWithError) {
-        const { title, shortDescription, content, blogId } = req.body;
+        const { title, shortDescription, content } = req.body;
         const id = req.params.id;
         const result = await this.postsService.updatePost(
             id,
             title,
             shortDescription,
-            content,
-            blogId
+            content
         );
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
@@ -195,8 +194,8 @@ export class PostsController {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     }
 
-    async deletePost(req: TDeletePostRequest, res: TResponseWithError) {
-        const result = await this.postsService.deletePost(req.params.id);
+    async deletePostById(req: TDeletePostRequest, res: TResponseWithError) {
+        const result = await this.postsService.deletePostById(req.params.id);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,

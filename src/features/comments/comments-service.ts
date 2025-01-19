@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { CommentsRepository } from './comments-repository';
 import { UsersRepository } from '../users/infrastructure/users-repository';
-import { PostsRepository } from '../posts/posts-repository';
+import { PostsRepository } from '../posts/infrastructure/posts-repository';
 import { LikesRepository } from '../likes/likes-repository';
 import { CommentCreateRequestModel } from './types';
 import { TResult } from '../../shared/types';
@@ -102,10 +102,12 @@ export class CommentsService {
                 status: likeStatus,
             });
         }
-        const likesCount =
-            await this.likesRepository.getLikesCountByParentId(id);
-        const dislikesCount =
-            await this.likesRepository.getDislikesCountByParentId(id);
+
+        const [likesCount, dislikesCount] = await Promise.all([
+            await this.likesRepository.getLikesCountByParentId(id),
+            await this.likesRepository.getDislikesCountByParentId(id),
+        ]);
+
         await this.commentsRepository.updateComment({
             id,
             likesCount,

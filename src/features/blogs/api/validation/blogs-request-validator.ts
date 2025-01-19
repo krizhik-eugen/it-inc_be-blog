@@ -3,7 +3,7 @@ import { requestValidator } from '../../../../shared/helpers';
 import {
     postsBodySchema,
     postsQuerySchema,
-} from '../../../posts/posts-request-validator';
+} from '../../../posts/api/validation/posts-request-validator';
 import {
     blogDescriptionValidation,
     blogNameValidation,

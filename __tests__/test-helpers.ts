@@ -3,9 +3,9 @@ import { agent } from 'supertest';
 import { app } from '../src/initApp';
 import { connectToDB } from '../src/db/db';
 import { baseRoutes } from '../src/app/configs/routes-config';
-import { PostViewModel } from '../src/features/posts/types';
+import { PostViewModel } from '../src/features/posts/api/types';
 import { UserViewModel } from '../src/features/users/api/types';
-import { PostsModel } from '../src/features/posts/posts-model';
+import { PostModel } from '../src/features/posts/domain/post-entity';
 import { CommentsModel } from '../src/features/comments/comments-model';
 import { UserModel } from '../src/features/users/domain/user-entity';
 import { RateLimiterModel } from '../src/app/models/rate-limiter-model';
@@ -163,7 +163,7 @@ export const mockUserAgents = {
 
 export const clearAllCollections = async () => {
     await BlogModel.deleteMany({});
-    await PostsModel.deleteMany({});
+    await PostModel.deleteMany({});
     await CommentsModel.deleteMany({});
     await UserModel.deleteMany({});
     await SessionModel.deleteMany({});

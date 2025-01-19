@@ -10,7 +10,7 @@ import {
     TGetAllPostsRequestQueries,
     PostCreateRequestModel,
     PostViewModel,
-} from '../../posts/types';
+} from '../../posts/api/types';
 import { BlogsDBSearchParams } from '../domain/types';
 
 export type BlogViewModel = {

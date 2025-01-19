@@ -1,7 +1,7 @@
 import {
     PostCreateRequestModel,
     PostViewModel,
-} from '../../src/features/posts/types';
+} from '../../src/features/posts/api/types';
 import {
     addNewBlog,
     addNewPost,

@@ -4,11 +4,14 @@ import {
     TIDParam,
     TResponseWithError,
     TSearchQueryParams,
-} from '../../shared/types';
-import { PostsDBSearchParams } from './posts-model';
-import { CommentCreateRequestModel, CommentViewModel } from '../comments/types';
-import { NewestLikesViewModel, TLikeStatus } from '../likes/types';
-import { CommentsDBSearchParams } from '../comments/comments-model';
+} from '../../../shared/types';
+import {
+    CommentCreateRequestModel,
+    CommentViewModel,
+} from '../../comments/types';
+import { NewestLikesViewModel, TLikeStatus } from '../../likes/types';
+import { CommentsDBSearchParams } from '../../comments/comments-model';
+import { PostsDBSearchParams } from '../domain/types';
 
 export type PostViewModel = {
     id: string;

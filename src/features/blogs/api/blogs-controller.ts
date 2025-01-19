@@ -13,17 +13,15 @@ import {
     TGetBlogResponse,
     TUpdateBlogRequest,
 } from './types';
-
 import { BlogsService } from '../application/blogs-service';
-import { PostsQueryRepository } from '../../posts/posts-query-repository';
-import { PostsService } from '../../posts/posts-service';
+import { PostsQueryRepository } from '../../posts/infrastructure/posts-query-repository';
+import { PostsService } from '../../posts/application/posts-service';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
-
 import { HTTP_STATUS_CODES } from '../../../constants';
-import { PostsDBSearchParams } from '../../posts/posts-model';
 import { TResponseWithError } from '../../../shared/types';
 import { BlogsQueryRepository } from '../infrastructure/blogs-query-repository';
 import { BlogsDBSearchParams } from '../domain/types';
+import { PostsDBSearchParams } from '../../posts/domain/types';
 
 @injectable()
 export class BlogsController {
@@ -117,13 +115,13 @@ export class BlogsController {
         res: TCreateNewBlogPostResponse
     ) {
         const { title, shortDescription, content } = req.body;
-        const id = req.params.id;
+        const blogId = req.params.id;
         const userId = req.userId;
-        const result = await this.postsService.createNewPostForBlog({
+        const result = await this.postsService.createNewPost({
             title,
             shortDescription,
             content,
-            id,
+            blogId,
         });
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
@@ -132,7 +130,7 @@ export class BlogsController {
             return;
         }
         const addedPost = await this.postsQueryRepository.getPost(
-            result.data.postId,
+            result.data.id,
             userId
         );
         if (!addedPost) {

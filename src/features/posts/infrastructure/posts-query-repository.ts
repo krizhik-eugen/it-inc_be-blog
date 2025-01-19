@@ -1,11 +1,12 @@
 import { inject, injectable } from 'inversify';
-import { LikesQueryRepository } from '../likes/likes-query-repository';
-import { TMappedSearchQueryParams } from '../../shared/types';
-import { PostsDBSearchParams, PostsModel } from './posts-model';
-import { getDBSearchQueries } from '../../shared/helpers';
-import { PostViewModel } from './types';
-import { TLikeStatus } from '../likes/types';
-import { BlogModel } from '../blogs/domain/blog-entity';
+import { LikesQueryRepository } from '../../likes/likes-query-repository';
+import { TMappedSearchQueryParams } from '../../../shared/types';
+import { PostModel } from '../domain/post-entity';
+import { getDBSearchQueries } from '../../../shared/helpers';
+import { PostViewModel } from '../api/types';
+import { TLikeStatus } from '../../likes/types';
+import { BlogModel } from '../../blogs/domain/blog-entity';
+import { PostsDBSearchParams } from '../domain/types';
 
 @injectable()
 export class PostsQueryRepository {
@@ -23,8 +24,8 @@ export class PostsQueryRepository {
     }) {
         const dbSearchQueries =
             getDBSearchQueries<PostsDBSearchParams['sortBy']>(searchQueries);
-        const totalCount = await PostsModel.countDocuments({});
-        const foundPosts = await PostsModel.find({})
+        const totalCount = await PostModel.countDocuments({});
+        const foundPosts = await PostModel.find({})
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit);
@@ -73,7 +74,7 @@ export class PostsQueryRepository {
     }
 
     async getPost(id: string, userId: string | null) {
-        const foundPost = await PostsModel.findById(id);
+        const foundPost = await PostModel.findById(id);
         if (!foundPost) return undefined;
         let likeStatus: TLikeStatus = 'None';
         if (userId) {
@@ -117,8 +118,8 @@ export class PostsQueryRepository {
         }
         const dbSearchQueries =
             getDBSearchQueries<PostsDBSearchParams['sortBy']>(searchQueries);
-        const totalCount = await PostsModel.countDocuments({ blogId });
-        const foundPosts = await PostsModel.find({ blogId })
+        const totalCount = await PostModel.countDocuments({ blogId });
+        const foundPosts = await PostModel.find({ blogId })
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit);

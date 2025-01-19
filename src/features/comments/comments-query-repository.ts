@@ -3,7 +3,7 @@ import { CommentsDBSearchParams, CommentsModel } from './comments-model';
 import { LikesQueryRepository } from '../likes/likes-query-repository';
 import { TLikeStatus } from '../likes/types';
 import { TMappedSearchQueryParams } from '../../shared/types';
-import { PostsModel } from '../posts/posts-model';
+import { PostModel } from '../posts/domain/post-entity';
 import { getDBSearchQueries } from '../../shared/helpers';
 import { CommentViewModel } from './types';
 
@@ -51,7 +51,7 @@ export class CommentsQueryRepository {
         postId: string;
         userId: string | null;
     }) {
-        const post = await PostsModel.findById(postId);
+        const post = await PostModel.findById(postId);
         if (!post) {
             return;
         }

@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { userAuthValidator } from '../../app/middlewares/user-auth-validator';
+import { userAuthValidator } from '../../../app/middlewares/user-auth-validator';
 
-import { userAuthIdentifier } from '../../app/middlewares/user-auth-identifier';
-import { container } from '../../app-composition-root';
+import { userAuthIdentifier } from '../../../app/middlewares/user-auth-identifier';
+import { container } from '../../../app-composition-root';
 import { PostsController } from './posts-controller';
-import { routersPaths } from '../../app/configs/routes-config';
-import { postsValidators } from './posts-request-validator';
-import { adminAuthValidator } from '../../app/middlewares/admin-auth-validator';
+import { routersPaths } from '../../../app/configs/routes-config';
+import { postsValidators } from './validation/posts-request-validator';
+import { adminAuthValidator } from '../../../app/middlewares/admin-auth-validator';
 
 export const postsRouter = Router();
 
@@ -40,7 +40,7 @@ postsRouter
     .delete(
         ...adminAuthValidator,
         ...postsValidators.deletePostRequest,
-        postsController.deletePost.bind(postsController)
+        postsController.deletePostById.bind(postsController)
     );
 
 postsRouter

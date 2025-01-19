@@ -1,15 +1,16 @@
 import { Schema } from 'express-validator';
-import { container } from '../../app-composition-root';
-import { BlogsRepository } from '../blogs/infrastructure/blogs-repository';
-import { requestValidator } from '../../shared/helpers';
+import { container } from '../../../../app-composition-root';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs-repository';
+import { requestValidator } from '../../../../shared/helpers';
 import {
     commentsBodySchema,
     commentsQuerySchema,
-} from '../comments/comments-request-validator';
-
-const titleLength = 30;
-const shortDescriptionLength = 100;
-const contentLength = 1000;
+} from '../../../comments/comments-request-validator';
+import {
+    postContentValidation,
+    postShortDescriptionValidation,
+    postTitleValidation,
+} from '../../domain/settings';
 
 const blogsRepository = container.get(BlogsRepository);
 
@@ -34,8 +35,8 @@ export const postsBodySchema: Schema = {
             errorMessage: 'Title is required',
         },
         isLength: {
-            options: { max: titleLength },
-            errorMessage: `Title length should be max ${titleLength} characters`,
+            options: { max: postTitleValidation.maxLength },
+            errorMessage: `Title length should be max ${postTitleValidation.maxLength} characters`,
         },
     },
     shortDescription: {
@@ -49,8 +50,8 @@ export const postsBodySchema: Schema = {
             errorMessage: 'ShortDescription is required',
         },
         isLength: {
-            options: { max: shortDescriptionLength },
-            errorMessage: `ShortDescription length should be max ${shortDescriptionLength} characters`,
+            options: { max: postShortDescriptionValidation.maxLength },
+            errorMessage: `ShortDescription length should be max ${postShortDescriptionValidation.maxLength} characters`,
         },
     },
     content: {
@@ -64,8 +65,8 @@ export const postsBodySchema: Schema = {
             errorMessage: 'Content is required',
         },
         isLength: {
-            options: { max: contentLength },
-            errorMessage: `Content length should be max ${contentLength} characters`,
+            options: { max: postContentValidation.maxLength },
+            errorMessage: `Content length should be max ${postContentValidation.maxLength} characters`,
         },
     },
     blogId: {
