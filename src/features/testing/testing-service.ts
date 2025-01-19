@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { BlogsRepository } from '../blogs/blogs-repository';
+import { BlogsRepository } from '../blogs/infrastructure/blogs-repository';
 import { PostsRepository } from '../posts/posts-repository';
 import { UsersRepository } from '../users/infrastructure/users-repository';
 import { CommentsRepository } from '../comments/comments-repository';
@@ -18,7 +18,7 @@ export class TestingService {
     ) {}
 
     async deleteAllData() {
-        await this.blogsRepository.clearBlogs();
+        await this.blogsRepository.deleteAllBlogs();
         await this.postsRepository.clearPosts();
         await this.usersRepository.deleteAllUsers();
         await this.commentsRepository.clearComments();

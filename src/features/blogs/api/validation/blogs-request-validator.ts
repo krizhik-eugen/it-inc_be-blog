@@ -1,15 +1,14 @@
 import { Schema } from 'express-validator';
-import { requestValidator } from '../../shared/helpers';
+import { requestValidator } from '../../../../shared/helpers';
 import {
     postsBodySchema,
     postsQuerySchema,
-} from '../posts/posts-request-validator';
-
-const nameLength = 15;
-const descriptionLength = 500;
-const websiteUrlLength = 100;
-const websiteUrlPattern =
-    /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;
+} from '../../../posts/posts-request-validator';
+import {
+    blogDescriptionValidation,
+    blogNameValidation,
+    blogWebsiteUrlValidation,
+} from '../../domain/settings';
 
 const paramSchema: Schema = {
     id: {
@@ -32,8 +31,8 @@ export const blogsBodySchema: Schema = {
             errorMessage: 'Name is required',
         },
         isLength: {
-            options: { max: nameLength },
-            errorMessage: `Name length should be max ${nameLength} characters`,
+            options: { max: blogNameValidation.maxLength },
+            errorMessage: `Name length should be max ${blogNameValidation.maxLength} characters`,
         },
     },
     description: {
@@ -47,8 +46,8 @@ export const blogsBodySchema: Schema = {
             errorMessage: 'Description is required',
         },
         isLength: {
-            options: { max: descriptionLength },
-            errorMessage: `Description length should be max ${descriptionLength} characters`,
+            options: { max: blogDescriptionValidation.maxLength },
+            errorMessage: `Description length should be max ${blogDescriptionValidation.maxLength} characters`,
         },
     },
     websiteUrl: {
@@ -62,12 +61,12 @@ export const blogsBodySchema: Schema = {
             errorMessage: 'WebsiteUrl is required',
         },
         isLength: {
-            options: { max: websiteUrlLength },
-            errorMessage: `Website URL length should be max ${websiteUrlLength} characters`,
+            options: { max: blogWebsiteUrlValidation.maxLength },
+            errorMessage: `Website URL length should be max ${blogWebsiteUrlValidation.maxLength} characters`,
         },
         matches: {
-            options: websiteUrlPattern,
-            errorMessage: 'Website URL should be a valid URL',
+            options: blogWebsiteUrlValidation.pattern,
+            errorMessage: blogWebsiteUrlValidation.errorMessagePattern,
         },
     },
 };

@@ -1,11 +1,12 @@
 import { injectable } from 'inversify';
-import { BlogViewModel } from './types';
-import { BlogsDBSearchParams, BlogsModel } from './blogs-model';
 import {
     AllItemsViewModel,
     TMappedSearchQueryParams,
-} from '../../shared/types';
-import { getDBSearchQueries } from '../../shared/helpers';
+} from '../../../shared/types';
+import { getDBSearchQueries } from '../../../shared/helpers';
+import { BlogViewModel } from '../api/types';
+import { BlogModel } from '../domain/blog-entity';
+import { BlogsDBSearchParams } from '../domain/types';
 
 @injectable()
 export class BlogsQueryRepository {
@@ -18,10 +19,10 @@ export class BlogsQueryRepository {
     }): Promise<AllItemsViewModel<BlogViewModel>> {
         const dbSearchQueries =
             getDBSearchQueries<BlogsDBSearchParams['sortBy']>(searchQueries);
-        const totalCount = await BlogsModel.countDocuments({
+        const totalCount = await BlogModel.countDocuments({
             name: { $regex: term ?? '', $options: 'i' },
         });
-        const foundBlogs = await BlogsModel.find({
+        const foundBlogs = await BlogModel.find({
             name: { $regex: term ?? '', $options: 'i' },
         })
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
@@ -47,7 +48,7 @@ export class BlogsQueryRepository {
     }
 
     async getBlog(id: string): Promise<BlogViewModel | undefined> {
-        const foundBlog = await BlogsModel.findById(id);
+        const foundBlog = await BlogModel.findById(id);
         if (!foundBlog) return undefined;
         return {
             id: foundBlog.id,

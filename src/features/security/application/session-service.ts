@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { SessionsQueryRepository } from '../infrastructure/sessions-query-repository';
 import { SessionsRepository } from '../infrastructure/sessions-repository';
 import { AuthService } from '../../auth/application/auth-service';
-import { SessionViewModel } from '../types';
+import { SessionViewModel } from '../api/types';
 import { TResult } from '../../../shared/types';
 import {
     forbiddenErrorResult,

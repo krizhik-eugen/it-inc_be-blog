@@ -1,5 +1,5 @@
 import { HydratedDocument, Model } from 'mongoose';
-import { sessionMethods, sessionStatics } from './session-entity';
+import { sessionStatics } from './session-entity';
 
 export type TSession = {
     userId: string;
@@ -20,9 +20,7 @@ export type TCreateSessionDTO = {
 };
 
 type SessionStatics = typeof sessionStatics;
-type SessionMethods = typeof sessionMethods;
 
-export type TSessionModel = Model<TSession, object, SessionMethods> &
-    SessionStatics;
+export type TSessionModel = Model<TSession> & SessionStatics;
 
-export type SessionDocument = HydratedDocument<TSession, SessionMethods>;
+export type SessionDocument = HydratedDocument<TSession>;

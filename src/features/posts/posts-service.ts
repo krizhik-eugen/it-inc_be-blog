@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { PostsRepository } from './posts-repository';
 import { LikesRepository } from '../likes/likes-repository';
-import { BlogsRepository } from '../blogs/blogs-repository';
+import { BlogsRepository } from '../blogs/infrastructure/blogs-repository';
 import { TResult } from '../../shared/types';
 import {
     internalErrorResult,

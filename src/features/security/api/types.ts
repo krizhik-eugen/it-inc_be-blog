@@ -1,4 +1,4 @@
-import { TResponseWithError } from '../../shared/types';
+import { TResponseWithError } from '../../../shared/types';
 
 export type SessionViewModel = {
     ip: string;

@@ -2,16 +2,16 @@ import { connection, disconnect } from 'mongoose';
 import { agent } from 'supertest';
 import { app } from '../src/initApp';
 import { connectToDB } from '../src/db/db';
-import { BlogViewModel } from '../src/features/blogs/types';
 import { baseRoutes } from '../src/app/configs/routes-config';
 import { PostViewModel } from '../src/features/posts/types';
 import { UserViewModel } from '../src/features/users/api/types';
-import { BlogsModel } from '../src/features/blogs/blogs-model';
 import { PostsModel } from '../src/features/posts/posts-model';
 import { CommentsModel } from '../src/features/comments/comments-model';
 import { UserModel } from '../src/features/users/domain/user-entity';
 import { RateLimiterModel } from '../src/app/models/rate-limiter-model';
 import { SessionModel } from '../src/features/security/domain/session-entity';
+import { BlogViewModel } from '../src/features/blogs/api/types';
+import { BlogModel } from '../src/features/blogs/domain/blog-entity';
 
 export const req = agent(app);
 
@@ -162,7 +162,7 @@ export const mockUserAgents = {
 };
 
 export const clearAllCollections = async () => {
-    await BlogsModel.deleteMany({});
+    await BlogModel.deleteMany({});
     await PostsModel.deleteMany({});
     await CommentsModel.deleteMany({});
     await UserModel.deleteMany({});

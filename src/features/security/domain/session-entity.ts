@@ -17,10 +17,7 @@ export const sessionStatics = {
     },
 };
 
-export const sessionMethods = {};
-
 sessionSchema.statics = sessionStatics;
-sessionSchema.methods = sessionMethods;
 
 export const SessionModel = model<TSession, TSessionModel>(
     'sessions',

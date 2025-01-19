@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { container } from '../../app-composition-root';
+import { container } from '../../../app-composition-root';
 import { BlogsController } from './blogs-controller';
-import { routersPaths } from '../../app/configs/routes-config';
-import { blogsValidators } from './blogs-request-validator';
-import { adminAuthValidator } from '../../app/middlewares/admin-auth-validator';
-import { userAuthIdentifier } from '../../app/middlewares/user-auth-identifier';
+import { routersPaths } from '../../../app/configs/routes-config';
+import { blogsValidators } from './validation/blogs-request-validator';
+import { adminAuthValidator } from '../../../app/middlewares/admin-auth-validator';
+import { userAuthIdentifier } from '../../../app/middlewares/user-auth-identifier';
 
 export const blogsRouter = Router();
 
@@ -36,7 +36,7 @@ blogsRouter
     .delete(
         ...adminAuthValidator,
         ...blogsValidators.deleteBlogRequest,
-        blogsController.deleteBlog.bind(blogsController)
+        blogsController.deleteBlogById.bind(blogsController)
     );
 
 blogsRouter

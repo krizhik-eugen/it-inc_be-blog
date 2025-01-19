@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { SessionViewModel } from '../types';
+import { SessionViewModel } from '../api/types';
 import { SessionModel } from '../domain/session-entity';
 
 @injectable()

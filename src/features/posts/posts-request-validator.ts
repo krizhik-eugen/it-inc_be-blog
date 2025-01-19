@@ -1,6 +1,6 @@
 import { Schema } from 'express-validator';
 import { container } from '../../app-composition-root';
-import { BlogsRepository } from '../blogs/blogs-repository';
+import { BlogsRepository } from '../blogs/infrastructure/blogs-repository';
 import { requestValidator } from '../../shared/helpers';
 import {
     commentsBodySchema,

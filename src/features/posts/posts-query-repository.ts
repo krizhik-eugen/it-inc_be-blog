@@ -5,7 +5,7 @@ import { PostsDBSearchParams, PostsModel } from './posts-model';
 import { getDBSearchQueries } from '../../shared/helpers';
 import { PostViewModel } from './types';
 import { TLikeStatus } from '../likes/types';
-import { BlogsModel } from '../blogs/blogs-model';
+import { BlogModel } from '../blogs/domain/blog-entity';
 
 @injectable()
 export class PostsQueryRepository {
@@ -111,7 +111,7 @@ export class PostsQueryRepository {
         blogId: string;
         userId: string | null;
     }) {
-        const blog = await BlogsModel.findById(blogId);
+        const blog = await BlogModel.findById(blogId);
         if (!blog) {
             return;
         }

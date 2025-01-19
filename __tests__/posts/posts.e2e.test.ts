@@ -2,7 +2,6 @@ import {
     PostCreateRequestModel,
     PostViewModel,
 } from '../../src/features/posts/types';
-import { BlogViewModel } from '../../src/features/blogs/types';
 import {
     addNewBlog,
     addNewPost,
@@ -28,6 +27,7 @@ import {
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { baseRoutes, routersPaths } from '../../src/app/configs/routes-config';
+import { BlogViewModel } from '../../src/features/blogs/api/types';
 
 describe('Posts Controller', () => {
     let createdTestBlog: BlogViewModel;

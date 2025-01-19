@@ -13,15 +13,17 @@ import {
     TGetBlogResponse,
     TUpdateBlogRequest,
 } from './types';
-import { BlogsQueryRepository } from './blogs-query-repository';
-import { BlogsService } from './blogs-service';
-import { PostsQueryRepository } from '../posts/posts-query-repository';
-import { PostsService } from '../posts/posts-service';
-import { createResponseError, getSearchQueries } from '../../shared/helpers';
-import { BlogsDBSearchParams } from './blogs-model';
-import { HTTP_STATUS_CODES } from '../../constants';
-import { PostsDBSearchParams } from '../posts/posts-model';
-import { TResponseWithError } from '../../shared/types';
+
+import { BlogsService } from '../application/blogs-service';
+import { PostsQueryRepository } from '../../posts/posts-query-repository';
+import { PostsService } from '../../posts/posts-service';
+import { createResponseError, getSearchQueries } from '../../../shared/helpers';
+
+import { HTTP_STATUS_CODES } from '../../../constants';
+import { PostsDBSearchParams } from '../../posts/posts-model';
+import { TResponseWithError } from '../../../shared/types';
+import { BlogsQueryRepository } from '../infrastructure/blogs-query-repository';
+import { BlogsDBSearchParams } from '../domain/types';
 
 @injectable()
 export class BlogsController {
@@ -160,8 +162,8 @@ export class BlogsController {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     }
 
-    async deleteBlog(req: TDeleteBlogRequest, res: TResponseWithError) {
-        const result = await this.blogsService.deleteBlog(req.params.id);
+    async deleteBlogById(req: TDeleteBlogRequest, res: TResponseWithError) {
+        const result = await this.blogsService.deleteBlogById(req.params.id);
         if (result.status !== 'Success') {
             res.status(HTTP_STATUS_CODES.NOT_FOUND).json({
                 errorsMessages: result.errorsMessages,
