@@ -33,39 +33,39 @@ import { UsersController } from './features/users/api/users-controller';
 
 const container = new Container();
 
-container.bind(EmailManager).to(EmailManager);
-container.bind(RateLimiterRepository).to(RateLimiterRepository);
-container.bind(JwtService).to(JwtService);
-container.bind(RateLimiterService).to(RateLimiterService);
+container.bind(EmailManager).toSelf();
+container.bind(RateLimiterRepository).toSelf();
+container.bind(JwtService).toSelf();
+container.bind(RateLimiterService).toSelf();
 
-container.bind(BlogsQueryRepository).to(BlogsQueryRepository);
-container.bind(CommentsQueryRepository).to(CommentsQueryRepository);
-container.bind(LikesQueryRepository).to(LikesQueryRepository);
-container.bind(PostsQueryRepository).to(PostsQueryRepository);
-container.bind(SessionsQueryRepository).to(SessionsQueryRepository);
-container.bind(UsersQueryRepository).to(UsersQueryRepository);
+container.bind(BlogsQueryRepository).toSelf();
+container.bind(CommentsQueryRepository).toSelf();
+container.bind(LikesQueryRepository).toSelf();
+container.bind(PostsQueryRepository).toSelf();
+container.bind(SessionsQueryRepository).toSelf();
+container.bind(UsersQueryRepository).toSelf();
 
-container.bind(BlogsRepository).to(BlogsRepository);
-container.bind(CommentsRepository).to(CommentsRepository);
-container.bind(LikesRepository).to(LikesRepository);
-container.bind(PostsRepository).to(PostsRepository);
-container.bind(SessionsRepository).to(SessionsRepository);
-container.bind(UsersRepository).to(UsersRepository);
+container.bind(BlogsRepository).toSelf();
+container.bind(CommentsRepository).toSelf();
+container.bind(LikesRepository).toSelf();
+container.bind(PostsRepository).toSelf();
+container.bind(SessionsRepository).toSelf();
+container.bind(UsersRepository).toSelf();
 
-container.bind(AuthService).to(AuthService);
-container.bind(BlogsService).to(BlogsService);
-container.bind(CommentsService).to(CommentsService);
-container.bind(PostsService).to(PostsService);
-container.bind(SessionService).to(SessionService);
-container.bind(TestingService).to(TestingService);
-container.bind(UsersService).to(UsersService);
+container.bind(AuthService).toSelf();
+container.bind(BlogsService).toSelf();
+container.bind(CommentsService).toSelf();
+container.bind(PostsService).toSelf();
+container.bind(SessionService).toSelf();
+container.bind(TestingService).toSelf();
+container.bind(UsersService).toSelf();
 
-container.bind(AuthController).to(AuthController);
-container.bind(BlogsController).to(BlogsController);
-container.bind(CommentsController).to(CommentsController);
-container.bind(PostsController).to(PostsController);
-container.bind(SecurityController).to(SecurityController);
-container.bind(TestingController).to(TestingController);
-container.bind(UsersController).to(UsersController);
+container.bind(AuthController).toSelf();
+container.bind(BlogsController).toSelf();
+container.bind(CommentsController).toSelf();
+container.bind(PostsController).toSelf();
+container.bind(SecurityController).toSelf();
+container.bind(TestingController).toSelf();
+container.bind(UsersController).toSelf();
 
 export { container };
