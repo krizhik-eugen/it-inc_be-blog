@@ -5,13 +5,13 @@ import { RateLimiterRepository } from './app/repositories/rate-limiter-repositor
 import { CommentsQueryRepository } from './features/comments/comments-query-repository';
 import { JwtService } from './app/services/jwt-service';
 import { RateLimiterService } from './app/services/rate-limiter-service';
-import { LikesQueryRepository } from './features/likes/likes-query-repository';
+import { LikesQueryRepository } from './features/likes/infrastructure/likes-query-repository';
 import { PostsQueryRepository } from './features/posts/infrastructure/posts-query-repository';
 import { SessionsQueryRepository } from './features/security/infrastructure/sessions-query-repository';
 import { UsersQueryRepository } from './features/users/infrastructure/users-query-repository';
 import { BlogsRepository } from './features/blogs/infrastructure/blogs-repository';
 import { CommentsRepository } from './features/comments/comments-repository';
-import { LikesRepository } from './features/likes/likes-repository';
+import { LikesRepository } from './features/likes/infrastructure/likes-repository';
 import { PostsRepository } from './features/posts/infrastructure/posts-repository';
 import { SessionsRepository } from './features/security/infrastructure/sessions-repository';
 import { UsersRepository } from './features/users/infrastructure/users-repository';

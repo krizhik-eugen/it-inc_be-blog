@@ -9,9 +9,10 @@ import {
     CommentCreateRequestModel,
     CommentViewModel,
 } from '../../comments/types';
-import { NewestLikesViewModel, TLikeStatus } from '../../likes/types';
+import { NewestLikesViewModel } from '../../likes/api/types';
 import { CommentsDBSearchParams } from '../../comments/comments-model';
 import { PostsDBSearchParams } from '../domain/types';
+import { TLikeStatus } from '../../likes/domain/types';
 
 export type PostViewModel = {
     id: string;

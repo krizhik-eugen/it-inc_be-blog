@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify';
-import { LikesQueryRepository } from '../../likes/likes-query-repository';
+import { LikesQueryRepository } from '../../likes/infrastructure/likes-query-repository';
 import { TMappedSearchQueryParams } from '../../../shared/types';
 import { PostModel } from '../domain/post-entity';
 import { getDBSearchQueries } from '../../../shared/helpers';
 import { PostViewModel } from '../api/types';
-import { TLikeStatus } from '../../likes/types';
 import { BlogModel } from '../../blogs/domain/blog-entity';
 import { PostsDBSearchParams } from '../domain/types';
+import { TLikeStatus } from '../../likes/domain/types';
 
 @injectable()
 export class PostsQueryRepository {

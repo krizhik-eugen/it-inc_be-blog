@@ -1,12 +1,13 @@
 import { inject, injectable } from 'inversify';
 import { PostsRepository } from '../infrastructure/posts-repository';
-import { LikesRepository } from '../../likes/likes-repository';
+import { LikesRepository } from '../../likes/infrastructure/likes-repository';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs-repository';
 import { TResult } from '../../../shared/types';
 import { notFoundErrorResult, successResult } from '../../../shared/helpers';
 import { PostModel } from '../domain/post-entity';
-import { TLikeStatus } from '../../likes/types';
 import { PostCreateRequestModel } from '../api/types';
+import { LikeModel } from '../../likes/domain/like-entity';
+import { TLikeStatus } from '../../likes/domain/types';
 
 @injectable()
 export class PostsService {
@@ -80,20 +81,17 @@ export class PostsService {
             await this.likesRepository.findLikeByUserIdAndParentId(userId, id);
 
         if (!foundLike) {
-            await this.likesRepository.addLike({
+            const newLike = LikeModel.createNewLike({
                 userId,
                 parentId: id,
                 status: likeStatus,
-                createdAt: new Date().toISOString(),
             });
+            await this.likesRepository.save(newLike);
         }
 
         if (foundLike) {
-            await this.likesRepository.updateLikeStatus({
-                userId,
-                parentId: id,
-                status: likeStatus,
-            });
+            foundLike.updateStatus(likeStatus);
+            await this.likesRepository.save(foundLike);
         }
 
         const [likesCount, dislikesCount] = await Promise.all([

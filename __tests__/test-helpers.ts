@@ -12,6 +12,7 @@ import { RateLimiterModel } from '../src/app/models/rate-limiter-model';
 import { SessionModel } from '../src/features/security/domain/session-entity';
 import { BlogViewModel } from '../src/features/blogs/api/types';
 import { BlogModel } from '../src/features/blogs/domain/blog-entity';
+import { LikeModel } from '../src/features/likes/domain/like-entity';
 
 export const req = agent(app);
 
@@ -168,4 +169,5 @@ export const clearAllCollections = async () => {
     await UserModel.deleteMany({});
     await SessionModel.deleteMany({});
     await RateLimiterModel.deleteMany({});
+    await LikeModel.deleteMany({});
 };

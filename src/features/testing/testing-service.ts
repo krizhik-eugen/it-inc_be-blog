@@ -4,6 +4,7 @@ import { PostsRepository } from '../posts/infrastructure/posts-repository';
 import { UsersRepository } from '../users/infrastructure/users-repository';
 import { CommentsRepository } from '../comments/comments-repository';
 import { SessionsRepository } from '../security/infrastructure/sessions-repository';
+import { LikesRepository } from '../likes/infrastructure/likes-repository';
 
 @injectable()
 export class TestingService {
@@ -14,7 +15,8 @@ export class TestingService {
         @inject(CommentsRepository)
         protected commentsRepository: CommentsRepository,
         @inject(SessionsRepository)
-        protected sessionsRepository: SessionsRepository
+        protected sessionsRepository: SessionsRepository,
+        @inject(LikesRepository) protected likesRepository: LikesRepository
     ) {}
 
     async deleteAllData() {
@@ -23,5 +25,6 @@ export class TestingService {
         await this.usersRepository.deleteAllUsers();
         await this.commentsRepository.clearComments();
         await this.sessionsRepository.deleteAllSessions();
+        await this.likesRepository.deleteAllLikes();
     }
 }

@@ -10,7 +10,7 @@ import {
 } from './types';
 import { createResponseError } from '../../shared/helpers';
 import { TResponseWithError } from '../../shared/types';
-import { TUpdateLikeStatusRequest } from '../likes/types';
+import { TUpdateLikeStatusRequest } from '../likes/api/types';
 import { HTTP_STATUS_CODES } from '../../constants';
 
 @injectable()

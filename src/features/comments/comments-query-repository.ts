@@ -1,11 +1,11 @@
 import { inject, injectable } from 'inversify';
 import { CommentsDBSearchParams, CommentsModel } from './comments-model';
-import { LikesQueryRepository } from '../likes/likes-query-repository';
-import { TLikeStatus } from '../likes/types';
+import { LikesQueryRepository } from '../likes/infrastructure/likes-query-repository';
 import { TMappedSearchQueryParams } from '../../shared/types';
 import { PostModel } from '../posts/domain/post-entity';
 import { getDBSearchQueries } from '../../shared/helpers';
 import { CommentViewModel } from './types';
+import { TLikeStatus } from '../likes/domain/types';
 
 @injectable()
 export class CommentsQueryRepository {

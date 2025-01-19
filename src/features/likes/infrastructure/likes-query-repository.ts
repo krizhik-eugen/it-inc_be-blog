@@ -1,8 +1,7 @@
 import { inject, injectable } from 'inversify';
-
-import { NewestLikesViewModel } from './types';
-import { UsersQueryRepository } from '../users/infrastructure/users-query-repository';
-import { LikesModel } from './likes-model';
+import { NewestLikesViewModel } from '../api/types';
+import { UsersQueryRepository } from '../../users/infrastructure/users-query-repository';
+import { LikeModel } from '../domain/like-entity';
 
 @injectable()
 export class LikesQueryRepository {
@@ -12,12 +11,12 @@ export class LikesQueryRepository {
     ) {}
 
     async getLikeStatus(parentId: string, userId: string) {
-        const foundLike = await LikesModel.findOne({ parentId, userId });
+        const foundLike = await LikeModel.findOne({ parentId, userId });
         return foundLike ? foundLike.status : 'None';
     }
 
     async getLikesArray(parentIdsArray: string[], userId: string) {
-        const foundLikes = await LikesModel.find({
+        const foundLikes = await LikeModel.find({
             parentId: { $in: parentIdsArray },
             userId,
         }).lean();
@@ -25,7 +24,7 @@ export class LikesQueryRepository {
     }
 
     async getLastThreeLikes(parentId: string) {
-        const foundLikes = await LikesModel.find({ parentId, status: 'Like' })
+        const foundLikes = await LikeModel.find({ parentId, status: 'Like' })
             .sort({
                 createdAt: -1,
             })

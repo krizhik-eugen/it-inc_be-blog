@@ -21,7 +21,7 @@ import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import { CommentsDBSearchParams } from '../../comments/comments-model';
 import { TResponseWithError } from '../../../shared/types';
-import { TUpdateLikeStatusRequest } from '../../likes/types';
+import { TUpdateLikeStatusRequest } from '../../likes/api/types';
 import { PostsDBSearchParams } from '../domain/types';
 
 @injectable()

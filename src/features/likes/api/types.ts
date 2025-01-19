@@ -1,7 +1,6 @@
 import { Request } from 'express';
-import { TIDParam } from '../../shared/types';
-
-export type TLikeStatus = 'Like' | 'Dislike' | 'None';
+import { TIDParam } from '../../../shared/types';
+import { TLikeStatus } from '../domain/types';
 
 export type LikesViewModel = {
     likesCount: number;
