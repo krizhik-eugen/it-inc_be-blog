@@ -27,15 +27,3 @@ export const ResultStatus = {
     BadRequest: 'BadRequest',
     InternalError: 'InternalError',
 } as const;
-
-//TODO: implement in the code:
-export const ServiceErrorMessages = {
-    UpdatingError: 'Error occurred during updating',
-    CreationError: 'Error occurred during creation',
-    DeletionError: 'Error occurred during deletion',
-    NotFoundBlog: 'Blog is not found',
-    NotFoundPost: 'Post is not found',
-    NotFoundComment: 'Comment is not found',
-    NotFoundUser: 'User is not found',
-    InvalidCredentials: 'Invalid credentials',
-} as const;

@@ -1,5 +1,5 @@
 import { connect, disconnect } from 'mongoose';
-import { mongoDBName, mongoDBUrl } from '../app/configs';
+import { mongoDBName, mongoDBUrl } from '../app/configs/app-config';
 
 export const connectToDB = async () => {
     try {

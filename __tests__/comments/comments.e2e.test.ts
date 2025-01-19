@@ -1,4 +1,3 @@
-import { baseRoutes, routersPaths } from '../../src/app/configs';
 import {
     PostCreateRequestModel,
     PostViewModel,
@@ -22,6 +21,7 @@ import {
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
 import { CommentViewModel } from '../../src/features/comments/types';
+import { baseRoutes, routersPaths } from '../../src/app/configs/routes-config';
 
 describe('Comments Controller', () => {
     let createdTestBlog: BlogViewModel;

@@ -1,4 +1,3 @@
-import { baseRoutes } from '../../src/app/configs';
 import {
     PostCreateRequestModel,
     PostViewModel,
@@ -28,7 +27,7 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { routersPaths } from '../../src/app/configs';
+import { baseRoutes, routersPaths } from '../../src/app/configs/routes-config';
 
 describe('Posts Controller', () => {
     let createdTestBlog: BlogViewModel;

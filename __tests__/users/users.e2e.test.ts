@@ -1,4 +1,3 @@
-import { baseRoutes } from '../../src/app/configs';
 import {
     addNewUser,
     DBHandlers,
@@ -16,8 +15,9 @@ import {
     clearAllCollections,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { UserViewModel } from '../../src/features/users/types';
-import { UsersModel } from '../../src/features/users/model';
+import { UserViewModel } from '../../src/features/users/api/types';
+import { baseRoutes } from '../../src/app/configs/routes-config';
+import { UserModel } from '../../src/features/users/domain/user-entity';
 
 describe('Users Controller', () => {
     const setTestUsers = async () => {
@@ -242,7 +242,7 @@ describe('Users Controller', () => {
         });
 
         it('returns a list of users with the email and login matching the search term', async () => {
-            await UsersModel.deleteMany({});
+            await UserModel.deleteMany({});
             await setTestUsers();
             await addNewUser({
                 login: 'login10',

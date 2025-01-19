@@ -1,6 +1,6 @@
 import { app } from './initApp';
-import { port } from './app/configs';
-import { connectToDB } from './db';
+import { port } from './app/configs/app-config';
+import { connectToDB } from './db/db';
 
 app.listen(port, async () => {
     const isConnected = await connectToDB();

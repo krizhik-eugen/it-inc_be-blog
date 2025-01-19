@@ -1,46 +1,35 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
-import { EmailManager } from './app/managers';
-import { RateLimiterRepository } from './app/repositories';
-import { JwtService, RateLimiterService } from './app/services';
-import { AuthController } from './features/auth/controller';
-import { AuthService } from './features/auth/service';
-import { UsersService } from './features/users/service';
-import {
-    UsersQueryRepository,
-    UsersRepository,
-} from './features/users/repository';
-import { UsersController } from './features/users/controller';
-import { TestingService } from './features/testing/service';
-import { TestingController } from './features/testing/controller';
-import { SessionService } from './features/security/service';
-import {
-    SessionsQueryRepository,
-    SessionsRepository,
-} from './features/security/repository';
-import { SecurityController } from './features/security/controller';
-import { PostsService } from './features/posts/service';
-import {
-    PostsQueryRepository,
-    PostsRepository,
-} from './features/posts/repository';
-import { PostsController } from './features/posts/controller';
-import {
-    LikesQueryRepository,
-    LikesRepository,
-} from './features/likes/repository';
-import { CommentsService } from './features/comments/service';
-import {
-    CommentsQueryRepository,
-    CommentsRepository,
-} from './features/comments/repository';
-import { CommentsController } from './features/comments/controller';
-import { BlogsService } from './features/blogs/service';
-import {
-    BlogsQueryRepository,
-    BlogsRepository,
-} from './features/blogs/repository';
-import { BlogsController } from './features/blogs/controller';
+import { EmailManager } from './app/managers/email-manager';
+import { RateLimiterRepository } from './app/repositories/rate-limiter-repository';
+import { BlogsQueryRepository } from './features/blogs/blogs-query-repository';
+import { CommentsQueryRepository } from './features/comments/comments-query-repository';
+import { JwtService } from './app/services/jwt-service';
+import { RateLimiterService } from './app/services/rate-limiter-service';
+import { LikesQueryRepository } from './features/likes/likes-query-repository';
+import { PostsQueryRepository } from './features/posts/posts-query-repository';
+import { SessionsQueryRepository } from './features/security/sessions-query-repository';
+import { UsersQueryRepository } from './features/users/infrastructure/users-query-repository';
+import { BlogsRepository } from './features/blogs/blogs-repository';
+import { CommentsRepository } from './features/comments/comments-repository';
+import { LikesRepository } from './features/likes/likes-repository';
+import { PostsRepository } from './features/posts/posts-repository';
+import { SessionsRepository } from './features/security/sessions-repository';
+import { UsersRepository } from './features/users/infrastructure/users-repository';
+import { AuthService } from './features/auth/application/auth-service';
+import { BlogsService } from './features/blogs/blogs-service';
+import { CommentsService } from './features/comments/comments-service';
+import { PostsService } from './features/posts/posts-service';
+import { SessionService } from './features/security/session-service';
+import { TestingService } from './features/testing/testing-service';
+import { UsersService } from './features/users/application/users-service';
+import { AuthController } from './features/auth/api/auth-controller';
+import { BlogsController } from './features/blogs/blogs-controller';
+import { CommentsController } from './features/comments/comments-controller';
+import { PostsController } from './features/posts/posts-controller';
+import { SecurityController } from './features/security/security-controller';
+import { TestingController } from './features/testing/testing-controller';
+import { UsersController } from './features/users/api/users-controller';
 
 const container = new Container();
 

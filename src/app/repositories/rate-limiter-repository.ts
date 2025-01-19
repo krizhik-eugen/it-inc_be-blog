@@ -1,9 +1,9 @@
 import { injectable } from 'inversify';
 import {
-    RateLimiterModel,
     RateLimiterDBModel,
     RateLimiterDBSearchParams,
-} from '../models/rate-limiter';
+    RateLimiterModel,
+} from '../models/rate-limiter-model';
 
 @injectable()
 export class RateLimiterRepository {

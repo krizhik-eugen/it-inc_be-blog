@@ -5,10 +5,10 @@ import {
     TResponseWithError,
     TSearchQueryParams,
 } from '../../shared/types';
-import { PostsDBSearchParams } from './model/posts-model';
-import { CommentsDBSearchParams } from '../comments/model';
+import { PostsDBSearchParams } from './posts-model';
 import { CommentCreateRequestModel, CommentViewModel } from '../comments/types';
 import { NewestLikesViewModel, TLikeStatus } from '../likes/types';
+import { CommentsDBSearchParams } from '../comments/comments-model';
 
 export type PostViewModel = {
     id: string;

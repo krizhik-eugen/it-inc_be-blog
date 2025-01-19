@@ -1,14 +1,14 @@
 import express from 'express';
 // import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { baseRoutes } from './app/configs';
-import { testingRouter } from './features/testing/router';
-import { postsRouter } from './features/posts/router';
-import { blogsRouter } from './features/blogs/router';
-import { usersRouter } from './features/users/router';
-import { authRouter } from './features/auth/router';
-import { commentsRouter } from './features/comments/router';
-import { securityRouter } from './features/security/router';
+import { baseRoutes } from './app/configs/routes-config';
+import { authRouter } from './features/auth/api/auth-router';
+import { blogsRouter } from './features/blogs/blogs-router';
+import { commentsRouter } from './features/comments/comments-router';
+import { postsRouter } from './features/posts/posts-router';
+import { testingRouter } from './features/testing/testing-router';
+import { usersRouter } from './features/users/api/users-router';
+import { securityRouter } from './features/security/security-router';
 
 export const app = express();
 
@@ -24,3 +24,9 @@ app.use(baseRoutes.posts, postsRouter);
 app.use(baseRoutes.testing, testingRouter);
 app.use(baseRoutes.users, usersRouter);
 app.use(baseRoutes.security, securityRouter);
+
+app.get('/', (req, res: express.Response) => {
+    res.json({
+        version: 1,
+    });
+});

@@ -1,17 +1,17 @@
 import { connection, disconnect } from 'mongoose';
 import { agent } from 'supertest';
 import { app } from '../src/initApp';
-import { connectToDB } from '../src/db';
+import { connectToDB } from '../src/db/db';
 import { BlogViewModel } from '../src/features/blogs/types';
+import { baseRoutes } from '../src/app/configs/routes-config';
 import { PostViewModel } from '../src/features/posts/types';
-import { baseRoutes } from '../src/app/configs';
-import { UserViewModel } from '../src/features/users/types';
-import { BlogsModel } from '../src/features/blogs/model';
-import { PostsModel } from '../src/features/posts/model';
-import { CommentsModel } from '../src/features/comments/model';
-import { UsersModel } from '../src/features/users/model';
-import { SessionsModel } from '../src/features/security/model';
-import { RateLimiterModel } from '../src/app/models/rate-limiter';
+import { UserViewModel } from '../src/features/users/api/types';
+import { BlogsModel } from '../src/features/blogs/blogs-model';
+import { PostsModel } from '../src/features/posts/posts-model';
+import { CommentsModel } from '../src/features/comments/comments-model';
+import { UserModel } from '../src/features/users/domain/user-entity';
+import { SessionsModel } from '../src/features/security/session-model';
+import { RateLimiterModel } from '../src/app/models/rate-limiter-model';
 
 export const req = agent(app);
 
@@ -165,7 +165,7 @@ export const clearAllCollections = async () => {
     await BlogsModel.deleteMany({});
     await PostsModel.deleteMany({});
     await CommentsModel.deleteMany({});
-    await UsersModel.deleteMany({});
+    await UserModel.deleteMany({});
     await SessionsModel.deleteMany({});
     await RateLimiterModel.deleteMany({});
 };

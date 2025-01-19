@@ -1,9 +1,4 @@
 import {
-    accessTokenExpirationTime,
-    baseRoutes,
-    refreshTokenExpirationTime,
-} from '../../src/app/configs';
-import {
     addNewUser,
     DBHandlers,
     req,
@@ -11,12 +6,16 @@ import {
     clearAllCollections,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { routersPaths } from '../../src/app/configs';
-import { RateLimiterModel } from '../../src/app/models/rate-limiter';
+import { RateLimiterModel } from '../../src/app/models/rate-limiter-model';
+import { baseRoutes, routersPaths } from '../../src/app/configs/routes-config';
+import {
+    accessTokenExpirationTime,
+    refreshTokenExpirationTime,
+} from '../../src/app/configs/app-config';
 
 jest.mock('nodemailer');
-jest.mock('../../src/app/configs', () => ({
-    ...jest.requireActual('../../src/app/configs'),
+jest.mock('../../src/app/configs/app-config', () => ({
+    ...jest.requireActual('../../src/app/configs/app-config'),
     accessTokenExpirationTime: 1,
     refreshTokenExpirationTime: 2,
 }));

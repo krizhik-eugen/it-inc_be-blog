@@ -5,12 +5,13 @@ import {
     TResponseWithError,
     TSearchQueryParams,
 } from '../../shared/types';
-import { BlogsDBSearchParams } from './model';
+
 import {
     TGetAllPostsRequestQueries,
     PostCreateRequestModel,
     PostViewModel,
 } from '../posts/types';
+import { BlogsDBSearchParams } from './blogs-model';
 
 export type BlogViewModel = {
     id: string;
