@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import { baseRoutes } from './app/configs/routes-config';
 import { authRouter } from './features/auth/api/auth-router';
 import { blogsRouter } from './features/blogs/api/blogs-router';
-import { commentsRouter } from './features/comments/comments-router';
+import { commentsRouter } from './features/comments/api/comments-router';
 import { postsRouter } from './features/posts/api/posts-router';
 import { testingRouter } from './features/testing/testing-router';
 import { usersRouter } from './features/users/api/users-router';

@@ -19,9 +19,9 @@ import {
     validObjectId,
 } from '../test-helpers';
 import { HTTP_STATUS_CODES } from '../../src/constants';
-import { CommentViewModel } from '../../src/features/comments/types';
 import { baseRoutes, routersPaths } from '../../src/app/configs/routes-config';
 import { BlogViewModel } from '../../src/features/blogs/api/types';
+import { CommentViewModel } from '../../src/features/comments/api/types';
 
 describe('Comments Controller', () => {
     let createdTestBlog: BlogViewModel;

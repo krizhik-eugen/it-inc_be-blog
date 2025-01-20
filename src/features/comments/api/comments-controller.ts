@@ -1,17 +1,17 @@
 import { inject, injectable } from 'inversify';
 
-import { CommentsQueryRepository } from './comments-query-repository';
-import { CommentsService } from './comments-service';
+import { CommentsQueryRepository } from '../infrastructure/comments-query-repository';
+import { CommentsService } from '../application/comments-service';
 import {
-    TDeleteCommentRequest,
+    TDeleteCommentByIdRequest,
     TGetCommentRequest,
     TGetCommentResponse,
     TUpdateCommentRequest,
 } from './types';
-import { createResponseError } from '../../shared/helpers';
-import { TResponseWithError } from '../../shared/types';
-import { TUpdateLikeStatusRequest } from '../likes/api/types';
-import { HTTP_STATUS_CODES } from '../../constants';
+import { createResponseError } from '../../../shared/helpers';
+import { TResponseWithError } from '../../../shared/types';
+import { TUpdateLikeStatusRequest } from '../../likes/api/types';
+import { HTTP_STATUS_CODES } from '../../../constants';
 
 @injectable()
 export class CommentsController {
@@ -88,8 +88,11 @@ export class CommentsController {
         res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT);
     }
 
-    async deleteComment(req: TDeleteCommentRequest, res: TResponseWithError) {
-        const result = await this.commentsService.deleteComment(
+    async deleteCommentById(
+        req: TDeleteCommentByIdRequest,
+        res: TResponseWithError
+    ) {
+        const result = await this.commentsService.deleteCommentById(
             req.params.id,
             req.userId!
         );

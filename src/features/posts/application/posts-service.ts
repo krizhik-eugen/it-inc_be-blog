@@ -52,15 +52,7 @@ export class PostsService {
             return notFoundErrorResult('Post is not found');
         }
 
-        if (title) {
-            foundPost.title = title;
-        }
-        if (shortDescription) {
-            foundPost.shortDescription = shortDescription;
-        }
-        if (content) {
-            foundPost.content = content;
-        }
+        foundPost.updatePost({ title, shortDescription, content });
 
         await this.postsRepository.save(foundPost);
 

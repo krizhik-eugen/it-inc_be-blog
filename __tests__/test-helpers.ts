@@ -6,13 +6,13 @@ import { baseRoutes } from '../src/app/configs/routes-config';
 import { PostViewModel } from '../src/features/posts/api/types';
 import { UserViewModel } from '../src/features/users/api/types';
 import { PostModel } from '../src/features/posts/domain/post-entity';
-import { CommentsModel } from '../src/features/comments/comments-model';
 import { UserModel } from '../src/features/users/domain/user-entity';
 import { RateLimiterModel } from '../src/app/models/rate-limiter-model';
 import { SessionModel } from '../src/features/security/domain/session-entity';
 import { BlogViewModel } from '../src/features/blogs/api/types';
 import { BlogModel } from '../src/features/blogs/domain/blog-entity';
 import { LikeModel } from '../src/features/likes/domain/like-entity';
+import { CommentModel } from '../src/features/comments/domain/comment-entity';
 
 export const req = agent(app);
 
@@ -165,7 +165,7 @@ export const mockUserAgents = {
 export const clearAllCollections = async () => {
     await BlogModel.deleteMany({});
     await PostModel.deleteMany({});
-    await CommentsModel.deleteMany({});
+    await CommentModel.deleteMany({});
     await UserModel.deleteMany({});
     await SessionModel.deleteMany({});
     await RateLimiterModel.deleteMany({});

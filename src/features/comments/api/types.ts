@@ -1,11 +1,7 @@
 import { Request } from 'express';
-import { TIDParam, TResponseWithError } from '../../shared/types';
-import { LikesViewModel } from '../likes/api/types';
-
-export type TCommentatorInfo = {
-    userId: string;
-    userLogin: string;
-};
+import { TIDParam, TResponseWithError } from '../../../shared/types';
+import { LikesViewModel } from '../../likes/api/types';
+import { TCommentatorInfo } from '../domain/types';
 
 export type CommentViewModel = {
     id: string;
@@ -29,4 +25,4 @@ export type TUpdateCommentRequest = Request<
     CommentCreateRequestModel
 >;
 
-export type TDeleteCommentRequest = Request<TIDParam>;
+export type TDeleteCommentByIdRequest = Request<TIDParam>;

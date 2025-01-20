@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
 import { PostsQueryRepository } from '../infrastructure/posts-query-repository';
 import { PostsService } from '../application/posts-service';
-import { CommentsQueryRepository } from '../../comments/comments-query-repository';
-import { CommentsService } from '../../comments/comments-service';
+import { CommentsQueryRepository } from '../../comments/infrastructure/comments-query-repository';
+import { CommentsService } from '../../comments/application/comments-service';
 import {
     TCreateNewPostCommentRequest,
     TCreateNewPostCommentResponse,
@@ -19,10 +19,10 @@ import {
 } from './types';
 import { createResponseError, getSearchQueries } from '../../../shared/helpers';
 import { HTTP_STATUS_CODES } from '../../../constants';
-import { CommentsDBSearchParams } from '../../comments/comments-model';
 import { TResponseWithError } from '../../../shared/types';
 import { TUpdateLikeStatusRequest } from '../../likes/api/types';
 import { PostsDBSearchParams } from '../domain/types';
+import { CommentsDBSearchParams } from '../../comments/domain/types';
 
 @injectable()
 export class PostsController {
@@ -33,7 +33,7 @@ export class PostsController {
         @inject(CommentsQueryRepository)
         protected commentsQueryRepository: CommentsQueryRepository,
         @inject(CommentsService) protected commentsService: CommentsService
-    ) {}
+    ) { }
 
     async getAllPosts(req: TGetAllPostsRequest, res: TGetAllPostsResponse) {
         const userId = req.userId;

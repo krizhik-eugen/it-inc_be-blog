@@ -1,8 +1,7 @@
 import { Schema } from 'express-validator';
-import { requestValidator } from '../../shared/helpers';
-
-const contentMinLength = 20;
-const contentMaxLength = 300;
+import { requestValidator } from '../../../../shared/helpers';
+import { commentContentValidation } from '../../domain/settings';
+import { likeTypes } from '../../../likes/domain/like-entity';
 
 const paramSchema: Schema = {
     id: {
@@ -25,8 +24,11 @@ export const commentsBodySchema: Schema = {
             errorMessage: 'Content is required',
         },
         isLength: {
-            options: { min: contentMinLength, max: contentMaxLength },
-            errorMessage: `Content length should be min ${contentMinLength} and max ${contentMaxLength} characters`,
+            options: {
+                min: commentContentValidation.minLength,
+                max: commentContentValidation.maxLength,
+            },
+            errorMessage: `Content length should be min ${commentContentValidation.minLength} and max ${commentContentValidation.maxLength} characters`,
         },
     },
 };
@@ -80,7 +82,7 @@ export const likeStatusBodySchema: Schema = {
             errorMessage: 'Like status is required',
         },
         isIn: {
-            options: [['Like', 'Dislike', 'None']],
+            options: [likeTypes],
             errorMessage:
                 'Like status must be one of the following: Like, Dislike, None',
         },
@@ -93,7 +95,7 @@ export const commentsValidators = {
         bodySchema: commentsBodySchema,
         paramSchema,
     }),
-    deleteCommentRequest: requestValidator({ paramSchema }),
+    deleteCommentByIdRequest: requestValidator({ paramSchema }),
     updateLikeStatusRequest: requestValidator({
         paramSchema,
         bodySchema: likeStatusBodySchema,

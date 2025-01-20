@@ -1,11 +1,12 @@
 import { inject, injectable } from 'inversify';
-import { CommentsDBSearchParams, CommentsModel } from './comments-model';
-import { LikesQueryRepository } from '../likes/infrastructure/likes-query-repository';
-import { TMappedSearchQueryParams } from '../../shared/types';
-import { PostModel } from '../posts/domain/post-entity';
-import { getDBSearchQueries } from '../../shared/helpers';
-import { CommentViewModel } from './types';
-import { TLikeStatus } from '../likes/domain/types';
+import { CommentModel } from '../domain/comment-entity';
+import { LikesQueryRepository } from '../../likes/infrastructure/likes-query-repository';
+import { TMappedSearchQueryParams } from '../../../shared/types';
+import { PostModel } from '../../posts/domain/post-entity';
+import { getDBSearchQueries } from '../../../shared/helpers';
+import { CommentViewModel } from '../api/types';
+import { TLikeStatus } from '../../likes/domain/types';
+import { CommentsDBSearchParams } from '../domain/types';
 
 @injectable()
 export class CommentsQueryRepository {
@@ -15,7 +16,7 @@ export class CommentsQueryRepository {
     ) {}
 
     async getComment(id: string, userId: string | null) {
-        const foundComment = await CommentsModel.findById(id);
+        const foundComment = await CommentModel.findById(id);
         if (!foundComment) return undefined;
         let likeStatus: TLikeStatus = 'None';
         if (userId) {
@@ -57,8 +58,8 @@ export class CommentsQueryRepository {
         }
         const dbSearchQueries =
             getDBSearchQueries<CommentsDBSearchParams['sortBy']>(searchQueries);
-        const totalCount = await CommentsModel.countDocuments({ postId });
-        const foundComments = await CommentsModel.find({ postId })
+        const totalCount = await CommentModel.countDocuments({ postId });
+        const foundComments = await CommentModel.find({ postId })
             .sort({ [dbSearchQueries.sortBy]: dbSearchQueries.sortDirection })
             .skip(dbSearchQueries.skip)
             .limit(dbSearchQueries.limit);

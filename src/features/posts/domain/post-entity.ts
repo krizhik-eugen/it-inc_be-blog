@@ -1,5 +1,12 @@
 import { model, Schema } from 'mongoose';
-import { TCreatePostDTO, TPost, TPostModel } from './types';
+import {
+    PostDocument,
+    TCreatePostDTO,
+    TPost,
+    TPostModel,
+    TUpdateLikesCountDTO,
+    TUpdatePostDTO,
+} from './types';
 import {
     postContentValidation,
     postShortDescriptionValidation,
@@ -45,6 +52,30 @@ export const postStatics = {
     },
 };
 
+export const postMethods = {
+    updatePost(dto: TUpdatePostDTO) {
+        const { title, shortDescription, content } = dto;
+        const that = this as PostDocument;
+
+        if (title) {
+            that.title = title;
+        }
+        if (shortDescription) {
+            that.shortDescription = shortDescription;
+        }
+        if (content) {
+            that.content = content;
+        }
+    },
+
+    updateLikesCount(dto: TUpdateLikesCountDTO) {
+        const that = this as PostDocument;
+        that.likesCount = dto.likesCount;
+        that.dislikesCount = dto.dislikesCount;
+    },
+};
+
 postSchema.statics = postStatics;
+postSchema.methods = postMethods;
 
 export const PostModel = model<TPost, TPostModel>('posts', postSchema);

@@ -5,7 +5,7 @@ import { requestValidator } from '../../../../shared/helpers';
 import {
     commentsBodySchema,
     commentsQuerySchema,
-} from '../../../comments/comments-request-validator';
+} from '../../../comments/api/validation/comments-request-validator';
 import {
     postContentValidation,
     postShortDescriptionValidation,

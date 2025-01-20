@@ -7,7 +7,7 @@ import {
     TLikeStatus,
 } from './types';
 
-const likeTypes: TLikeStatus[] = ['Like', 'Dislike', 'None'];
+export const likeTypes: TLikeStatus[] = ['Like', 'Dislike', 'None'] as const;
 
 const likeSchema = new Schema<TLike>({
     createdAt: {
